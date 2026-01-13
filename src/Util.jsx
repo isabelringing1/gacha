@@ -64,19 +64,9 @@ const roll = (
   var totalSum = 0;
   min = min == 0 ? 1 : min;
   max = max == 0 ? 100 : max;
-  console.log(pool);
   for (var n in data.drop_rates) {
     n = parseInt(n);
-    if (n % multiple != 0) {
-      continue;
-    }
-    if (n < min || n > max) {
-      continue;
-    }
-    if (modulo != 0 && n % modulo != remainder) {
-      continue;
-    }
-    if (pool.length > 0 && !pool.includes(n)) {
+    if (!isNumberValid(n, multiple, min, max, modulo, remainder, pool)) {
       continue;
     }
     var rarity = data.drop_rates[n];
@@ -89,18 +79,10 @@ const roll = (
   var counter = 0;
   for (var n in data.drop_rates) {
     n = parseInt(n);
-    if (n % multiple != 0) {
+    if (!isNumberValid(n, multiple, min, max, modulo, remainder, pool)) {
       continue;
     }
-    if (n < min || n > max) {
-      continue;
-    }
-    if (modulo != 0 && n % modulo != remainder) {
-      continue;
-    }
-    if (pool.length > 0 && !pool.includes(n)) {
-      continue;
-    }
+
     var rarity = data.drop_rates[n];
     var dropRate = data.chance[rarity];
     counter += dropRate;
@@ -126,6 +108,52 @@ const rollMultiple = (
   }
   return rolls;
 };
+
+function getNumbersInPack(pack) {
+  var numbers = [];
+  for (var n in data.drop_rates) {
+    n = parseInt(n);
+    if (
+      !isNumberValid(
+        n,
+        pack.multiple,
+        pack.min,
+        pack.max,
+        pack.modulo,
+        pack.remainder,
+        pack.pool
+      )
+    ) {
+      continue;
+    }
+    numbers.push(n);
+  }
+  return numbers;
+}
+
+function isNumberValid(
+  n,
+  multiple = 1,
+  min = 1,
+  max = 100,
+  modulo = 0,
+  remainder = 0,
+  pool = []
+) {
+  if (n % multiple != 0) {
+    return false;
+  }
+  if (n < min || n > max) {
+    return false;
+  }
+  if (modulo != 0 && n % modulo != remainder) {
+    return false;
+  }
+  if (pool.length > 0 && !pool.includes(n)) {
+    return false;
+  }
+  return true;
+}
 
 const getRarityIndex = (n) => {
   return data.drop_rates[n];
@@ -208,4 +236,5 @@ export {
   rollForPack,
   getNextCharm,
   getCharmById,
+  getNumbersInPack,
 };

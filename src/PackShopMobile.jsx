@@ -6,7 +6,7 @@ import { UNLOCK_ENTRY_COST, REFRESH_ENTRY_BASE_COST } from "./constants.js";
 
 import packData from "./json/packs.json";
 
-export default function PackShop(props) {
+export default function PackShopMobile(props) {
   const {
     packShopState,
     packShopEntriesUnlocked,
@@ -111,7 +111,7 @@ export default function PackShop(props) {
         />
       )}
 
-      <div className="pack-shop">
+      <div className="pack-shop-mobile">
         <div className="shop-title">PACK SHOP</div>
         <div className="pack-shop-packs">
           {cardShopEntries.map((shopEntry, i) => {

@@ -9,14 +9,15 @@ import Timer from "./Timer";
 import SplashDisplayFront from "./SplashDisplayFront";
 import SplashDisplayBack from "./SplashDisplayBack";
 import PackShop from "./PackShop";
+import PackShopMobile from "./PackShopMobile";
 import CharmShop from "./CharmShop";
 import OutOfHeartsContainer from "./OutOfHeartsContainer";
 
-function App() {
-  const REFRESH_TIME = 60000;
-  const BASE_MAX_HEARTS = 10;
-  const isMobile = window.innerWidth <= 600;
+import arrow from "/assets/arrow.png";
 
+import { REFRESH_TIME, BASE_MAX_HEARTS, isMobile } from "./constants.js";
+
+function App() {
   const [numbers, setNumbers] = useState({});
   const [viewNumbers, setViewNumbers] = useState({});
   const [rolls, setRolls] = useState([]);
@@ -51,6 +52,8 @@ function App() {
   const [timeMultiplier, setTimeMultiplier] = useState(1);
   const [showOutOfHearts, setShowOutOfHearts] = useState(false);
   const [maxHearts, setMaxHearts] = useState(BASE_MAX_HEARTS);
+  const [highlightedNumbers, setHighlightedNumbers] = useState([]);
+  const [buttonContainerXOffset, setButtonContainerXOffset] = useState(0);
 
   useEffect(() => {
     loadData();
@@ -303,6 +306,10 @@ function App() {
     setCharmShopEntries(newCharmShopEntries);
   };
 
+  const onArrowClicked = (direction) => {
+    setButtonContainerXOffset(buttonContainerXOffset + 100 * direction);
+  };
+
   return (
     <div id="content">
       <Debug
@@ -354,7 +361,9 @@ function App() {
                 key={"number-" + n}
                 n={n}
                 viewData={viewNumbers[n]}
-                isHighlighted={highlightedNumber === n}
+                isHighlighted={
+                  highlightedNumber === n || highlightedNumbers.includes(n)
+                }
                 isRolled={rolledNumber === n}
                 showingRoll={showingRoll === n}
                 bigNumberQueue={bigNumberQueue}
@@ -364,46 +373,82 @@ function App() {
           })}
         </div>
       </div>
-      <div id="buttons-container">
+      {isMobile && (
+        <div id="arrows-container">
+          <img
+            className="arrow left-arrow"
+            src={arrow}
+            onClick={() => onArrowClicked(1)}
+          />
+          <img
+            className="arrow right-arrow"
+            src={arrow}
+            onClick={() => onArrowClicked(-1)}
+          />
+        </div>
+      )}
+      <div className="wallet-container">
+        <div className="hearts-container">
+          <div>
+            ♥: {hearts}/{maxHearts}
+          </div>
+          {nextHeartRefreshTime && (
+            <div>
+              Next ♥ in{" "}
+              <Timer
+                endTime={nextHeartRefreshTime}
+                onTimerEnd={refreshHearts}
+              />
+            </div>
+          )}
+        </div>
+
+        <div id="diamonds-container">♦ {showDiamonds.toLocaleString()}</div>
+      </div>
+
+      <div
+        id="buttons-container"
+        style={{ transform: "translate(" + buttonContainerXOffset + "vw, 0)" }}
+      >
         <div id="roll-container">
-          {hearts > 0 && (
+          <span className="hearts-span">
             <button
               id="roll-button"
               disabled={showingRoll != -1 || hearts <= 0}
               onClick={rollNumber}
             >
-              Roll Number (1♥)
+              Roll (1♥)
             </button>
-          )}
-
-          {hearts <= 0 && (
-            <button
-              id="out-of-hearts-button"
-              onClick={() => setShowOutOfHearts(true)}
-            >
-              Get More ♥
-            </button>
-          )}
-
-          <div className="hearts-container">
-            <div>
-              ♥: {hearts}/{maxHearts}
-            </div>
-
-            {nextHeartRefreshTime && (
-              <div>
-                Next ♥ in{" "}
-                <Timer
-                  endTime={nextHeartRefreshTime}
-                  onTimerEnd={refreshHearts}
-                />
-              </div>
+            {hearts <= 0 && (
+              <button
+                id="out-of-hearts-button"
+                onClick={() => setShowOutOfHearts(true)}
+              >
+                Get More ♥
+              </button>
             )}
-            <div id="diamonds-container">♦ {showDiamonds.toLocaleString()}</div>
-          </div>
+          </span>
         </div>
 
-        {packShopState != "hidden" && (
+        {packShopState != "hidden" && isMobile && (
+          <PackShopMobile
+            packShopState={packShopState}
+            packShopEntriesUnlocked={packShopEntriesUnlocked}
+            setPackShopEntriesUnlocked={setPackShopEntriesUnlocked}
+            openPack={openPack}
+            bigNumberQueue={bigNumberQueue}
+            cardShopEntries={cardShopEntries}
+            setShopEntries={setCardShopEntries}
+            setDiamonds={setDiamonds}
+            setShowDiamonds={setShowDiamonds}
+            diamonds={diamonds}
+            unlockShopEntry={unlockShopEntry}
+            generatePackShopEntry={generatePackShopEntry}
+            setHighlightedNumbers={setHighlightedNumbers}
+          />
+        )}
+
+        {packShopState != "hidden" && !isMobile && (
           <PackShop
             packShopState={packShopState}
             packShopEntriesUnlocked={packShopEntriesUnlocked}
@@ -417,9 +462,10 @@ function App() {
             diamonds={diamonds}
             unlockShopEntry={unlockShopEntry}
             generatePackShopEntry={generatePackShopEntry}
+            setHighlightedNumbers={setHighlightedNumbers}
           />
         )}
-        {charmShopState != "hidden" && (
+        {charmShopState != "hidden" && !isMobile && (
           <CharmShop
             diamonds={diamonds}
             setDiamonds={setDiamonds}

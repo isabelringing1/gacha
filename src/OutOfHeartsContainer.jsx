@@ -3,14 +3,12 @@ import Timer from "./Timer";
 import ruled_paper from "/assets/ruled_paper.png";
 import { DitherShader } from "./dither-shader";
 import MathProblem from "./MathProblem";
+import { EASY_HEARTS, HARD_HEARTS } from "./constants.js";
 
 export default function OutOfHeartsContainer(props) {
   const { setShowOutOfHearts, nextHeartRefreshTime, setHearts, hearts } = props;
   const [showMath, setShowMath] = useState(0); //0, 1, 2
   const [mathProblems, setMathProblems] = useState([]);
-
-  const EASY_HEARTS = 5;
-  const HARD_HEARTS = 10;
 
   useEffect(() => {
     if (mathProblems.length > 0) {
@@ -29,7 +27,8 @@ export default function OutOfHeartsContainer(props) {
     var maxDigits = isHard ? 100 : 15;
     var numberPool = Array.from({ length: maxDigits }, (_, i) => i + 1);
     var operationPool = isHard ? ["+", "-"] : ["+"];
-    for (var i = 0; i < 6; i++) {
+    var numProblems = isHard ? 6 : 3;
+    for (var i = 0; i < numProblems; i++) {
       var rand1 = numberPool[Math.floor(Math.random() * numberPool.length)];
       var rand2 = numberPool[Math.floor(Math.random() * numberPool.length)];
       var operation =
