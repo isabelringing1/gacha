@@ -9,6 +9,8 @@ import Timer from "./Timer";
 
 import { REFRESH_TIME, NUM_TABS, isMobile } from "./constants.js";
 import { rollMultiple, getNextCharm } from "./Util";
+import packData from "./json/packs.json";
+import { getPackCost } from "./Util";
 
 export default function MenusContainer(props) {
   var {
@@ -53,6 +55,8 @@ export default function MenusContainer(props) {
 
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [currentPack, setCurrentPack] = useState(null);
+
   const minSwipeDistance = 50;
 
   useEffect(() => {
@@ -134,7 +138,74 @@ export default function MenusContainer(props) {
     setCharmShopEntries(newCharmShopEntries);
   };
 
+  const buyPack = (shopEntry) => {
+    var pack = packData.packs[shopEntry.id];
+    setDiamonds(diamonds - getPackCost(pack));
+    setViewDiamonds(diamonds - getPackCost(pack));
+    setCurrentPack(packData.packs[shopEntry.id]);
+    setHighlightedNumbers([]);
+    var newShopEntries = [...cardShopEntries];
+
+    for (var i = 0; i < cardShopEntries.length; i++) {
+      if (
+        cardShopEntries[i] &&
+        cardShopEntries[i].id == shopEntry.id &&
+        cardShopEntries[i].creation == shopEntry.creation
+      ) {
+        newShopEntries[i] = {
+          nextRefreshTime: Date.now() + 60000,
+        };
+        break;
+      }
+    }
+
+    setCardShopEntries(newShopEntries);
+
+    setTimeout(() => {
+      var container = document.getElementById("card-pack-container");
+      container.classList.add("bounce-in");
+    }, 100);
+
+    setTimeout(() => {
+      var container = document.getElementById("card-pack-container");
+      container.classList.remove("bounce-in");
+      container.style.transform = "translateY(0px)";
+    }, 750);
+  };
+
+  const trashPack = (shopEntry) => {
+    var newShopEntries = [...cardShopEntries];
+    setHighlightedNumbers([]);
+    for (var i = 0; i < cardShopEntries.length; i++) {
+      if (
+        cardShopEntries[i] &&
+        cardShopEntries[i].id == shopEntry.id &&
+        cardShopEntries[i].creation == shopEntry.creation
+      ) {
+        newShopEntries[i] = {
+          nextRefreshTime: Date.now() + 60000,
+        };
+        break;
+      }
+    }
+    setCardShopEntries(newShopEntries);
+  };
+
+  const hidePack = () => {
+    var container = document.getElementById("card-pack-container");
+    container.classList.add("bounce-out");
+
+    setTimeout(() => {
+      container.classList.remove("bounce-out");
+      container.style.transform = "translateY(100vh)";
+      setCurrentPack(null);
+    }, 750);
+  };
+
   const onTouchStart = (e) => {
+    if (currentPack) {
+      return;
+    }
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
   };
@@ -142,7 +213,7 @@ export default function MenusContainer(props) {
   const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+    if (!touchStart || !touchEnd || currentPack) return;
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
@@ -162,14 +233,16 @@ export default function MenusContainer(props) {
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
     >
-      <div className="dots-container">
-        {Array.from({ length: NUM_TABS }, (_, i) => (
-          <span
-            key={"dot-" + i}
-            className={"dot" + (mobileMenuIndex == i ? " dot-filled" : "")}
-          ></span>
-        ))}
-      </div>
+      {isMobile && (
+        <div className="dots-container">
+          {Array.from({ length: NUM_TABS }, (_, i) => (
+            <span
+              key={"dot-" + i}
+              className={"dot" + (mobileMenuIndex == i ? " dot-filled" : "")}
+            ></span>
+          ))}
+        </div>
+      )}
       <div
         id="menus"
         style={{ transform: "translate(" + mobileMenuIndex * -100 + "vw, 0)" }}
@@ -210,19 +283,19 @@ export default function MenusContainer(props) {
 
         {packShopState != "hidden" && !isMobile && (
           <PackShop
-            packShopState={packShopState}
             packShopEntriesUnlocked={packShopEntriesUnlocked}
             setPackShopEntriesUnlocked={setPackShopEntriesUnlocked}
             openPack={openPack}
             bigNumberQueue={bigNumberQueue}
             cardShopEntries={cardShopEntries}
-            setShopEntries={setCardShopEntries}
-            setDiamonds={setDiamonds}
-            setViewDiamonds={setViewDiamonds}
             diamonds={diamonds}
             unlockShopEntry={unlockShopEntry}
             generatePackShopEntry={generatePackShopEntry}
             setHighlightedNumbers={setHighlightedNumbers}
+            currentPack={currentPack}
+            buyPack={buyPack}
+            trashPack={trashPack}
+            hidePack={hidePack}
           />
         )}
         {charmShopState != "hidden" && !isMobile && (
@@ -236,19 +309,19 @@ export default function MenusContainer(props) {
         {/* MOBILE */}
         {packShopState != "hidden" && isMobile && (
           <PackShopMobile
-            packShopState={packShopState}
             packShopEntriesUnlocked={packShopEntriesUnlocked}
             setPackShopEntriesUnlocked={setPackShopEntriesUnlocked}
             openPack={openPack}
             bigNumberQueue={bigNumberQueue}
             cardShopEntries={cardShopEntries}
-            setShopEntries={setCardShopEntries}
-            setDiamonds={setDiamonds}
-            setViewDiamonds={setViewDiamonds}
             diamonds={diamonds}
             unlockShopEntry={unlockShopEntry}
             generatePackShopEntry={generatePackShopEntry}
             setHighlightedNumbers={setHighlightedNumbers}
+            currentPack={currentPack}
+            buyPack={buyPack}
+            trashPack={trashPack}
+            hidePack={hidePack}
           />
         )}
         {charmShopState != "hidden" && isMobile && (

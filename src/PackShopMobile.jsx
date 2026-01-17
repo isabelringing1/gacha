@@ -10,85 +10,19 @@ import { getPackCost } from "./Util";
 
 export default function PackShopMobile(props) {
   const {
-    packShopState,
     packShopEntriesUnlocked,
-    setPackShopEntriesUnlocked,
     openPack,
     bigNumberQueue,
     cardShopEntries,
-    setShopEntries,
-    setDiamonds,
-    setViewDiamonds,
     diamonds,
     unlockShopEntry,
     generatePackShopEntry,
     setHighlightedNumbers,
+    currentPack,
+    buyPack,
+    trashPack,
+    hidePack,
   } = props;
-  const [currentPack, setCurrentPack] = useState(null);
-
-  const buyPack = (shopEntry) => {
-    var pack = packData.packs[shopEntry.id];
-    setDiamonds(diamonds - getPackCost(pack));
-    setViewDiamonds(diamonds - getPackCost(pack));
-    setCurrentPack(packData.packs[shopEntry.id]);
-    setHighlightedNumbers([]);
-    var newShopEntries = [...cardShopEntries];
-
-    for (var i = 0; i < cardShopEntries.length; i++) {
-      if (
-        cardShopEntries[i] &&
-        cardShopEntries[i].id == shopEntry.id &&
-        cardShopEntries[i].creation == shopEntry.creation
-      ) {
-        newShopEntries[i] = {
-          nextRefreshTime: Date.now() + 60000,
-        };
-        break;
-      }
-    }
-
-    setShopEntries(newShopEntries);
-
-    setTimeout(() => {
-      var container = document.getElementById("card-pack-container");
-      container.classList.add("bounce-in");
-    }, 100);
-
-    setTimeout(() => {
-      var container = document.getElementById("card-pack-container");
-      container.classList.remove("bounce-in");
-      container.style.transform = "translateY(0px)";
-    }, 750);
-  };
-
-  const trashPack = (shopEntry) => {
-    var newShopEntries = [...cardShopEntries];
-    setHighlightedNumbers([]);
-    for (var i = 0; i < cardShopEntries.length; i++) {
-      if (
-        cardShopEntries[i] &&
-        cardShopEntries[i].id == shopEntry.id &&
-        cardShopEntries[i].creation == shopEntry.creation
-      ) {
-        newShopEntries[i] = {
-          nextRefreshTime: Date.now() + 60000,
-        };
-        break;
-      }
-    }
-    setShopEntries(newShopEntries);
-  };
-
-  const hidePack = () => {
-    var container = document.getElementById("card-pack-container");
-    container.classList.add("bounce-out");
-
-    setTimeout(() => {
-      container.classList.remove("bounce-out");
-      container.style.transform = "translateY(100vh)";
-      setCurrentPack(null);
-    }, 750);
-  };
 
   const canUnlockShopEntry = () => {
     return diamonds >= UNLOCK_ENTRY_COST;

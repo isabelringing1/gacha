@@ -790,6 +790,7 @@ button {
   position: absolute;
   width: 100vw;
   height: 100dvh;
+  pointer-events: none;
 }
 
 .pack-shop {
@@ -1327,6 +1328,7 @@ input[type="number"] {
     height: 40dvh;
     width: 100vw;
     pointer-events: none;
+    z-index: 2;
   }
 
   .arrow {
