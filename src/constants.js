@@ -1,12 +1,15 @@
 const isMobile = window.innerWidth <= 600;
 
+const NUM_TABS = 3;
+
 // Hearts
 const REFRESH_TIME = 60000;
 const BASE_MAX_HEARTS = 10;
 
 // Pack Shop
 const UNLOCK_ENTRY_COST = 200;
-const REFRESH_ENTRY_BASE_COST = 200;
+const REFRESH_ENTRY_BASE_COST = 50;
+const PACK_LIFETIME = 300000;
 
 // Math Problems
 const EASY_HEARTS = 5;
@@ -19,5 +22,7 @@ export {
   REFRESH_ENTRY_BASE_COST,
   EASY_HEARTS,
   HARD_HEARTS,
+  PACK_LIFETIME,
+  NUM_TABS,
   isMobile,
 };

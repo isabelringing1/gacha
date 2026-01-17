@@ -11,7 +11,7 @@ const Debug = (props) => {
     generatePackShopEntry,
     setTimeMultiplier,
     setDiamonds,
-    setShowDiamonds,
+    setViewDiamonds,
   } = props;
   const [showDebug, setShowDebug] = useState(false);
   const heartsInputRef = useRef(null);
@@ -61,7 +61,7 @@ const Debug = (props) => {
               setHearts(parseInt(heartsInputRef.current.value));
             }}
           >
-            Set ♥
+            Set &hearts;&#xfe0e;
           </button>
         </div>
 
@@ -71,7 +71,7 @@ const Debug = (props) => {
             className="debug-button"
             onClick={() => {
               setDiamonds(parseInt(diamondsInputRef.current.value));
-              setShowDiamonds(diamondsInputRef.current.value);
+              setViewDiamonds(diamondsInputRef.current.value);
             }}
           >
             Set ♦

@@ -5,13 +5,18 @@
     "2": 7,
     "3": 3
   },
+  "cost": {
+    "0": 400,
+    "1": 700,
+    "2": 900,
+    "3": 1200
+  },
   "packs": {
     "standard": {
       "id": "standard",
       "name": "Standard Pack",
       "multiple": 1,
       "art": "/mini_card_pack.png",
-      "cost": 500,
       "rarity": 0,
       "amount": 5
     },
@@ -20,118 +25,97 @@
       "name": "Mega Pack",
       "multiple": 1,
       "art": "/mini_card_pack.png",
-      "cost": 800,
-      "rarity": 2,
+      "rarity": 1,
       "amount": 10
     },
-    "threes": {
-      "id": "threes",
-      "name": "Threes Pack",
-      "multiple": 3,
-      "art": "/mini_card_pack.png",
-      "cost": 500,
-      "rarity": 0,
-      "amount": 5
-    },
-    "fours": {
-      "id": "fours",
-      "name": "Fours Pack",
-      "multiple": 4,
-      "art": "/mini_card_pack.png",
-      "cost": 500,
-      "rarity": 0,
-      "amount": 5
-    },
-    "fives": {
-      "id": "fives",
-      "name": "Fives Pack",
-      "multiple": 5,
-      "art": "/mini_card_pack.png",
-      "cost": 700,
-      "rarity": 1,
-      "amount": 5
-    },
-    "sixes": {
-      "id": "sixes",
-      "name": "Sixes Pack",
-      "multiple": 6,
-      "art": "/mini_card_pack.png",
-      "cost": 500,
-      "rarity": 0,
-      "amount": 5
-    },
-    "sevens": {
-      "id": "sevens",
-      "name": "Sevens Pack",
-      "multiple": 7,
-      "art": "/mini_card_pack.png",
-      "cost": 500,
-      "rarity": 0,
-      "amount": 5
-    },
-    "eights": {
-      "id": "eights",
-      "name": "Eights Pack",
-      "multiple": 8,
-      "art": "/mini_card_pack.png",
-      "cost": 500,
-      "rarity": 0,
-      "amount": 5
-    },
-    "nines": {
-      "id": "nines",
-      "name": "Nines Pack",
-      "multiple": 9,
-      "art": "/mini_card_pack.png",
-      "cost": 500,
-      "rarity": 0,
-      "amount": 5
-    },
-    "tens": {
-      "id": "tens",
-      "name": "Tens Pack",
-      "multiple": 10,
-      "art": "/mini_card_pack.png",
-      "cost": 700,
-      "rarity": 1,
-      "amount": 5
-    },
-    "elevens": {
-      "id": "elevens",
-      "name": "Elevens Pack",
-      "multiple": 11,
-      "art": "/mini_card_pack.png",
-      "cost": 500,
-      "rarity": 0,
-      "amount": 5
-    },
-    "twelves": {
-      "id": "twelves",
-      "name": "Twelves Pack",
-      "multiple": 12,
-      "art": "/mini_card_pack.png",
-      "cost": 500,
-      "rarity": 0,
-      "amount": 5
-    },
-    "younguns": {
-      "id": "younguns",
-      "name": "Young'uns Pack",
+    "aughts": {
+      "id": "aughts",
+      "name": "Aughts Pack",
       "min": 1,
-      "max": 25,
+      "max": 10,
       "art": "/mini_card_pack.png",
-      "cost": 900,
       "rarity": 2,
       "amount": 5
     },
-    "elderly": {
-      "id": "elderly",
-      "name": "Elderly Pack",
-      "min": 75,
+    "teens": {
+      "id": "teens",
+      "name": "Teens Pack",
+      "min": 11,
+      "max": 20,
+      "art": "/mini_card_pack.png",
+      "rarity": 1,
+      "amount": 5
+    },
+    "twenties": {
+      "id": "twenties",
+      "name": "Twenties Pack",
+      "min": 21,
+      "max": 30,
+      "art": "/mini_card_pack.png",
+      "rarity": 0,
+      "amount": 5
+    },
+    "thirties": {
+      "id": "thirties",
+      "name": "Thirties Pack",
+      "min": 31,
+      "max": 40,
+      "art": "/mini_card_pack.png",
+      "rarity": 0,
+      "amount": 5
+    },
+    "forties": {
+      "id": "forties",
+      "name": "Forties Pack",
+      "min": 41,
+      "max": 50,
+      "art": "/mini_card_pack.png",
+      "rarity": 1,
+      "amount": 5
+    },
+    "fifties": {
+      "id": "fifties",
+      "name": "Fifties Pack",
+      "min": 51,
+      "max": 60,
+      "art": "/mini_card_pack.png",
+      "rarity": 0,
+      "amount": 5
+    },
+    "sixties": {
+      "id": "sixties",
+      "name": "Sixties Pack",
+      "min": 61,
+      "max": 70,
+      "art": "/mini_card_pack.png",
+      "rarity": 0,
+      "amount": 5
+    },
+    "seventies": {
+      "id": "seventies",
+      "name": "Seventies Pack",
+      "min": 71,
+      "max": 80,
+      "art": "/mini_card_pack.png",
+      "rarity": 0,
+      "amount": 5
+    },
+    "eighties": {
+      "id": "eighties",
+      "name": "Eighties Pack",
+      "min": 81,
+      "max": 90,
+      "art": "/mini_card_pack.png",
+      "rarity": 1,
+      "amount": 5
+    },
+    "nineties": {
+      "id": "nineties",
+      "name": "Nineties Pack",
+      "min": 91,
       "max": 100,
       "art": "/mini_card_pack.png",
-      "cost": 700,
-      "rarity": 1,
+      "rarity": 0,
       "amount": 5
     },
     "evens": {
@@ -139,7 +123,6 @@
       "name": "Evens Pack",
       "multiple": 2,
       "art": "/mini_card_pack.png",
-      "cost": 500,
       "rarity": 0,
       "amount": 5
     },
@@ -149,8 +132,7 @@
       "modulo": 2,
       "remainder": 1,
       "art": "/mini_card_pack.png",
-      "cost": 900,
-      "rarity": 2,
+      "rarity": 1,
       "amount": 5
     },
     "primes": {
@@ -161,7 +143,6 @@
         71, 73, 79, 83, 89, 97
       ],
       "art": "/mini_card_pack.png",
-      "cost": 1200,
       "rarity": 3,
       "amount": 5
     },
@@ -170,7 +151,106 @@
       "name": "Squares Pack",
       "pool": [1, 4, 9, 16, 25, 36, 49, 64, 81],
       "art": "/mini_card_pack.png",
-      "cost": 700,
+      "rarity": 2,
+      "amount": 5
+    }
+  },
+  "disabled": {
+    "threes": {
+      "id": "threes",
+      "name": "Threes Pack",
+      "multiple": 3,
+      "art": "/mini_card_pack.png",
+      "rarity": 0,
+      "amount": 5
+    },
+    "fours": {
+      "id": "fours",
+      "name": "Fours Pack",
+      "multiple": 4,
+      "art": "/mini_card_pack.png",
+      "rarity": 0,
+      "amount": 5
+    },
+    "fives": {
+      "id": "fives",
+      "name": "Fives Pack",
+      "multiple": 5,
+      "art": "/mini_card_pack.png",
+      "rarity": 1,
+      "amount": 5
+    },
+    "sixes": {
+      "id": "sixes",
+      "name": "Sixes Pack",
+      "multiple": 6,
+      "art": "/mini_card_pack.png",
+      "rarity": 0,
+      "amount": 5
+    },
+    "sevens": {
+      "id": "sevens",
+      "name": "Sevens Pack",
+      "multiple": 7,
+      "art": "/mini_card_pack.png",
+      "rarity": 0,
+      "amount": 5
+    },
+    "eights": {
+      "id": "eights",
+      "name": "Eights Pack",
+      "multiple": 8,
+      "art": "/mini_card_pack.png",
+      "rarity": 0,
+      "amount": 5
+    },
+    "nines": {
+      "id": "nines",
+      "name": "Nines Pack",
+      "multiple": 9,
+      "art": "/mini_card_pack.png",
+      "rarity": 0,
+      "amount": 5
+    },
+    "tens": {
+      "id": "tens",
+      "name": "Tens Pack",
+      "multiple": 10,
+      "art": "/mini_card_pack.png",
+      "rarity": 1,
+      "amount": 5
+    },
+    "elevens": {
+      "id": "elevens",
+      "name": "Elevens Pack",
+      "multiple": 11,
+      "art": "/mini_card_pack.png",
+      "rarity": 0,
+      "amount": 5
+    },
+    "twelves": {
+      "id": "twelves",
+      "name": "Twelves Pack",
+      "multiple": 12,
+      "art": "/mini_card_pack.png",
+      "rarity": 0,
+      "amount": 5
+    },
+    "younguns": {
+      "id": "younguns",
+      "name": "Young'uns Pack",
+      "min": 1,
+      "max": 25,
+      "art": "/mini_card_pack.png",
+      "rarity": 2,
+      "amount": 5
+    },
+    "elderly": {
+      "id": "elderly",
+      "name": "Elderly Pack",
+      "min": 75,
+      "max": 100,
+      "art": "/mini_card_pack.png",
       "rarity": 1,
       "amount": 5
     }

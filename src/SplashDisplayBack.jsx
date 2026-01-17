@@ -14,8 +14,8 @@ export default function SplashDisplayBack(props) {
     setAnimating,
     viewNumbers,
     setViewNumbers,
-    showDiamonds,
-    setShowDiamonds,
+    viewDiamonds,
+    setViewDiamonds,
   } = props;
 
   const [cn, setCn] = useState("big-number-container");
@@ -44,7 +44,7 @@ export default function SplashDisplayBack(props) {
       var newViewNumbers = { ...viewNumbers };
       newViewNumbers[n] = newViewNumbers[n] ? newViewNumbers[n] + 1 : 1;
       setViewNumbers(newViewNumbers);
-      setShowDiamonds(showDiamonds + n);
+      setViewDiamonds(viewDiamonds + n);
       diamonds.classList.remove("pulse-delay");
     }, 700);
   }
@@ -65,8 +65,6 @@ export default function SplashDisplayBack(props) {
     }
 
     setTwinkleArray(newTwinkleArray);
-
-    console.log(n);
   }, [n]);
 
   function getTransformOrigin() {

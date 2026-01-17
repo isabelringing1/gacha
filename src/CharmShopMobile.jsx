@@ -1,7 +1,7 @@
 import CharmShopEntry from "./CharmShopEntry";
 import { getCharmById } from "./Util";
 
-export default function CharmShop(props) {
+export default function CharmShopMobile(props) {
   const { diamonds, charmShopEntries, buyCharm } = props;
 
   return (

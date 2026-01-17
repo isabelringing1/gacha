@@ -1,21 +1,27 @@
 import { useState, useEffect } from "react";
-import { roll, rollMultiple, rollForPack, getNextCharm } from "./Util";
+import { roll, rollForPack } from "./Util";
 import "./App.css";
 
 import Number from "./Number";
 import Debug from "./Debug";
-import Bet from "./Bet";
 import Timer from "./Timer";
 import SplashDisplayFront from "./SplashDisplayFront";
 import SplashDisplayBack from "./SplashDisplayBack";
-import PackShop from "./PackShop";
-import PackShopMobile from "./PackShopMobile";
-import CharmShop from "./CharmShop";
+
 import OutOfHeartsContainer from "./OutOfHeartsContainer";
+import MenusContainer from "./MenusContainer.jsx";
 
 import arrow from "/arrow.png";
+var hearts = "&hearts;&#xfe0e;";
+var diamonds = "&diams;&#xfe0e;";
 
-import { REFRESH_TIME, BASE_MAX_HEARTS, isMobile } from "./constants.js";
+import {
+  REFRESH_TIME,
+  BASE_MAX_HEARTS,
+  PACK_LIFETIME,
+  NUM_TABS,
+  isMobile,
+} from "./constants.js";
 
 function App() {
   const [numbers, setNumbers] = useState({});
@@ -48,12 +54,13 @@ function App() {
   const [sportsbookState, setSportsbookState] = useState("hidden"); //hidden, locked, unlocked
   const [animating, setAnimating] = useState(false);
   const [diamonds, setDiamonds] = useState(0);
-  const [showDiamonds, setShowDiamonds] = useState(0);
+  const [viewDiamonds, setViewDiamonds] = useState(0);
   const [timeMultiplier, setTimeMultiplier] = useState(1);
   const [showOutOfHearts, setShowOutOfHearts] = useState(false);
   const [maxHearts, setMaxHearts] = useState(BASE_MAX_HEARTS);
   const [highlightedNumbers, setHighlightedNumbers] = useState([]);
-  const [buttonContainerXOffset, setButtonContainerXOffset] = useState(0);
+  const [mobileMenuIndex, setMobileMenuIndex] = useState(0);
+  const [goal, setGoal] = useState(0);
 
   useEffect(() => {
     loadData();
@@ -66,18 +73,15 @@ function App() {
 
   useEffect(() => {
     saveData();
-  }, [numbers, cardShopEntries, timeMultiplier, diamonds, hearts, maxHearts]);
-
-  useEffect(() => {
-    if (diamonds > 100 && packShopState == "hidden") {
-      setPackShopState("unlocked");
-      generatePackShopEntry(2);
-    }
-    if (diamonds > 0 && charmShopState == "hidden") {
-      setCharmShopState("unlocked");
-      generateCharmShopEntry([0, 1], purchasedCharms);
-    }
-  }, [diamonds]);
+  }, [
+    numbers,
+    cardShopEntries,
+    timeMultiplier,
+    diamonds,
+    hearts,
+    maxHearts,
+    mobileMenuIndex,
+  ]);
 
   function saveData() {
     var newPlayerData = {
@@ -95,6 +99,7 @@ function App() {
       charmShopState: charmShopState,
       charmShopEntries: charmShopEntries,
       purchasedCharms: purchasedCharms,
+      mobileMenuIndex: mobileMenuIndex,
     };
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
@@ -114,13 +119,16 @@ function App() {
         setPackShopEntriesUnlocked(saveData.packShopEntriesUnlocked);
         setCardShopEntries(saveData.cardShopEntries);
         setDiamonds(saveData.diamonds);
-        setShowDiamonds(saveData.diamonds);
+        setViewDiamonds(saveData.diamonds);
         setHearts(saveData.hearts);
         setTimeMultiplier(saveData.timeMultiplier);
         setMaxHearts(saveData.maxHearts);
         setCharmShopState(saveData.charmShopState);
         setCharmShopEntries(saveData.charmShopEntries);
         setPurchasedCharms(saveData.purchasedCharms);
+        if (isMobile) {
+          setMobileMenuIndex(saveData.mobileMenuIndex);
+        }
 
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
@@ -179,40 +187,6 @@ function App() {
     setRolls(newRolls);
     setDiamonds(diamonds + rolledNumber);
     showRolledNumber(newRolls[newRolls.length - 1]);
-  };
-
-  const openPack = (pack) => {
-    var newNumbers = { ...numbers };
-    var newRolls = [...rolls];
-    var rolledNumbers = rollMultiple(
-      pack.amount,
-      pack.multiple,
-      pack.min,
-      pack.max,
-      pack.modulo,
-      pack.remainder,
-      pack.pool
-    );
-    var newDiamonds = 0;
-
-    if (!nextHeartRefreshTime) {
-      setNextHeartRefreshTime(Date.now() + REFRESH_TIME);
-    }
-
-    for (var i = 0; i < pack.amount; i++) {
-      var n = rolledNumbers[i];
-      newNumbers[n] = newNumbers[n] ? newNumbers[n] + 1 : 1;
-      newRolls.push(n);
-      newDiamonds += n;
-    }
-    setNumbers(newNumbers);
-    setRolls(newRolls);
-    setDiamonds(diamonds + newDiamonds);
-    setTimeout(() => {
-      setBigNumberQueue([...bigNumberQueue, ...rolledNumbers]);
-    }, 1000);
-
-    return newRolls;
   };
 
   const showRolledNumber = (n) => {
@@ -279,6 +253,7 @@ function App() {
       var newEntry = {
         id: pack.id,
         creation: Date.now(),
+        expirationTime: Date.now() + PACK_LIFETIME,
       };
 
       newShopEntries[firstNullIndex] = newEntry;
@@ -286,28 +261,20 @@ function App() {
     setCardShopEntries(newShopEntries);
   };
 
-  const unlockShopEntry = (i) => {
-    var newPackShopEntriesUnlocked = [...packShopEntriesUnlocked];
-    newPackShopEntriesUnlocked[i] = true;
-    setPackShopEntriesUnlocked(newPackShopEntriesUnlocked);
-    generatePackShopEntry();
-  };
-
-  const generateCharmShopEntry = (indices = [0], newPurchasedCharms) => {
-    console.log("generating ", indices);
-    var newCharmShopEntries = [...charmShopEntries];
-    for (var i = 0; i < indices.length; i++) {
-      var index = indices[i];
-      var nextCharm = getNextCharm(index, newPurchasedCharms);
-      if (nextCharm) {
-        newCharmShopEntries[index] = nextCharm.id;
-      }
+  const trySwipe = (direction) => {
+    if (mobileMenuIndex == 0 && direction < 0) {
+      return;
+    } else if (mobileMenuIndex == NUM_TABS - 1 && direction > 0) {
+      return;
     }
-    setCharmShopEntries(newCharmShopEntries);
+    setMobileMenuIndex(mobileMenuIndex + direction);
   };
 
-  const onArrowClicked = (direction) => {
-    setButtonContainerXOffset(buttonContainerXOffset + 100 * direction);
+  const getGoalPercent = () => {
+    if (goal == 0) {
+      return Object.keys(viewNumbers).length;
+    }
+    return 0;
   };
 
   return (
@@ -317,12 +284,11 @@ function App() {
         numbers={numbers}
         setHearts={setHearts}
         setDiamonds={setDiamonds}
-        setShowDiamonds={setShowDiamonds}
+        setViewDiamonds={setViewDiamonds}
         rollNumber={rollNumber}
         generatePackShopEntry={generatePackShopEntry}
         setTimeMultiplier={setTimeMultiplier}
       />
-
       {showOutOfHearts && (
         <OutOfHeartsContainer
           setShowOutOfHearts={setShowOutOfHearts}
@@ -331,7 +297,6 @@ function App() {
           hearts={hearts}
         />
       )}
-
       {bigNumberQueue.length > 0 && (
         <SplashDisplayFront
           n={bigNumberQueue[0]}
@@ -348,11 +313,11 @@ function App() {
           animating={animating}
           viewNumbers={viewNumbers}
           setViewNumbers={setViewNumbers}
-          setShowDiamonds={setShowDiamonds}
-          showDiamonds={showDiamonds}
+          setViewDiamonds={setViewDiamonds}
+          viewDiamonds={viewDiamonds}
         />
       )}
-
+      <div className="goal-container">YOU ARE AT {getGoalPercent()}%</div>
       <div id="numbers-grid-container">
         <div id="numbers-grid">
           {Array.from({ length: 100 }, (_, i) => i + 1).map((n) => {
@@ -375,16 +340,21 @@ function App() {
       </div>
       {isMobile && (
         <div id="arrows-container">
-          <img
-            className="arrow left-arrow"
-            src={arrow}
-            onClick={() => onArrowClicked(1)}
-          />
-          <img
-            className="arrow right-arrow"
-            src={arrow}
-            onClick={() => onArrowClicked(-1)}
-          />
+          {mobileMenuIndex != 0 && (
+            <img
+              className="arrow left-arrow"
+              src={arrow}
+              onClick={() => trySwipe(-1)}
+            />
+          )}
+
+          {mobileMenuIndex != NUM_TABS - 1 && (
+            <img
+              className="arrow right-arrow"
+              src={arrow}
+              onClick={() => trySwipe(1)}
+            />
+          )}
         </div>
       )}
       <div className="wallet-container">
@@ -392,7 +362,7 @@ function App() {
           <div>
             &hearts;&#xfe0e;: {hearts}/{maxHearts}
           </div>
-          {nextHeartRefreshTime && (
+          {!isMobile && nextHeartRefreshTime && (
             <div className="next-heart-container">
               Next &hearts;&#xfe0e; in{" "}
               <Timer
@@ -404,95 +374,48 @@ function App() {
         </div>
 
         <div id="diamonds-container">
-          &diams;&#xfe0e; {showDiamonds.toLocaleString()}
+          &diams;&#xfe0e; {viewDiamonds.toLocaleString()}
         </div>
       </div>
-
-      <div
-        id="buttons-container"
-        style={{ transform: "translate(" + buttonContainerXOffset + "vw, 0)" }}
-      >
-        <div id="roll-container">
-          <span className="hearts-span">
-            <button
-              id="roll-button"
-              disabled={showingRoll != -1 || hearts <= 0}
-              onClick={rollNumber}
-            >
-              Roll (1&hearts;&#xfe0e;)
-            </button>
-            {hearts <= 0 && (
-              <button
-                id="out-of-hearts-button"
-                onClick={() => setShowOutOfHearts(true)}
-              >
-                Get More &hearts;&#xfe0e;
-              </button>
-            )}
-          </span>
-        </div>
-
-        {packShopState != "hidden" && isMobile && (
-          <PackShopMobile
-            packShopState={packShopState}
-            packShopEntriesUnlocked={packShopEntriesUnlocked}
-            setPackShopEntriesUnlocked={setPackShopEntriesUnlocked}
-            openPack={openPack}
-            bigNumberQueue={bigNumberQueue}
-            cardShopEntries={cardShopEntries}
-            setShopEntries={setCardShopEntries}
-            setDiamonds={setDiamonds}
-            setShowDiamonds={setShowDiamonds}
-            diamonds={diamonds}
-            unlockShopEntry={unlockShopEntry}
-            generatePackShopEntry={generatePackShopEntry}
-            setHighlightedNumbers={setHighlightedNumbers}
-          />
-        )}
-
-        {packShopState != "hidden" && !isMobile && (
-          <PackShop
-            packShopState={packShopState}
-            packShopEntriesUnlocked={packShopEntriesUnlocked}
-            setPackShopEntriesUnlocked={setPackShopEntriesUnlocked}
-            openPack={openPack}
-            bigNumberQueue={bigNumberQueue}
-            cardShopEntries={cardShopEntries}
-            setShopEntries={setCardShopEntries}
-            setDiamonds={setDiamonds}
-            setShowDiamonds={setShowDiamonds}
-            diamonds={diamonds}
-            unlockShopEntry={unlockShopEntry}
-            generatePackShopEntry={generatePackShopEntry}
-            setHighlightedNumbers={setHighlightedNumbers}
-          />
-        )}
-        {charmShopState != "hidden" && !isMobile && (
-          <CharmShop
-            diamonds={diamonds}
-            setDiamonds={setDiamonds}
-            setShowDiamonds={setShowDiamonds}
-            setTimeMultiplier={setTimeMultiplier}
-            maxHearts={maxHearts}
-            setMaxHearts={setMaxHearts}
-            hearts={hearts}
-            setHearts={setHearts}
-            purchasedCharms={purchasedCharms}
-            setPurchasedCharms={setPurchasedCharms}
-            charmShopEntries={charmShopEntries}
-            generateCharmShopEntry={generateCharmShopEntry}
-          />
-        )}
-        {sportsbookState != "hidden" && (
-          <div id="bets-container">
-            <div id="bets-header">Bets</div>
-            <div id="bets-grid">
-              <Bet />
-              <Bet />
-            </div>
-          </div>
-        )}
-      </div>
+      <MenusContainer
+        numbers={numbers}
+        setNumbers={setNumbers}
+        rolls={rolls}
+        setRolls={setRolls}
+        nextHeartRefreshTime={nextHeartRefreshTime}
+        setNextHeartRefreshTime={setNextHeartRefreshTime}
+        diamonds={diamonds}
+        setDiamonds={setDiamonds}
+        setViewDiamonds={setViewDiamonds}
+        hearts={hearts}
+        setHearts={setHearts}
+        maxHearts={maxHearts}
+        setMaxHearts={setMaxHearts}
+        charmShopEntries={charmShopEntries}
+        setCharmShopEntries={setCharmShopEntries}
+        cardShopEntries={cardShopEntries}
+        setCardShopEntries={setCardShopEntries}
+        setHighlightedNumbers={setHighlightedNumbers}
+        purchasedCharms={purchasedCharms}
+        setPurchasedCharms={setPurchasedCharms}
+        mobileMenuIndex={mobileMenuIndex}
+        bigNumberQueue={bigNumberQueue}
+        setBigNumberQueue={setBigNumberQueue}
+        packShopEntriesUnlocked={packShopEntriesUnlocked}
+        setPackShopEntriesUnlocked={setPackShopEntriesUnlocked}
+        generatePackShopEntry={generatePackShopEntry}
+        charmShopState={charmShopState}
+        setCharmShopState={setCharmShopState}
+        packShopState={packShopState}
+        setPackShopState={setPackShopState}
+        showingRoll={showingRoll}
+        animating={animating}
+        rollNumber={rollNumber}
+        sportsbookState={sportsbookState}
+        setTimeMultiplier={setTimeMultiplier}
+        refreshHearts={refreshHearts}
+        trySwipe={trySwipe}
+      />
     </div>
   );
 }

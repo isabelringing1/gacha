@@ -1,8 +1,9 @@
 import { DitherShader } from "./dither-shader";
 import cardPackOld from "/card_pack_old.png";
 import miniCardPack from "/mini_card_pack.png";
+import Timer from "./Timer.jsx";
 
-import { getNumbersInPack } from "./Util";
+import { getNumbersInPack, getPackCost } from "./Util";
 import { isMobile } from "./constants.js";
 
 export default function PackShopEntry(props) {
@@ -16,7 +17,7 @@ export default function PackShopEntry(props) {
   } = props;
 
   function canBuy() {
-    return diamonds - pack.cost >= 0;
+    return diamonds - getPackCost(pack) >= 0;
   }
 
   function onMouseOver(e) {
@@ -74,9 +75,27 @@ export default function PackShopEntry(props) {
           className="pack-shop-entry-buy-button"
           disabled={!canBuy()}
         >
-          ♦ {pack.cost}
+          ♦ {getPackCost(pack)}
         </button>
+        {isMobile && (
+          <div className="pack-shop-entry-expiry">
+            Expires in{" "}
+            <Timer
+              endTime={shopEntry.expirationTime}
+              onTimerEnd={() => trashPack(shopEntry)}
+            />
+          </div>
+        )}
       </div>
+      {!isMobile && (
+        <div className="pack-shop-entry-expiry">
+          Expires in{" "}
+          <Timer
+            endTime={shopEntry.expirationTime}
+            onTimerEnd={() => trashPack(shopEntry)}
+          />
+        </div>
+      )}
     </div>
   );
 }

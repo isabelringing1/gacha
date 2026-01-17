@@ -5,6 +5,8 @@ import Timer from "./Timer";
 import { UNLOCK_ENTRY_COST, REFRESH_ENTRY_BASE_COST } from "./constants.js";
 
 import packData from "./json/packs.json";
+import { data } from "motion/react-client";
+import { getPackCost } from "./Util";
 
 export default function PackShopMobile(props) {
   const {
@@ -16,7 +18,7 @@ export default function PackShopMobile(props) {
     cardShopEntries,
     setShopEntries,
     setDiamonds,
-    setShowDiamonds,
+    setViewDiamonds,
     diamonds,
     unlockShopEntry,
     generatePackShopEntry,
@@ -26,8 +28,8 @@ export default function PackShopMobile(props) {
 
   const buyPack = (shopEntry) => {
     var pack = packData.packs[shopEntry.id];
-    setDiamonds(diamonds - pack.cost);
-    setShowDiamonds(diamonds - pack.cost);
+    setDiamonds(diamonds - getPackCost(pack));
+    setViewDiamonds(diamonds - getPackCost(pack));
     setCurrentPack(packData.packs[shopEntry.id]);
     setHighlightedNumbers([]);
     var newShopEntries = [...cardShopEntries];
@@ -136,6 +138,8 @@ export default function PackShopMobile(props) {
                         if (canBuyRefreshEntry(shopEntry)) {
                           generatePackShopEntry(1, [i]);
                         }
+                        setDiamonds(diamonds - getRefreshEntryCost());
+                        setViewDiamonds(diamonds - getRefreshEntryCost());
                       }}
                       className="pack-shop-entry-unlock-button"
                       disabled={!canBuyRefreshEntry(shopEntry)}

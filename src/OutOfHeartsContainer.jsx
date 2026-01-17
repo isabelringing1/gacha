@@ -83,10 +83,10 @@ export default function OutOfHeartsContainer(props) {
       <div className={"out-of-hearts-outer" + (showMath != 0 ? " flip" : "")}>
         <div className={"out-of-hearts-inner" + (showMath != 0 ? " flip" : "")}>
           <div className={"out-of-hearts-popup"}>
-            <div className="out-of-hearts-title">Out of ♥!</div>
+            <div className="out-of-hearts-title">Out of &hearts;&#xfe0e;!</div>
             {nextHeartRefreshTime && (
               <div>
-                Next ♥ in{" "}
+                Next &hearts;&#xfe0e; in{" "}
                 <Timer
                   endTime={nextHeartRefreshTime}
                   onTimerEnd={() => {
@@ -102,7 +102,7 @@ export default function OutOfHeartsContainer(props) {
                 generateMathProblems();
               }}
             >
-              Do Easy Math Problems <div>(+{EASY_HEARTS} ♥)</div>
+              Do Easy Math Problems <div>(+{EASY_HEARTS} &hearts;&#xfe0e;)</div>
             </button>
 
             <button
@@ -112,7 +112,7 @@ export default function OutOfHeartsContainer(props) {
                 generateMathProblems(true);
               }}
             >
-              Do Hard Math Problems <div>(+{HARD_HEARTS} ♥)</div>
+              Do Hard Math Problems <div>(+{HARD_HEARTS} &hearts;&#xfe0e;)</div>
             </button>
           </div>
 

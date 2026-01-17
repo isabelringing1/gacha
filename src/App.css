@@ -1,14 +1,18 @@
+html,
+body {
+  overflow: hidden;
+}
+
 body {
   margin: 0;
   width: 100vw;
   height: 100dvh;
-  overflow: hidden;
+  position: relative;
   font-family: Helvetica;
-}
-
-@font-face {
-  font-family: Helvetica;
-  src: url("Helvetica.woff");
+  user-select: none; /* Standard property */
+  -webkit-user-select: none; /* Safari, Chrome, iOS Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
 }
 
 @font-face {
@@ -281,11 +285,18 @@ body {
   }
 }
 
-#buttons-container {
+#menus-container {
   width: 100vw;
   height: 100dvh;
   position: absolute;
   pointer-events: none;
+}
+
+#menus {
+  width: 100vw;
+  height: 100dvh;
+  position: absolute;
+  pointer-events: all;
 }
 
 button {
@@ -849,8 +860,13 @@ button {
 }
 
 .pack-shop-entry-buy-button {
-  padding: 0.5dvh 1.5dvh;
+  padding: 0.5dvh 1.5dvh 0;
   margin-bottom: 1dvh;
+}
+
+.pack-shop-entry-expiry {
+  font-size: 1.5vh;
+  text-align: center;
 }
 
 .trash-button {
@@ -937,6 +953,7 @@ button {
   animation: floating-ribbon-text 3s infinite ease-in-out;
   filter: drop-shadow(0 0 0.9dvh rgba(0, 0, 0, 0.472));
   transform: translate(50%, 0%);
+  z-index: 1;
 }
 
 .number-text {
@@ -1013,7 +1030,6 @@ button {
 }
 
 #out-of-hearts-button {
-  margin-top: 2dvh;
   margin-bottom: 0dvh;
   margin-left: 3dvh;
 }
@@ -1071,6 +1087,35 @@ input[type="number"] {
   -moz-appearance: textfield; /* Firefox */
 }
 
+.goal-container {
+  position: absolute;
+  font-size: 1.5vh;
+  font-weight: bold;
+  top: 1vh;
+}
+
+.dots-container {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+  bottom: 37.4dvh;
+}
+
+.dot {
+  width: 1.2dvh;
+  height: 1.2dvh;
+  background: gray;
+  border-radius: 1dvh;
+  z-index: 3;
+  margin: 0 0.3dvh;
+  opacity: 0.3;
+}
+
+.dot-filled {
+  opacity: 1;
+}
+
 /* Mobile */
 @media (max-width: 600px) {
   #numbers-grid {
@@ -1093,7 +1138,7 @@ input[type="number"] {
     font-size: 2.6dvh;
   }
 
-  #buttons-container {
+  #menus {
     width: 100vw;
     padding: 0;
     transition: transform 0.3s ease-in-out;
@@ -1172,6 +1217,7 @@ input[type="number"] {
   .new-container {
     top: 17dvh;
     left: 6vw;
+    z-index: 1;
   }
 
   .new-text {
@@ -1189,14 +1235,10 @@ input[type="number"] {
     font-size: 2.5dvh;
   }
 
-  .buttons-container {
-    position: absolute;
-    bottom: 0;
-  }
-
   #roll-container {
     height: 40dvh;
     justify-content: center;
+    text-align: center;
   }
 
   .pack-shop-mobile {
@@ -1251,16 +1293,32 @@ input[type="number"] {
     flex-direction: column;
     align-items: center;
     justify-content: start;
-    padding-top: 20%;
     height: 100%;
   }
 
   .pack-shop-entry-name {
-    padding-bottom: 1.5dvh;
+    padding-bottom: 0.5dvh;
   }
 
   .shop-title {
     padding: 0 0 0.3dvh 0;
+  }
+
+  .charm-shop-container {
+    position: absolute;
+    bottom: 0;
+    height: 36dvh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translate(200vw, 0);
+  }
+
+  .charm-shop {
+    width: 80%;
+    right: auto;
+    top: auto;
   }
 
   #arrows-container {
@@ -1273,8 +1331,8 @@ input[type="number"] {
 
   .arrow {
     position: absolute;
-    width: 2dvh;
-    height: 6dvh;
+    width: 1.5dvh;
+    height: 4dvh;
     top: 40%;
     pointer-events: all;
   }
@@ -1327,15 +1385,15 @@ input[type="number"] {
   }
 
   .next-heart-container {
-    position: absolute;
-    left: 48vw;
-    width: 30vw;
-    transform: translate(-20vw, 0);
-    text-align: left;
   }
 
   .card-pack {
     width: 250px;
     height: 470px;
+  }
+
+  .goal-container {
+    font-size: 2vh;
+    top: 1.6vh;
   }
 }

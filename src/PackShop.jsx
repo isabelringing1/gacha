@@ -3,6 +3,7 @@ import CardPack from "./CardPack";
 import PackShopEntry from "./PackShopEntry";
 import Timer from "./Timer";
 import { UNLOCK_ENTRY_COST, REFRESH_ENTRY_BASE_COST } from "./constants.js";
+import { getPackCost } from "./Util";
 
 import packData from "./json/packs.json";
 
@@ -16,7 +17,7 @@ export default function PackShop(props) {
     cardShopEntries,
     setShopEntries,
     setDiamonds,
-    setShowDiamonds,
+    setViewDiamonds,
     diamonds,
     unlockShopEntry,
     generatePackShopEntry,
@@ -26,8 +27,8 @@ export default function PackShop(props) {
 
   const buyPack = (shopEntry) => {
     var pack = packData.packs[shopEntry.id];
-    setDiamonds(diamonds - pack.cost);
-    setShowDiamonds(diamonds - pack.cost);
+    setDiamonds(diamonds - getPackCost(pack));
+    setViewDiamonds(diamonds - getPackCost(pack));
     setCurrentPack(packData.packs[shopEntry.id]);
     setHighlightedNumbers([]);
     var newShopEntries = [...cardShopEntries];

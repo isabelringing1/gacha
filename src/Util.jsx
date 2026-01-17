@@ -223,6 +223,10 @@ function getCharmById(id) {
   return null;
 }
 
+function getPackCost(pack) {
+  return packData.cost[pack.rarity];
+}
+
 export {
   useInterval,
   msToTime,
@@ -236,4 +240,5 @@ export {
   getNextCharm,
   getCharmById,
   getNumbersInPack,
+  getPackCost,
 };
