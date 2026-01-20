@@ -1,6 +1,6 @@
 const isMobile = window.innerWidth <= 600;
 
-const NUM_TABS = 3;
+const NUM_TABS = 4;
 
 // Hearts
 const REFRESH_TIME = 60000;

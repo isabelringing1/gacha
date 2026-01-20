@@ -1,20 +1,45 @@
-import { useState, useRef } from "react";
-
+import { useState, useRef, useEffect } from "react";
+import Markdown from "react-markdown";
 const Bet = (props) => {
-  const { bet, diamonds } = props;
+  const { betEntry, bet, diamonds, onBetConfirmed, index, generateBet } = props;
 
   const [betButtonPressed, setBetButtonPressed] = useState(-1);
   const [betInputClassName, setBetInputClassName] = useState("");
-  const [payout, setPayout] = useState("");
+  const [payout, setPayout] = useState(0);
   const [confirmedBet, setConfirmedBet] = useState(-1);
+  const [betInputInteracted, setBetInputInteracted] = useState(false);
+  const [betResult, setBetResult] = useState(null);
 
   const setBetInputRef = useRef(null);
+
+  useEffect(() => {
+    if (betEntry.payout) {
+      setPayout(betEntry.payout);
+
+      setConfirmedBet(betEntry.cost);
+    } else {
+      setPayout((diamonds / 2) * 2); // replace with whatever formula
+      setConfirmedBet(-1);
+    }
+    setBetButtonPressed(betEntry.option ?? -1);
+    console.log("bet entry updated, ", betEntry);
+
+    if (betEntry.finished) {
+      setBetResult(betEntry.wonBet ? "YOU WON!" : "YOU LOST!");
+      setTimeout(() => {
+        generateBet([index]);
+      }, 800);
+    } else {
+      setBetResult(null);
+    }
+  }, [betEntry]);
 
   const onBetButtonPressed = (i) => {
     setBetButtonPressed(i);
   };
 
   const onInput = () => {
+    setBetInputInteracted(true);
     if (setBetInputRef.current.value.length > 4) {
       setBetInputClassName("bet-input-smaller");
     } else if (setBetInputRef.current.value.length > 3) {
@@ -30,10 +55,14 @@ const Bet = (props) => {
   };
 
   const isSetBetButtonDisabled = () => {
+    if (!betInputInteracted && diamonds > 1) {
+      return false;
+    }
     if (
       setBetInputRef.current &&
       setBetInputRef.current.value &&
-      !isNaN(parseInt(setBetInputRef.current.value))
+      !isNaN(parseInt(setBetInputRef.current.value)) &&
+      setBetInputRef.current.value % 1 == 0
     ) {
       var input = parseInt(setBetInputRef.current.value);
       return input > diamonds || input <= 0;
@@ -42,7 +71,9 @@ const Bet = (props) => {
   };
 
   const onConfirmPressed = () => {
-    setConfirmedBet(parseInt(setBetInputRef.current.value));
+    var bet = parseInt(setBetInputRef.current.value);
+    setConfirmedBet(bet);
+    onBetConfirmed(index, betButtonPressed, bet, payout);
   };
 
   return (
@@ -67,11 +98,11 @@ const Bet = (props) => {
       )}
 
       <div className="bet-title">
-        Next number is <b>ODD</b>?
+        <Markdown>{bet.text}</Markdown>
       </div>
       {confirmedBet == -1 && (
         <div className="bet-left-column">
-          {betButtonPressed != 1 && (
+          {betButtonPressed == -1 && (
             <div className="bet-option" id="bet-option-0">
               <button
                 className={
@@ -92,7 +123,7 @@ const Bet = (props) => {
               </span>
             </div>
           )}
-          {betButtonPressed == 1 && (
+          {betButtonPressed != -1 && (
             <div className="bet-option" id="bet-option-confirm">
               <button
                 className="bet-button"
@@ -104,7 +135,20 @@ const Bet = (props) => {
               </button>
             </div>
           )}
-          {betButtonPressed != 0 && (
+
+          {betButtonPressed != -1 && (
+            <div className="bet-option">
+              <button
+                className="bet-button"
+                id="bet-button-cancel"
+                onClick={() => setBetButtonPressed(-1)}
+              >
+                CANCEL
+              </button>
+            </div>
+          )}
+
+          {betButtonPressed == -1 && (
             <div className="bet-option" id="bet-option-1">
               <button
                 className={
@@ -125,19 +169,6 @@ const Bet = (props) => {
               </span>
             </div>
           )}
-
-          {betButtonPressed == 0 && (
-            <div className="bet-option" id="bet-option-confirm">
-              <button
-                className="bet-button"
-                id="bet-button-confirm"
-                disabled={isSetBetButtonDisabled()}
-                onClick={onConfirmPressed}
-              >
-                CONFIRM
-              </button>
-            </div>
-          )}
         </div>
       )}
 
@@ -151,6 +182,8 @@ const Bet = (props) => {
               id="set-bet-input"
               className={betInputClassName}
               ref={setBetInputRef}
+              defaultValue={Math.floor(diamonds / 2)}
+              autoFocus={true}
             ></input>
           </div>
           {payout > 0 && (
@@ -164,21 +197,32 @@ const Bet = (props) => {
       {/* AFTER BET CONFIRMED */}
       {confirmedBet != -1 && (
         <div className="bet-left-column bet-confirmed-left">
-          <div
-            className={
-              "bet-odds-big " +
-              (bet.chances[0] >= 50 ? " bet-good" : " bet-bad")
-            }
-          >
-            {bet.chances[betButtonPressed]}%
-          </div>
+          {!betResult && (
+            <div
+              className={
+                "bet-odds-big " +
+                (bet.chances[0] >= 50 ? " bet-good" : " bet-bad")
+              }
+            >
+              {bet.chances[betButtonPressed]}%
+            </div>
+          )}
+          {betResult && (
+            <div
+              className={
+                "bet-result " + (betEntry.wonBet ? " bet-good" : " bet-bad")
+              }
+            >
+              {betResult}
+            </div>
+          )}
           <div className="confirmed-payout-container">
             Pays out &diams;&#xfe0e;{payout.toLocaleString()}{" "}
           </div>
         </div>
       )}
 
-      {confirmedBet != -1 && (
+      {betButtonPressed != -1 && (
         <div className="bet-right-column bet-confirmed-right">
           <button
             className={
@@ -189,7 +233,11 @@ const Bet = (props) => {
             {bet.options[betButtonPressed]}
           </button>
           <div>
-            <span className="bet-rolls-container">0/{bet.rolls}</span>
+            {confirmedBet != -1 && (
+              <span className="bet-rolls-container">
+                {betEntry.rolls.length}/{bet.rolls}
+              </span>
+            )}
           </div>
         </div>
       )}

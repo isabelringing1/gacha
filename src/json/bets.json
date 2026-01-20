@@ -1,9 +1,16 @@
 [
   {
     "id": "next-roll-odd",
-    "text": "Next number is ODD?",
+    "text": "Next roll is **ODD**?",
     "options": ["YES", "NO"],
     "chances": [50, 50],
     "rolls": 1
+  },
+  {
+    "id": "next-three-rolls-hundred",
+    "text": "Next **3** rolls > **100**?",
+    "options": ["YES", "NO"],
+    "chances": [50, 50],
+    "rolls": 3
   }
 ]

@@ -6,7 +6,7 @@ import { DitherShader } from "./dither-shader";
 
 export default function SplashDisplayBack(props) {
   const {
-    n,
+    bigNumberEntry,
     numbers,
     setNumbers,
     bigNumberQueue,
@@ -15,12 +15,15 @@ export default function SplashDisplayBack(props) {
     setAnimating,
     diamonds,
     setDiamonds,
+    rolls,
+    setRolls,
   } = props;
 
   const [cn, setCn] = useState("big-number-container");
   const [data, setData] = useState(null);
   const [twinkleArray, setTwinkleArray] = useState([]);
   const [twinkleIndex, setTwinkleIndex] = useState(0);
+  var n = bigNumberEntry.n;
 
   function onClick() {
     if (animating) {
@@ -43,8 +46,8 @@ export default function SplashDisplayBack(props) {
       var newNumbers = { ...numbers };
       newNumbers[n] = newNumbers[n] ? newNumbers[n] + 1 : 1;
       setNumbers(newNumbers);
-      console.log(diamonds, n);
       setDiamonds(diamonds + n);
+      setRolls([...rolls, n]);
       diamondsContainer.classList.remove("pulse-delay");
     }, 700);
   }

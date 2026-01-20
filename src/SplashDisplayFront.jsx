@@ -7,7 +7,8 @@ import { getRarityData, getRarity } from "./Util";
 import numberData from "./json/numbers.json";
 
 export default function SplashDisplayFront(props) {
-  const { n, isNew, animating } = props;
+  const { bigNumberEntry, isNew, animating } = props;
+  var n = bigNumberEntry.n;
   var data = getRarityData(n);
   var r = getRarity(n).toUpperCase();
   const letters = r.split("");

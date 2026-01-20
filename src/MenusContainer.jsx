@@ -49,6 +49,10 @@ export default function MenusContainer(props) {
     refreshHearts,
     trySwipe,
     setShowOutOfHearts,
+    generateBet,
+    sportsbookEntries,
+    setSportsbookEntries,
+    rolls,
   } = props;
 
   const [touchStart, setTouchStart] = useState(null);
@@ -68,7 +72,7 @@ export default function MenusContainer(props) {
     }
     if (diamonds > 0 && sportsbookState == "hidden") {
       setSportsbookState("unlocked");
-      // generate bets
+      generateBet([0, 1]);
     }
   }, [diamonds]);
 
@@ -86,9 +90,16 @@ export default function MenusContainer(props) {
     if (!nextHeartRefreshTime) {
       setNextHeartRefreshTime(Date.now() + REFRESH_TIME);
     }
+    var newBigNumbers = [];
+    for (var i = 0; i < rolledNumbers.length; i++) {
+      newBigNumbers.push({
+        n: rolledNumbers[i],
+        fromPack: true,
+      });
+    }
 
     setTimeout(() => {
-      setBigNumberQueue([...bigNumberQueue, ...rolledNumbers]);
+      setBigNumberQueue([...bigNumberQueue, ...newBigNumbers]);
     }, 1000);
   };
 
@@ -332,7 +343,16 @@ export default function MenusContainer(props) {
           />
         )}
 
-        {sportsbookState != "hidden" && <Sportsbook diamonds={diamonds} />}
+        {sportsbookState != "hidden" && (
+          <Sportsbook
+            diamonds={diamonds}
+            sportsbookEntries={sportsbookEntries}
+            setSportsbookEntries={setSportsbookEntries}
+            setDiamonds={setDiamonds}
+            rolls={rolls}
+            generateBet={generateBet}
+          />
+        )}
       </div>
     </div>
   );

@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import data from "./json/data.json";
 import rarityData from "./json/rarity.json";
 import packData from "./json/packs.json";
 import charmData from "./json/charms.json";
+import betData from "./json/bets.json";
 
 //https://www.joshwcomeau.com/snippets/react-hooks/use-interval/
 function useInterval(callback, delay) {
@@ -26,7 +27,7 @@ function msToTime(
   duration,
   clipZeroes = false,
   noSeconds = false,
-  showMs = false
+  showMs = false,
 ) {
   var milliseconds = Math.floor((duration % 1000) / 100),
     seconds = Math.floor((duration / 1000) % 60),
@@ -59,7 +60,7 @@ const roll = (
   max = 0,
   modulo = 0,
   remainder = 0,
-  pool = []
+  pool = [],
 ) => {
   var totalSum = 0;
   min = min == 0 ? 1 : min;
@@ -100,7 +101,7 @@ const rollMultiple = (
   max = 0,
   modulo = 0,
   remainder = 0,
-  pool = []
+  pool = [],
 ) => {
   var rolls = [];
   for (var i = 0; i < amount; i++) {
@@ -121,7 +122,7 @@ function getNumbersInPack(pack) {
         pack.max,
         pack.modulo,
         pack.remainder,
-        pack.pool
+        pack.pool,
       )
     ) {
       continue;
@@ -138,7 +139,7 @@ function isNumberValid(
   max = 100,
   modulo = 0,
   remainder = 0,
-  pool = []
+  pool = [],
 ) {
   if (n % multiple != 0) {
     return false;
@@ -193,7 +194,7 @@ const rollForPack = () => {
   }
 
   var packsOfRarity = Object.values(packData.packs).filter(
-    (p) => p.rarity == rarity
+    (p) => p.rarity == rarity,
   );
 
   var rolledPack =
@@ -227,6 +228,18 @@ function getPackCost(pack) {
   return packData.cost[pack.rarity];
 }
 
+function rollForBet(index) {
+  return betData[index];
+}
+
+function getBet(id) {
+  for (var i = 0; i < betData.length; i++) {
+    if (betData[i].id == id) {
+      return betData[i];
+    }
+  }
+}
+
 export {
   useInterval,
   msToTime,
@@ -241,4 +254,6 @@ export {
   getCharmById,
   getNumbersInPack,
   getPackCost,
+  rollForBet,
+  getBet,
 };

@@ -20,6 +20,10 @@ body {
   src: url("helvetica-bold.ttf");
 }
 
+p {
+  margin: 0;
+}
+
 #content {
   width: 100vw;
   height: 100dvh;
@@ -423,12 +427,18 @@ button {
   background-color: #6ac5ff;
 }
 
+#bet-button-cancel {
+  width: 12dvh;
+  background-color: #b6b6b6;
+}
+
 #bet-button-confirm:disabled {
   background: #b6b6b6;
 }
 
 .bet-button-confirmed {
   cursor: default;
+  margin-top: -3%;
 }
 
 .bet-button:hover:not(.bet-button-confirmed) {
@@ -454,6 +464,11 @@ button {
   font-size: 5vh;
 }
 
+.bet-result {
+  font-size: 3vh;
+  font-weight: bold;
+}
+
 .bet-good {
   color: #3cdb3c;
 }
@@ -468,7 +483,7 @@ button {
   align-items: end;
   flex-direction: column;
   padding: 1dvh;
-  width: 80%;
+  width: 90%;
   height: 28%;
   position: absolute;
   pointer-events: none;
@@ -485,7 +500,7 @@ button {
   height: 6vh;
   display: flex;
   align-items: end;
-  padding-top: 1vh;
+  padding-top: 2vh;
 }
 
 #set-bet-input {
@@ -1276,6 +1291,10 @@ input[type="number"] {
   opacity: 1;
 }
 
+.pack-shop-entry-unlock-button-container {
+  text-align: center;
+}
+
 /* Mobile */
 @media (max-width: 600px) {
   #numbers-grid {
@@ -1517,10 +1536,6 @@ input[type="number"] {
     align-items: center;
   }
 
-  .pack-shop-entry-unlock-button-container {
-    text-align: center;
-  }
-
   .wallet-container {
     position: absolute;
     bottom: 0;
@@ -1559,5 +1574,26 @@ input[type="number"] {
   .goal-container {
     font-size: 2vh;
     top: 1.6vh;
+  }
+
+  .sportsbook-container {
+    position: absolute;
+    bottom: 0;
+    height: 36dvh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translate(300vw, 0);
+  }
+
+  .sportsbook {
+    width: 80%;
+    right: auto;
+    top: auto;
+  }
+
+  .bet {
+    padding-top: 1.5dvh;
   }
 }

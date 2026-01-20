@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { roll, rollForPack } from "./Util";
+import { roll, rollForPack, rollForBet } from "./Util";
 import "./App.css";
 
 import Number from "./Number";
@@ -47,10 +47,12 @@ function App() {
     null,
   ]);
 
+  const [sportsbookState, setSportsbookState] = useState("hidden"); //hidden, locked, unlocked
+  const [sportsbookEntries, setSportsbookEntries] = useState([null, null]);
+
   const [charmShopState, setCharmShopState] = useState("hidden");
   const [charmShopEntries, setCharmShopEntries] = useState([0, 0]);
   const [purchasedCharms, setPurchasedCharms] = useState([]);
-  const [sportsbookState, setSportsbookState] = useState("hidden"); //hidden, locked, unlocked
   const [animating, setAnimating] = useState(false);
   const [diamonds, setDiamonds] = useState(0);
   const [timeMultiplier, setTimeMultiplier] = useState(1);
@@ -88,6 +90,7 @@ function App() {
       hearts: hearts,
       nextHeartRefreshTime: nextHeartRefreshTime,
       sportsbookState: sportsbookState,
+      sportsbookEntries: sportsbookEntries,
       packShopState: packShopState,
       packShopEntriesUnlocked: packShopEntriesUnlocked,
       cardShopEntries: cardShopEntries,
@@ -125,6 +128,7 @@ function App() {
         if (isMobile) {
           setMobileMenuIndex(saveData.mobileMenuIndex);
         }
+        setSportsbookEntries(saveData.sportsbookEntries);
 
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
@@ -173,17 +177,10 @@ function App() {
       }
       rolledNumber = roll();
     }
-    var newNumbers = { ...numbers };
-    var newRolls = [...rolls];
-    newNumbers[rolledNumber] = newNumbers[rolledNumber]
-      ? newNumbers[rolledNumber] + 1
-      : 1;
-    newRolls.push(rolledNumber);
-    setRolls(newRolls);
-    showRolledNumber(newRolls[newRolls.length - 1]);
+    showRolledNumber(rolledNumber, false);
   };
 
-  const showRolledNumber = (n) => {
+  const showRolledNumber = (n, fromPack) => {
     if (showingRoll != -1) {
       return;
     }
@@ -217,7 +214,11 @@ function App() {
             setTimeout(() => {
               setRolledNumber(-1);
               setShowingRoll(-1);
-              setBigNumberQueue([...bigNumberQueue, n]);
+              var nextBigNumber = {
+                n: n,
+                fromPack: fromPack,
+              };
+              setBigNumberQueue([...bigNumberQueue, nextBigNumber]);
             }, 300 * timeMultiplier);
           }, 500 * timeMultiplier);
         }
@@ -253,6 +254,22 @@ function App() {
       newShopEntries[firstNullIndex] = newEntry;
     }
     setCardShopEntries(newShopEntries);
+  };
+
+  const generateBet = (slots = [0]) => {
+    var newSportsbookEntries = [...sportsbookEntries];
+    for (var i = 0; i < slots.length; i++) {
+      var bet = rollForBet(i);
+      var newEntry = {
+        id: bet.id,
+        creation: Date.now(),
+        rolls: [],
+      };
+      console.log(newEntry);
+      newSportsbookEntries[slots[i]] = newEntry;
+    }
+
+    setSportsbookEntries(newSportsbookEntries);
   };
 
   const trySwipe = (direction) => {
@@ -292,14 +309,14 @@ function App() {
       )}
       {bigNumberQueue.length > 0 && (
         <SplashDisplayFront
-          n={bigNumberQueue[0]}
-          isNew={numbers[bigNumberQueue[0]] == null}
+          bigNumberEntry={bigNumberQueue[0]}
+          isNew={numbers[bigNumberQueue[0].n] == null}
           animating={animating}
         />
       )}
       {bigNumberQueue.length > 0 && (
         <SplashDisplayBack
-          n={bigNumberQueue[0]}
+          bigNumberEntry={bigNumberQueue[0]}
           numbers={numbers}
           setNumbers={setNumbers}
           bigNumberQueue={bigNumberQueue}
@@ -308,6 +325,8 @@ function App() {
           animating={animating}
           diamonds={diamonds}
           setDiamonds={setDiamonds}
+          rolls={rolls}
+          setRolls={setRolls}
         />
       )}
       <div className="goal-container">YOU ARE AT {getGoalPercent()}%</div>
@@ -404,6 +423,10 @@ function App() {
         refreshHearts={refreshHearts}
         trySwipe={trySwipe}
         setShowOutOfHearts={setShowOutOfHearts}
+        generateBet={generateBet}
+        sportsbookEntries={sportsbookEntries}
+        setSportsbookEntries={setSportsbookEntries}
+        rolls={rolls}
       />
     </div>
   );
