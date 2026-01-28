@@ -6,7 +6,7 @@ export default function CharmShop(props) {
 
   return (
     <div className="charm-shop-container">
-      <div className="charm-shop">
+      <div className="charm-shop dither-bg">
         <div className="shop-title">CHARM SHOP</div>
         <div className="charm-shop-entries">
           {charmShopEntries.map((id, i) => {

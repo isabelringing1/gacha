@@ -7,18 +7,16 @@ function Timer(props) {
   var [timeLeft, setTimeLeft] = useState(null);
   const [status, setStatus] = useState("idle");
 
-  useInterval(
-    () => {
-      var t = endTime - Date.now();
-      if (t <= 0) {
-        setStatus("done");
-        console.log("calling on timer end");
-        onTimerEnd();
-      }
+  useInterval(() => {
+    var t = endTime - Date.now();
+    if (t <= 0) {
+      setStatus("done");
+      console.log("calling on timer end");
+      onTimerEnd();
+    } else {
       setTimeLeft(t);
-    },
-    status === "running" ? 1000 : null
-  );
+    }
+  }, 1000);
 
   useEffect(() => {
     var t = endTime - Date.now();

@@ -141,7 +141,7 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
       ctx: CanvasRenderingContext2D,
       displayWidth: number,
       displayHeight: number,
-      time: number = 0
+      time: number = 0,
     ) => {
       const canvas = canvasRef.current;
       if (!canvas || !imageDataRef.current) return;
@@ -253,7 +253,7 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
                   luminance + (ditherThreshold - 0.5) * 0.5;
                 const paletteIndex = Math.floor(
                   clamp(adjustedLuminance, 0, 1) *
-                    (parsedCustomPalette.length - 1)
+                    (parsedCustomPalette.length - 1),
                 );
                 outputColor = parsedCustomPalette[paletteIndex];
               }
@@ -306,7 +306,7 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
       contrast,
       backgroundColor,
       threshold,
-    ]
+    ],
   );
 
   // Setup resize observer for responsive sizing
@@ -394,12 +394,14 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
           0,
           0,
           displayWidth,
-          displayHeight
+          displayHeight,
         );
       } catch {
         console.error("Could not get image data. CORS issue?");
         return;
       }
+
+      console.log(displayHeight);
 
       // Initial render
       applyDithering(ctx, displayWidth, displayHeight, 0);
@@ -454,7 +456,11 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
       className={cn("relative h-full w-full", className)}
       style={style}
     >
-      {children ? children[0] : null}
+      {children
+        ? children.map((child, i) => {
+            return child;
+          })
+        : null}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 h-full w-full"

@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import { roll, rollForPack, rollForBet } from "./Util";
+import {
+  roll,
+  rollMultiple,
+  rollForPack,
+  rollForBet,
+  getPackCost,
+  getRarity,
+  getNextCharm,
+} from "./Util";
 import "./App.css";
 
 import Number from "./Number";
@@ -7,9 +15,15 @@ import Debug from "./Debug";
 import Timer from "./Timer";
 import SplashDisplayFront from "./SplashDisplayFront";
 import SplashDisplayBack from "./SplashDisplayBack";
-
+import PackShop from "./PackShop";
 import OutOfHeartsContainer from "./OutOfHeartsContainer";
 import MenusContainer from "./MenusContainer.jsx";
+import CardPack from "./CardPack.jsx";
+import CharmShop from "./CharmShop";
+import Sportsbook from "./Sportsbook.jsx";
+import MenuTooltip from "./MenuTooltip.jsx";
+
+import packData from "./json/packs.json";
 
 import arrow from "/arrow.png";
 var hearts = "&hearts;&#xfe0e;";
@@ -17,6 +31,7 @@ var diamonds = "&diams;&#xfe0e;";
 
 import {
   REFRESH_TIME,
+  REFRESH_ENTRY_BASE_COST,
   BASE_MAX_HEARTS,
   PACK_LIFETIME,
   NUM_TABS,
@@ -32,6 +47,7 @@ function App() {
   const [nextHeartRefreshTime, setNextHeartRefreshTime] = useState(null);
   const [showingRoll, setShowingRoll] = useState(-1);
   const [bigNumberQueue, setBigNumberQueue] = useState([]);
+  const [currentPack, setCurrentPack] = useState(null);
 
   const [packShopState, setPackShopState] = useState("hidden"); //hidden, locked, unlocked
   const [packShopEntriesUnlocked, setPackShopEntriesUnlocked] = useState([
@@ -61,6 +77,8 @@ function App() {
   const [highlightedNumbers, setHighlightedNumbers] = useState([]);
   const [mobileMenuIndex, setMobileMenuIndex] = useState(0);
   const [goal, setGoal] = useState(0);
+  const [hoveredPack, setHoveredPack] = useState(null);
+  const [mousePos, setMousePos] = useState([]);
 
   useEffect(() => {
     loadData();
@@ -259,7 +277,7 @@ function App() {
   const generateBet = (slots = [0]) => {
     var newSportsbookEntries = [...sportsbookEntries];
     for (var i = 0; i < slots.length; i++) {
-      var bet = rollForBet(i);
+      var bet = rollForBet(slots[i]);
       var newEntry = {
         id: bet.id,
         creation: Date.now(),
@@ -268,7 +286,7 @@ function App() {
       console.log(newEntry);
       newSportsbookEntries[slots[i]] = newEntry;
     }
-
+    console.log(newSportsbookEntries);
     setSportsbookEntries(newSportsbookEntries);
   };
 
@@ -288,8 +306,152 @@ function App() {
     return 0;
   };
 
+  const buyPack = (shopEntry) => {
+    var pack = packData.packs[shopEntry.id];
+    setDiamonds(diamonds - getPackCost(pack));
+    setCurrentPack(packData.packs[shopEntry.id]);
+    setHighlightedNumbers([]);
+    var newShopEntries = [...cardShopEntries];
+
+    for (var i = 0; i < cardShopEntries.length; i++) {
+      if (
+        cardShopEntries[i] &&
+        cardShopEntries[i].id == shopEntry.id &&
+        cardShopEntries[i].creation == shopEntry.creation
+      ) {
+        newShopEntries[i] = {
+          nextRefreshTime: Date.now() + 60000,
+        };
+        break;
+      }
+    }
+
+    setCardShopEntries(newShopEntries);
+
+    setTimeout(() => {
+      var container = document.getElementById("card-pack-container");
+      container.classList.add("bounce-in");
+    }, 100);
+
+    setTimeout(() => {
+      var container = document.getElementById("card-pack-container");
+      container.classList.remove("bounce-in");
+      container.style.transform = "translateY(0px)";
+    }, 750);
+  };
+
+  const trashPack = (shopEntry) => {
+    var newShopEntries = [...cardShopEntries];
+    setHighlightedNumbers([]);
+    for (var i = 0; i < cardShopEntries.length; i++) {
+      if (
+        cardShopEntries[i] &&
+        cardShopEntries[i].id == shopEntry.id &&
+        cardShopEntries[i].creation == shopEntry.creation
+      ) {
+        newShopEntries[i] = {
+          nextRefreshTime: Date.now() + 60000,
+        };
+        break;
+      }
+    }
+    setCardShopEntries(newShopEntries);
+  };
+
+  const refreshPackShopEntry = (index) => {
+    console.log("here", index);
+    generatePackShopEntry(1, [index]);
+    setDiamonds(diamonds - getRefreshEntryCost());
+  };
+
+  const getRefreshEntryCost = (entry) => {
+    return REFRESH_ENTRY_BASE_COST; // todo - implement scaling logic
+  };
+
+  const hidePack = () => {
+    var container = document.getElementById("card-pack-container");
+    container.classList.add("bounce-out");
+
+    setTimeout(() => {
+      container.classList.remove("bounce-out");
+      container.style.transform = "translateY(100vh)";
+      setCurrentPack(null);
+    }, 750);
+  };
+
+  const unlockShopEntry = (i) => {
+    var newPackShopEntriesUnlocked = [...packShopEntriesUnlocked];
+    newPackShopEntriesUnlocked[i] = true;
+    setPackShopEntriesUnlocked(newPackShopEntriesUnlocked);
+    generatePackShopEntry();
+  };
+
+  const openPack = (pack) => {
+    var rolledNumbers = rollMultiple(
+      pack.amount,
+      pack.multiple,
+      pack.min,
+      pack.max,
+      pack.modulo,
+      pack.remainder,
+      pack.pool,
+    );
+
+    if (!nextHeartRefreshTime) {
+      setNextHeartRefreshTime(Date.now() + REFRESH_TIME);
+    }
+    var newBigNumbers = [];
+    for (var i = 0; i < rolledNumbers.length; i++) {
+      newBigNumbers.push({
+        n: rolledNumbers[i],
+        fromPack: true,
+      });
+    }
+
+    setTimeout(() => {
+      setBigNumberQueue([...bigNumberQueue, ...newBigNumbers]);
+    }, 1000);
+  };
+
+  const buyCharm = (shopEntry, index = 0) => {
+    setDiamonds(diamonds - shopEntry.cost);
+    var newPurchasedCharms = [...purchasedCharms, shopEntry.id];
+    if (shopEntry.category == "speed-up") {
+      setTimeMultiplier(shopEntry.new_time_multiplier);
+    } else if (shopEntry.category == "heart-upgrade") {
+      setMaxHearts(maxHearts + shopEntry.heart_upgrade);
+      setHearts(hearts + shopEntry.heart_upgrade);
+    }
+    generateCharmShopEntry([index], newPurchasedCharms);
+    setPurchasedCharms(newPurchasedCharms);
+  };
+
+  const generateCharmShopEntry = (indices = [0], newPurchasedCharms) => {
+    console.log("generating ", indices);
+    var newCharmShopEntries = [...charmShopEntries];
+    for (var i = 0; i < indices.length; i++) {
+      var index = indices[i];
+      var nextCharm = getNextCharm(index, newPurchasedCharms);
+      if (nextCharm) {
+        newCharmShopEntries[index] = nextCharm.id;
+      }
+    }
+    setCharmShopEntries(newCharmShopEntries);
+  };
+
   return (
-    <div id="content">
+    <div
+      id="content"
+      onMouseMove={(e) => {
+        setMousePos([e.clientX, e.clientY]);
+      }}
+      onTouchStart={(e) => {
+        setMousePos([e.changedTouches[0].clientX, e.changedTouches[0].clientY]);
+      }}
+      onTouchMove={(e) => {
+        setMousePos([e.changedTouches[0].clientX, e.changedTouches[0].clientY]);
+      }}
+    >
       <Debug
         rolls={rolls}
         numbers={numbers}
@@ -329,65 +491,140 @@ function App() {
           setRolls={setRolls}
         />
       )}
+      {currentPack && (
+        <CardPack
+          pack={currentPack}
+          openPack={openPack}
+          hidePack={hidePack}
+          bigNumberQueue={bigNumberQueue}
+        />
+      )}
+      {hoveredPack && (
+        <MenuTooltip cardPack={hoveredPack} mousePos={mousePos} />
+      )}
       <div className="goal-container">YOU ARE AT {getGoalPercent()}%</div>
-      <div id="numbers-grid-container">
-        <div id="numbers-grid">
-          {Array.from({ length: 100 }, (_, i) => i + 1).map((n) => {
+      {!isMobile && (
+        <div className="history">
+          {rolls.map((r, i) => {
             return (
-              <Number
-                key={"number-" + n}
-                n={n}
-                data={numbers[n]}
-                isHighlighted={
-                  highlightedNumber === n || highlightedNumbers.includes(n)
-                }
-                isRolled={rolledNumber === n}
-                showingRoll={showingRoll === n}
-                bigNumberQueue={bigNumberQueue}
-              />
+              <span
+                className={"history-num " + getRarity(r)}
+                key={"history-num-" + i}
+              >
+                {r}
+              </span>
             );
           })}
         </div>
-      </div>
-      {isMobile && (
-        <div id="arrows-container">
-          {mobileMenuIndex != 0 && (
-            <img
-              className="arrow left-arrow"
-              src={arrow}
-              onClick={() => trySwipe(-1)}
-            />
-          )}
-
-          {mobileMenuIndex != NUM_TABS - 1 && (
-            <img
-              className="arrow right-arrow"
-              src={arrow}
-              onClick={() => trySwipe(1)}
-            />
-          )}
-        </div>
       )}
-      <div className="wallet-container">
-        <div className="hearts-container">
-          <div>
-            &hearts;&#xfe0e;: {hearts}/{maxHearts}
-          </div>
-          {!isMobile && nextHeartRefreshTime && (
-            <div className="next-heart-container">
-              Next &hearts;&#xfe0e; in{" "}
-              <Timer
-                endTime={nextHeartRefreshTime}
-                onTimerEnd={refreshHearts}
+
+      <div id="columns">
+        {!isMobile && (
+          <div id="column-1">
+            {packShopState != "hidden" && (
+              <PackShop
+                packShopEntriesUnlocked={packShopEntriesUnlocked}
+                setPackShopEntriesUnlocked={setPackShopEntriesUnlocked}
+                openPack={openPack}
+                bigNumberQueue={bigNumberQueue}
+                cardShopEntries={cardShopEntries}
+                diamonds={diamonds}
+                unlockShopEntry={unlockShopEntry}
+                generatePackShopEntry={generatePackShopEntry}
+                setHighlightedNumbers={setHighlightedNumbers}
+                currentPack={currentPack}
+                buyPack={buyPack}
+                trashPack={trashPack}
+                hidePack={hidePack}
+                getRefreshEntryCost={getRefreshEntryCost}
+                refreshPackShopEntry={refreshPackShopEntry}
+                setHoveredPack={setHoveredPack}
               />
+            )}
+          </div>
+        )}
+        <div id="column-2">
+          <div id="numbers-grid">
+            {Array.from({ length: 100 }, (_, i) => i + 1).map((n) => {
+              return (
+                <Number
+                  key={"number-" + n}
+                  n={n}
+                  data={numbers[n]}
+                  isHighlighted={
+                    highlightedNumber === n || highlightedNumbers.includes(n)
+                  }
+                  isRolled={rolledNumber === n}
+                  showingRoll={showingRoll === n}
+                  bigNumberQueue={bigNumberQueue}
+                />
+              );
+            })}
+          </div>
+          {isMobile && (
+            <div id="arrows-container">
+              {mobileMenuIndex != 0 && (
+                <img
+                  className="arrow left-arrow"
+                  src={arrow}
+                  onClick={() => trySwipe(-1)}
+                />
+              )}
+
+              {mobileMenuIndex != NUM_TABS - 1 && (
+                <img
+                  className="arrow right-arrow"
+                  src={arrow}
+                  onClick={() => trySwipe(1)}
+                />
+              )}
             </div>
           )}
-        </div>
+          <div className="wallet-container">
+            <div className="hearts-container">
+              <div>
+                &hearts;&#xfe0e;: {hearts}/{maxHearts}
+              </div>
+              {!isMobile && nextHeartRefreshTime && (
+                <div className="next-heart-container">
+                  Next &hearts;&#xfe0e; in{" "}
+                  <Timer
+                    endTime={nextHeartRefreshTime}
+                    onTimerEnd={refreshHearts}
+                  />
+                </div>
+              )}
+            </div>
 
-        <div id="diamonds-container">
-          &diams;&#xfe0e; {diamonds.toLocaleString()}
+            <div id="diamonds-container">
+              &diams;&#xfe0e; {diamonds.toLocaleString()}
+            </div>
+          </div>
         </div>
+        {!isMobile && (
+          <div id="column-3">
+            {charmShopState != "hidden" && (
+              <CharmShop
+                diamonds={diamonds}
+                charmShopEntries={charmShopEntries}
+                buyCharm={buyCharm}
+              />
+            )}
+
+            {sportsbookState != "hidden" && (
+              <Sportsbook
+                diamonds={diamonds}
+                sportsbookEntries={sportsbookEntries}
+                setSportsbookEntries={setSportsbookEntries}
+                setDiamonds={setDiamonds}
+                rolls={rolls}
+                generateBet={generateBet}
+              />
+            )}
+          </div>
+        )}
       </div>
+
       <MenusContainer
         nextHeartRefreshTime={nextHeartRefreshTime}
         setNextHeartRefreshTime={setNextHeartRefreshTime}
@@ -427,6 +664,17 @@ function App() {
         sportsbookEntries={sportsbookEntries}
         setSportsbookEntries={setSportsbookEntries}
         rolls={rolls}
+        currentPack={currentPack}
+        buyPack={buyPack}
+        trashPack={trashPack}
+        hidePack={hidePack}
+        getRefreshEntryCost={getRefreshEntryCost}
+        refreshPackShopEntry={refreshPackShopEntry}
+        unlockShopEntry={unlockShopEntry}
+        openPack={openPack}
+        buyCharm={buyCharm}
+        setHoveredPack={setHoveredPack}
+        generateCharmShopEntry={generateCharmShopEntry}
       />
     </div>
   );

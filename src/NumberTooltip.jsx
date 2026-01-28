@@ -2,12 +2,15 @@ import { useState } from "react";
 import { factors, getRarity } from "./Util";
 import Markdown from "react-markdown";
 import { isMobile } from "./constants.js";
+import tail from "/tail.png";
 
 export default function NumberTooltip(props) {
   const { n, numTimesRolled, isMobile } = props;
-  var cn = "number-tooltip";
+  var cn = "number-tooltip dither-bg";
+  var cnTail = "tooltip-tail number-tail";
   if (n <= 20) {
     cn += " top";
+    cnTail += " tail-top";
   }
   if (n % 10 == 1 && isMobile) {
     cn += " left";
@@ -33,16 +36,16 @@ export default function NumberTooltip(props) {
   }
   return (
     <div className={cn} id={"number-tooltip-" + n}>
-      <div
-        className={"rarity-tooltip-text rarity-tooltip-text-" + getRarity(n)}
-      >
-        <Markdown>{getRarity(n).toUpperCase()}</Markdown>
-      </div>
-      <div>
-        Rolled {numTimesRolled ?? "0"}/{n} times
-      </div>
-      <div>
-        <Markdown>{factorsText}</Markdown>
+      <div className="number-tooltip-inner">
+        <img className={cnTail} src={tail} />
+        <div
+          className={"rarity-tooltip-text rarity-tooltip-text-" + getRarity(n)}
+        >
+          <Markdown>{getRarity(n).toUpperCase()}</Markdown>
+        </div>
+        <div>
+          Rolled {numTimesRolled ?? "0"}/{n} times
+        </div>
       </div>
     </div>
   );

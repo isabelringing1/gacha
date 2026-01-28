@@ -14,6 +14,7 @@ export default function PackShopEntry(props) {
     diamonds,
     trashPack,
     setHighlightedNumbers,
+    setHoveredPack,
   } = props;
 
   function canBuy() {
@@ -25,6 +26,7 @@ export default function PackShopEntry(props) {
       return;
     }
     setHighlightedNumbers(getNumbersInPack(pack));
+    setHoveredPack(pack);
   }
 
   function onMouseOut() {
@@ -32,14 +34,37 @@ export default function PackShopEntry(props) {
       return;
     }
     setHighlightedNumbers([]);
+    setHoveredPack(null);
   }
 
   function onTouchStart() {
     setHighlightedNumbers(getNumbersInPack(pack));
+    setHoveredPack(pack);
   }
 
   function onTouchEnd() {
     setHighlightedNumbers([]);
+    setHoveredPack(null);
+  }
+
+  function getCardPackImgWidth() {
+    var container = document.getElementsByClassName("pack-shop-packs")[0];
+    if (container) {
+      if (isMobile) {
+        return Math.floor(container.getBoundingClientRect().width * 0.2);
+      } else {
+        return Math.floor(container.getBoundingClientRect().width * 0.4);
+      }
+    }
+    return 0;
+  }
+
+  function getCardPackImgHeight() {
+    var container = document.getElementsByClassName("pack-shop-packs")[0];
+    if (container) {
+      return Math.floor(container.getBoundingClientRect().height * 0.4);
+    }
+    return 0;
   }
 
   return (
@@ -51,11 +76,6 @@ export default function PackShopEntry(props) {
       onTouchEnd={onTouchEnd}
       onTouchCancel={onTouchEnd}
     >
-      <div className="trash-button" onClick={() => trashPack(shopEntry)}>
-        ✕
-      </div>
-      {!isMobile && <div className="pack-shop-entry-name">{pack.name}</div>}
-
       <div className="pack-shop-entry-img-container">
         <DitherShader
           src={miniCardPack}
@@ -65,28 +85,44 @@ export default function PackShopEntry(props) {
           threshold={0}
           customPalette={["#575757", "#cbcbcbff", "#ffffffff"]}
           className={"pack-shop-entry-img"}
-          objectFit="contain"
+          objectFit="fill"
+          style={{
+            width: getCardPackImgWidth() + "px",
+            height: getCardPackImgHeight() + "px",
+          }}
+          children={[
+            <div
+              className="pack-shop-entry-buy-button-container"
+              key="pack-shop-entry-buy-button-container"
+            >
+              <button
+                onClick={() => buyPack(shopEntry)}
+                className="pack-shop-entry-buy-button"
+                disabled={!canBuy()}
+              >
+                ♦ {getPackCost(pack)}
+              </button>
+              {isMobile && (
+                <div className="pack-shop-entry-expiry">
+                  Expires in{" "}
+                  <Timer
+                    endTime={shopEntry.expirationTime}
+                    onTimerEnd={() => trashPack(shopEntry)}
+                  />
+                </div>
+              )}
+            </div>,
+            <div
+              key="trash-button"
+              className="trash-button"
+              onClick={() => trashPack(shopEntry)}
+            >
+              ✕
+            </div>,
+          ]}
         />
       </div>
-      <div className="pack-shop-entry-buy-button-container">
-        {isMobile && <div className="pack-shop-entry-name">{pack.name}</div>}
-        <button
-          onClick={() => buyPack(shopEntry)}
-          className="pack-shop-entry-buy-button"
-          disabled={!canBuy()}
-        >
-          ♦ {getPackCost(pack)}
-        </button>
-        {isMobile && (
-          <div className="pack-shop-entry-expiry">
-            Expires in{" "}
-            <Timer
-              endTime={shopEntry.expirationTime}
-              onTimerEnd={() => trashPack(shopEntry)}
-            />
-          </div>
-        )}
-      </div>
+
       {!isMobile && (
         <div className="pack-shop-entry-expiry">
           Expires in{" "}

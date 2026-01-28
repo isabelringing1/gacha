@@ -47,7 +47,7 @@ export default function SplashDisplayBack(props) {
       newNumbers[n] = newNumbers[n] ? newNumbers[n] + 1 : 1;
       setNumbers(newNumbers);
       setDiamonds(diamonds + n);
-      setRolls([...rolls, n]);
+      setRolls([n, ...rolls]);
       diamondsContainer.classList.remove("pulse-delay");
     }, 700);
   }
@@ -72,7 +72,7 @@ export default function SplashDisplayBack(props) {
 
   function getTransformOrigin() {
     if (!animating) {
-      return "50% 50%";
+      return bigNumberEntry.fromPack ? "50% 100%" : "50% 50%";
     }
     var numberContainer = document.getElementById("number-container-" + n);
     var rect = numberContainer.getBoundingClientRect();

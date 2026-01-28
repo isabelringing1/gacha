@@ -24,7 +24,7 @@ export default function SplashDisplayFront(props) {
 
   function getTransformOrigin() {
     if (!animating) {
-      return "50% 50%";
+      return bigNumberEntry.fromPack ? "50% 100%" : "50% 50%";
     }
     var numberContainer = document.getElementById("number-container-" + n);
     var rect = numberContainer.getBoundingClientRect();

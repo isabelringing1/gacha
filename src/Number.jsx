@@ -17,8 +17,8 @@ function Number(props) {
     numTimesRolled = data;
     opacity = scale(numTimesRolled / n, 0, 1, 0.1, 1);
   }
-  var containerClass = "number-container";
-  var numberClass = "number";
+  var containerClass = "number-container number-container-" + rarityData.id;
+  var numberClass = "number number-" + rarityData.id;
   if (numTimesRolled == 0) {
     containerClass += " unrolled";
     numberClass += " unrolled";
@@ -32,6 +32,9 @@ function Number(props) {
     containerClass += " rolled";
     numberClass += " rolled";
   }
+  if (numTimesRolled >= n) {
+    containerClass += " completed";
+  }
 
   function scale(number, inMin, inMax, outMin, outMax) {
     var scaled =
@@ -42,19 +45,18 @@ function Number(props) {
   }
 
   return (
-    <div className={containerClass} id={"number-container-" + n}>
+    <div
+      className={containerClass}
+      id={"number-container-" + n}
+      style={{
+        scale: hover ? 1.1 : 1,
+        zIndex: hover ? 2 : 1,
+      }}
+    >
       {hover && numTimesRolled > 0 && (
         <NumberTooltip n={n} numTimesRolled={numTimesRolled} />
       )}
-      {numTimesRolled >= n && (
-        <div
-          className="completed-bg"
-          style={{
-            background: rarityData.completed_color,
-            scale: hover ? 1.1 : 1,
-          }}
-        ></div>
-      )}
+
       <div
         className={numberClass}
         id={"number-" + n}

@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import Markdown from "react-markdown";
+import { isMobile } from "./constants.js";
+import { getChances, getPayout } from "./Util.jsx";
+
 const Bet = (props) => {
   const { betEntry, bet, diamonds, onBetConfirmed, index, generateBet } = props;
 
@@ -18,7 +21,8 @@ const Bet = (props) => {
 
       setConfirmedBet(betEntry.cost);
     } else {
-      setPayout((diamonds / 2) * 2); // replace with whatever formula
+      var p = getPayout(bet, bet.options[betButtonPressed], diamonds / 2);
+      setPayout(Math.floor(p)); // replace with whatever formula
       setConfirmedBet(-1);
     }
     setBetButtonPressed(betEntry.option ?? -1);
@@ -48,7 +52,12 @@ const Bet = (props) => {
       setBetInputClassName("");
     }
     if (!isSetBetButtonDisabled()) {
-      setPayout(parseInt(setBetInputRef.current.value) * 2);
+      var p = getPayout(
+        bet,
+        bet.options[betButtonPressed],
+        parseInt(setBetInputRef.current.value),
+      );
+      setPayout(Math.floor(p));
     } else {
       setPayout(0);
     }
@@ -77,20 +86,20 @@ const Bet = (props) => {
   };
 
   return (
-    <div className="bet">
+    <div className={"bet entry-" + index}>
       {confirmedBet != -1 && (
         <svg className="animated-border" viewBox="0 0 100 100">
           <rect
             x="1"
             y="1"
             width="98"
-            height="35"
-            rx={5}
-            ry={5}
+            height={isMobile ? "37" : "35"}
+            rx={1}
+            ry={1}
             pathLength={1}
             style={{
               stroke: "#e2e2e2",
-              strokeWidth: `0.15dvh`,
+              strokeWidth: isMobile ? `0.25dvh` : `0.15dvh`,
               animationDuration: `2s`,
             }}
           />
@@ -98,10 +107,12 @@ const Bet = (props) => {
       )}
 
       <div className="bet-title">
-        <Markdown>{bet.text}</Markdown>
+        <Markdown>
+          {betButtonPressed != -1 ? bet.text_after[betButtonPressed] : bet.text}
+        </Markdown>
       </div>
       {confirmedBet == -1 && (
-        <div className="bet-left-column">
+        <div className="bet-options">
           {betButtonPressed == -1 && (
             <div className="bet-option" id="bet-option-0">
               <button
@@ -116,13 +127,69 @@ const Bet = (props) => {
               <span
                 className={
                   "bet-odds " +
-                  (bet.chances[0] >= 50 ? " bet-good" : " bet-bad")
+                  (getChances(bet, bet.options[0]) >= 50
+                    ? " bet-good"
+                    : " bet-bad")
                 }
               >
-                {bet.chances[0]}%
+                {getChances(bet, bet.options[0])}%
               </span>
             </div>
           )}
+
+          {betButtonPressed == -1 && (
+            <div className="bet-option" id="bet-option-1">
+              <button
+                className={
+                  "bet-button bet-red" +
+                  (betButtonPressed == 1 ? " bet-button-confirmed" : "")
+                }
+                onClick={() => onBetButtonPressed(1)}
+              >
+                {bet.options[1]}
+              </button>
+              <span
+                className={
+                  "bet-odds " +
+                  (getChances(bet, bet.options[1]) >= 50
+                    ? " bet-good"
+                    : " bet-bad")
+                }
+              >
+                {getChances(bet, bet.options[1])}%
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {betButtonPressed != -1 && confirmedBet == -1 && (
+        <div className="bet-left-column">
+          <div className={"set-bet-container " + betInputClassName}>
+            &diams;&#xfe0e;
+            <input
+              type="number"
+              onInput={onInput}
+              id="set-bet-input"
+              className={betInputClassName}
+              ref={setBetInputRef}
+              defaultValue={Math.floor(diamonds / 2)}
+              autoFocus={true}
+            ></input>
+          </div>
+          {betButtonPressed != -1 &&
+            confirmedBet == -1 &&
+            payout > 0 &&
+            betResult != "YOU LOST!" && (
+              <div className="bet-payout-container">
+                Payout: &diams;&#xfe0e;{payout.toLocaleString()}
+              </div>
+            )}
+        </div>
+      )}
+
+      {betButtonPressed != -1 && confirmedBet == -1 && (
+        <div className="bet-right-column">
           {betButtonPressed != -1 && (
             <div className="bet-option" id="bet-option-confirm">
               <button
@@ -147,50 +214,6 @@ const Bet = (props) => {
               </button>
             </div>
           )}
-
-          {betButtonPressed == -1 && (
-            <div className="bet-option" id="bet-option-1">
-              <button
-                className={
-                  "bet-button bet-red" +
-                  (betButtonPressed == 1 ? " bet-button-confirmed" : "")
-                }
-                onClick={() => onBetButtonPressed(1)}
-              >
-                {bet.options[1]}
-              </button>
-              <span
-                className={
-                  "bet-odds " +
-                  (bet.chances[1] >= 50 ? " bet-good" : " bet-bad")
-                }
-              >
-                {bet.chances[1]}%
-              </span>
-            </div>
-          )}
-        </div>
-      )}
-
-      {betButtonPressed != -1 && confirmedBet == -1 && (
-        <div className="bet-right-column">
-          <div className={"set-bet-container " + betInputClassName}>
-            &diams;&#xfe0e;
-            <input
-              type="number"
-              onInput={onInput}
-              id="set-bet-input"
-              className={betInputClassName}
-              ref={setBetInputRef}
-              defaultValue={Math.floor(diamonds / 2)}
-              autoFocus={true}
-            ></input>
-          </div>
-          {payout > 0 && (
-            <div className="bet-payout-container">
-              Payout: &diams;&#xfe0e;{payout.toLocaleString()}
-            </div>
-          )}
         </div>
       )}
 
@@ -201,10 +224,12 @@ const Bet = (props) => {
             <div
               className={
                 "bet-odds-big " +
-                (bet.chances[0] >= 50 ? " bet-good" : " bet-bad")
+                (getChances(bet, bet.options[betButtonPressed]) >= 50
+                  ? " bet-good"
+                  : " bet-bad")
               }
             >
-              {bet.chances[betButtonPressed]}%
+              {getChances(bet, bet.options[betButtonPressed])}%
             </div>
           )}
           {betResult && (
@@ -224,14 +249,6 @@ const Bet = (props) => {
 
       {betButtonPressed != -1 && (
         <div className="bet-right-column bet-confirmed-right">
-          <button
-            className={
-              "bet-button bet-button-confirmed " +
-              (betButtonPressed == 0 ? "bet-green" : "bet-red")
-            }
-          >
-            {bet.options[betButtonPressed]}
-          </button>
           <div>
             {confirmedBet != -1 && (
               <span className="bet-rolls-container">

@@ -132,6 +132,17 @@ function getNumbersInPack(pack) {
   return numbers;
 }
 
+function getPackRarity(pack) {
+  if (pack.rarity == 0) {
+    return "COMMON";
+  } else if (pack.rarity == 1) {
+    return "RARE";
+  } else if (pack.rarity == 2) {
+    return "EPIC";
+  }
+  return "COMMON";
+}
+
 function isNumberValid(
   n,
   multiple = 1,
@@ -240,6 +251,40 @@ function getBet(id) {
   }
 }
 
+function getChancesForNextRollOdd(option) {
+  var totalSum = 0;
+  var chances = 0;
+  for (var n in data.drop_rates) {
+    n = parseInt(n);
+    var rarity = data.drop_rates[n];
+    var dropRate = data.chance[rarity];
+    totalSum += dropRate;
+    if (n % 2 == (option == "YES" ? 1 : 0)) {
+      chances += dropRate;
+    }
+  }
+  return (100 * chances) / totalSum;
+}
+
+function getChancesForNextXRollsY(x, y) {
+  return 50;
+}
+
+function getChances(bet, option) {
+  if (bet.id == "next-roll-odd") {
+    return getChancesForNextRollOdd(option).toFixed(1);
+  }
+  if (bet.id == "next-three-rolls-hundred") {
+    return getChancesForNextXRollsY(3, 100).toFixed(1);
+  }
+  return 0;
+}
+
+function getPayout(bet, option, stake) {
+  var chances = getChances(bet, option);
+  return (stake / chances) * 100;
+}
+
 export {
   useInterval,
   msToTime,
@@ -256,4 +301,7 @@ export {
   getPackCost,
   rollForBet,
   getBet,
+  getChances,
+  getPayout,
+  getPackRarity,
 };

@@ -24,6 +24,7 @@ export default function PackShopMobile(props) {
     hidePack,
     getRefreshEntryCost,
     refreshPackShopEntry,
+    setHoveredPack,
   } = props;
 
   const canUnlockShopEntry = () => {
@@ -36,16 +37,7 @@ export default function PackShopMobile(props) {
 
   return (
     <div className="pack-shop-container">
-      {currentPack && (
-        <CardPack
-          pack={currentPack}
-          openPack={openPack}
-          hidePack={hidePack}
-          bigNumberQueue={bigNumberQueue}
-        />
-      )}
-
-      <div className="pack-shop-mobile">
+      <div className="pack-shop-mobile dither-bg">
         <div className="shop-title">PACK SHOP</div>
         <div className="pack-shop-packs">
           {cardShopEntries.map((shopEntry, i) => {
@@ -87,6 +79,7 @@ export default function PackShopMobile(props) {
                   diamonds={diamonds}
                   trashPack={trashPack}
                   setHighlightedNumbers={setHighlightedNumbers}
+                  setHoveredPack={setHoveredPack}
                 />
               )
             ) : (

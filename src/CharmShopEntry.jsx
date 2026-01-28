@@ -5,7 +5,7 @@ export default function CharmShopEntry(props) {
   }
 
   return (
-    <div className="charm-shop-entry">
+    <div className={"charm-shop-entry entry-" + index}>
       <div className="charm-shop-info-container">
         <div className="charm-shop-entry-name">{shopEntry.name}</div>
         <div className="charm-shop-entry-desc">{shopEntry.desc}</div>

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import CardPack from "./CardPack";
 import PackShopEntry from "./PackShopEntry";
 import Timer from "./Timer";
 import { UNLOCK_ENTRY_COST } from "./constants.js";
@@ -22,6 +21,7 @@ export default function PackShop(props) {
     hidePack,
     getRefreshEntryCost,
     refreshPackShopEntry,
+    setHoveredPack,
   } = props;
 
   const canUnlockShopEntry = () => {
@@ -34,16 +34,7 @@ export default function PackShop(props) {
 
   return (
     <div className="pack-shop-container">
-      {currentPack && (
-        <CardPack
-          pack={currentPack}
-          openPack={openPack}
-          hidePack={hidePack}
-          bigNumberQueue={bigNumberQueue}
-        />
-      )}
-
-      <div className="pack-shop">
+      <div className="pack-shop dither-bg">
         <div className="shop-title">PACK SHOP</div>
         <div className="pack-shop-packs">
           {cardShopEntries.map((shopEntry, i) => {
@@ -85,6 +76,7 @@ export default function PackShop(props) {
                   diamonds={diamonds}
                   trashPack={trashPack}
                   setHighlightedNumbers={setHighlightedNumbers}
+                  setHoveredPack={setHoveredPack}
                 />
               )
             ) : (

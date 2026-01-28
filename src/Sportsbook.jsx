@@ -52,6 +52,9 @@ export default function Sportsbook(props) {
     if (betId == "next-roll-odd") {
       return rolls[0] % 2 == (option == 0 ? 1 : 0);
     }
+    if (betId == "next-three-rolls-hundred") {
+      return rolls.reduce((acc, curr) => acc + curr, 0) >= 100;
+    }
   };
 
   const onBetConfirmed = (index, option, cost, payout) => {
@@ -72,7 +75,7 @@ export default function Sportsbook(props) {
 
   return (
     <div className="sportsbook-container">
-      <div className="sportsbook">
+      <div className="sportsbook dither-bg">
         <div className="shop-title">SPORTSBOOK</div>
         <div className="bets-container">
           {sportsbookEntries &&
