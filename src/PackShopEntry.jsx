@@ -67,6 +67,11 @@ export default function PackShopEntry(props) {
     return 0;
   }
 
+  function onBuyPressed(e) {
+    setHoveredPack(null);
+    buyPack(e);
+  }
+
   return (
     <div
       className="pack-shop-entry"
@@ -96,7 +101,7 @@ export default function PackShopEntry(props) {
               key="pack-shop-entry-buy-button-container"
             >
               <button
-                onClick={() => buyPack(shopEntry)}
+                onClick={() => onBuyPressed(shopEntry)}
                 className="pack-shop-entry-buy-button"
                 disabled={!canBuy()}
               >
@@ -107,7 +112,9 @@ export default function PackShopEntry(props) {
                   Expires in{" "}
                   <Timer
                     endTime={shopEntry.expirationTime}
-                    onTimerEnd={() => trashPack(shopEntry)}
+                    onTimerEnd={() => {
+                      trashPack(shopEntry);
+                    }}
                   />
                 </div>
               )}
@@ -115,7 +122,10 @@ export default function PackShopEntry(props) {
             <div
               key="trash-button"
               className="trash-button"
-              onClick={() => trashPack(shopEntry)}
+              onClick={() => {
+                setHoveredPack(null);
+                trashPack(shopEntry);
+              }}
             >
               ✕
             </div>,

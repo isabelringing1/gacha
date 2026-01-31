@@ -21,11 +21,11 @@ export default function Sportsbook(props) {
       if (sportsbookEntries[i].active) {
         if (
           rolls.length > sportsbookEntries[i].lastRecordedRollLength &&
-          !rolls[rolls.length - 1].fromPack
+          !rolls[0].fromPack
         ) {
           var newEntry = { ...sportsbookEntries[i] };
           newEntry.lastRecordedRollLength = rolls.length;
-          newEntry.rolls.push(rolls[rolls.length - 1]);
+          newEntry.rolls.push(rolls[0]);
           var bet = getBet(newEntry.id);
           if (newEntry.rolls.length >= bet.rolls) {
             console.log("bet done ", bet);
@@ -40,7 +40,6 @@ export default function Sportsbook(props) {
               console.log("bet lost");
             }
           }
-          console.log(newEntry);
           newSportsbookEntries[i] = newEntry;
         }
       }
@@ -50,6 +49,7 @@ export default function Sportsbook(props) {
 
   const meetsCondition = (betId, option, rolls) => {
     if (betId == "next-roll-odd") {
+      console.log(rolls, option, rolls[0] % 2);
       return rolls[0] % 2 == (option == 0 ? 1 : 0);
     }
     if (betId == "next-three-rolls-hundred") {

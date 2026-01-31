@@ -230,7 +230,7 @@ p {
 }
 
 #card-pack-container {
-  z-index: 1;
+  z-index: 2;
   width: 100vw;
   height: 100dvh;
   position: absolute;
@@ -401,6 +401,10 @@ button {
 
 button:hover:not([disabled]) {
   border: none;
+}
+
+button:disabled {
+  opacity: 0.5;
 }
 
 .debug-button {
@@ -797,7 +801,7 @@ button:hover:not([disabled]) {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2;
+  z-index: 3;
   mix-blend-mode: multiply;
   animation: zoom-in 0.7s ease-in-out;
 }
@@ -856,7 +860,7 @@ button:hover:not([disabled]) {
   flex-direction: column;
   justify-content: start;
   align-items: center;
-  z-index: 3;
+  z-index: 4;
   mix-blend-mode: initial;
   animation: zoom-in 0.7s ease-in-out;
   pointer-events: none;

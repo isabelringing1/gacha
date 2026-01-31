@@ -401,8 +401,6 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
         return;
       }
 
-      console.log(displayHeight);
-
       // Initial render
       applyDithering(ctx, displayWidth, displayHeight, 0);
 

@@ -14,10 +14,18 @@ export default function SplashDisplayFront(props) {
   const letters = r.split("");
   const mid = (letters.length - 1) / 2;
 
-  var newText = <span className="new-text">NEW</span>;
+  var newText = (
+    <span className="new-text" key="new-text">
+      NEW
+    </span>
+  );
   var randomNumberText =
     numberData[n][Math.floor(Math.random() * numberData[n].length)];
-  var numberText = <span className="number-text">{randomNumberText}</span>;
+  var numberText = (
+    <span key="number-text" className="number-text">
+      {randomNumberText}
+    </span>
+  );
 
   var digits =
     n == 100 ? [1, 0, 0] : n > 9 ? [Math.floor(n / 10), n % 10] : [n];
