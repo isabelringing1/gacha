@@ -8,7 +8,8 @@
     "font_color": "#353535",
     "num_twinkles": 0,
     "ribbon_palette": ["#575757", "#cbcbcbff", "#ffffffff"],
-    "completed_color": "#d0d0d0"
+    "completed_color": "#d0d0d0",
+    "event_banner_bg": "#d4d4d4"
   },
   "1": {
     "id": "rare",
@@ -23,7 +24,8 @@
     "num_twinkles": 3,
     "twinkle_shadow": "#00078d6e",
     "ribbon_palette": ["#2804b5", "#aed5ffff", "#ffffffff"],
-    "completed_color": "#a1d0ff"
+    "completed_color": "#a1d0ff",
+    "event_banner_bg": "#d2e5ff"
   },
   "2": {
     "id": "epic",
@@ -38,7 +40,8 @@
     "num_twinkles": 7,
     "twinkle_shadow": "#62008f6e",
     "ribbon_palette": ["#9b00a8", "#ecaeffff", "#ffffffff"],
-    "completed_color": "#d991ff"
+    "completed_color": "#d991ff",
+    "event_banner_bg": "#fad2ff"
   },
   "3": {
     "id": "legendary",
@@ -54,6 +57,7 @@
     "twinkle_threshold": -1,
     "twinkle_shadow": "#d49b0d6e",
     "ribbon_palette": ["#916800", "#fff9c2ff", "#ffffffff"],
-    "completed_color": "#ffe77b"
+    "completed_color": "#ffe77b",
+    "event_banner_bg": "#fffec0"
   }
 }

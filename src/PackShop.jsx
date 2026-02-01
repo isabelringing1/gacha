@@ -35,7 +35,7 @@ export default function PackShop(props) {
   return (
     <div className="pack-shop-container">
       <div className="pack-shop dither-bg">
-        <div className="shop-title">PACK SHOP</div>
+        <div className="title">PACK SHOP</div>
         <div className="pack-shop-packs">
           {cardShopEntries.map((shopEntry, i) => {
             return packShopEntriesUnlocked[i] && shopEntry ? (

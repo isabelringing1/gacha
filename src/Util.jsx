@@ -54,13 +54,14 @@ function msToTime(
   return strtime;
 }
 
-const roll = (
+/*const roll = (
   multiple = 1,
   min = 0,
   max = 0,
   modulo = 0,
   remainder = 0,
   pool = [],
+  drop_table = data.chance,
 ) => {
   var totalSum = 0;
   min = min == 0 ? 1 : min;
@@ -71,7 +72,7 @@ const roll = (
       continue;
     }
     var rarity = data.drop_rates[n];
-    var dropRate = data.chance[rarity];
+    var dropRate = drop_table[rarity];
     totalSum += dropRate;
   }
 
@@ -85,13 +86,64 @@ const roll = (
     }
 
     var rarity = data.drop_rates[n];
-    var dropRate = data.chance[rarity];
+    var dropRate = drop_table[rarity];
     counter += dropRate;
     if (counter >= random) {
       console.log(n, getRarity(n));
       return parseInt(n);
     }
   }
+};*/
+
+const roll = (
+  multiple = 1,
+  min = 0,
+  max = 0,
+  modulo = 0,
+  remainder = 0,
+  pool = [],
+  dropTable = data.chance,
+  dropRates = data.drop_rates,
+) => {
+  min = min == 0 ? 1 : min;
+  max = max == 0 ? 100 : max;
+
+  var rarities = Object.keys(dropTable);
+  rarities.reverse();
+  var rolledRarity = rarities[rarities.length - 1]; // assign most basic rarity
+  for (var i in rarities) {
+    var rarity = rarities[i];
+    var rarityChance = dropTable[rarity];
+    var roll = Math.random() * 100;
+    console.log(
+      "rarity roll: roll was " +
+        roll +
+        ", chance is " +
+        rarityChance +
+        " for rarity " +
+        rarity,
+    );
+    if (roll < rarityChance) {
+      rolledRarity = rarity;
+      break;
+    }
+  }
+  // sort by each rarity
+  var raritiesToNumber = {};
+  for (var n in dropRates) {
+    n = parseInt(n);
+    if (!isNumberValid(n, multiple, min, max, modulo, remainder, pool)) {
+      continue;
+    }
+    var rarity = dropRates[n];
+    if (raritiesToNumber[rarity]) {
+      raritiesToNumber[rarity].push(n);
+    } else {
+      raritiesToNumber[rarity] = [n];
+    }
+  }
+  var rolledPool = raritiesToNumber[rolledRarity];
+  return rolledPool[Math.floor(Math.random() * rolledPool.length)];
 };
 
 const rollMultiple = (
@@ -108,6 +160,37 @@ const rollMultiple = (
     rolls.push(roll(multiple, min, max, modulo, remainder, pool));
   }
   return rolls;
+};
+
+const rollEvent = (event) => {
+  var dropTable = { ...data.chance };
+  var dropRates = { ...data.drop_rates };
+  var n = event.n;
+  var normalNumberRarity = dropRates[n];
+
+  // sort by each rarity
+  var raritiesToNumber = {};
+  for (var i in dropRates) {
+    i = parseInt(n);
+    var rarity = dropRates[n];
+    if (raritiesToNumber[rarity]) {
+      raritiesToNumber[rarity].push(i);
+    } else {
+      raritiesToNumber[rarity] = [i];
+    }
+  }
+  // chance = chance to roll number's rarity * chance to roll that number within rarity
+  var regularChances =
+    dropTable[normalNumberRarity] *
+    (1 / raritiesToNumber[normalNumberRarity].length);
+
+  dropTable[4] = event.addedChance + regularChances; // add extra category for event number
+  dropTable[0] -= event.addedChance + regularChances; // take the % gained from the most common pool
+
+  // replace number's normal rarity with special rarity
+  dropRates[n] = 4;
+  //console.log(n, dropRates);
+  return roll(1, 0, 0, 0, 0, [], dropTable, dropRates);
 };
 
 function getNumbersInPack(pack) {
@@ -285,6 +368,25 @@ function getPayout(bet, option, stake) {
   return (stake / chances) * 100;
 }
 
+function rollEventNumber(numbers) {
+  var unrolled = [];
+  var defaultPool = [];
+  for (var i = 1; i <= 100; i++) {
+    var rarity = data.drop_rates[i];
+    if (rarity > 0) {
+      if (!numbers[i]) {
+        unrolled.push(i);
+      }
+      defaultPool.push(i);
+    }
+  }
+
+  if (unrolled.length != 0) {
+    return unrolled[Math.floor(Math.random() * unrolled.length)];
+  }
+  return defaultPool[Math.floor(Math.random() * defaultPool.length)];
+}
+
 export {
   useInterval,
   msToTime,
@@ -304,4 +406,6 @@ export {
   getChances,
   getPayout,
   getPackRarity,
+  rollEventNumber,
+  rollEvent,
 };

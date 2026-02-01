@@ -11,6 +11,7 @@ const Debug = (props) => {
     generatePackShopEntry,
     setTimeMultiplier,
     setDiamonds,
+    generateEvent,
   } = props;
   const [showDebug, setShowDebug] = useState(false);
   const heartsInputRef = useRef(null);
@@ -36,11 +37,6 @@ const Debug = (props) => {
   return (
     showDebug && (
       <div id="debug">
-        {rolls.map((roll, i) => (
-          <div key={"debug-roll-" + i}>
-            Rolled {roll}, {getRarity(roll)} ({numbers[roll]} times)
-          </div>
-        ))}
         <div>
           <input type="number" ref={timeMultiplierRef} />
           <button
@@ -95,6 +91,14 @@ const Debug = (props) => {
           }}
         >
           Generate Pack
+        </button>
+        <button
+          className="debug-button"
+          onClick={() => {
+            generateEvent();
+          }}
+        >
+          Generate Event
         </button>
         <button
           className="debug-button"

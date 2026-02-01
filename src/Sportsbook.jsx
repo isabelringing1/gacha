@@ -76,7 +76,7 @@ export default function Sportsbook(props) {
   return (
     <div className="sportsbook-container">
       <div className="sportsbook dither-bg">
-        <div className="shop-title">SPORTSBOOK</div>
+        <div className="title">SPORTSBOOK</div>
         <div className="bets-container">
           {sportsbookEntries &&
             sportsbookEntries.map((betEntry, i) => {

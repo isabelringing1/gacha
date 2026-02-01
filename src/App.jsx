@@ -7,6 +7,8 @@ import {
   getPackCost,
   getRarity,
   getNextCharm,
+  rollEventNumber,
+  rollEvent,
 } from "./Util";
 import "./App.css";
 
@@ -22,6 +24,8 @@ import CardPack from "./CardPack.jsx";
 import CharmShop from "./CharmShop";
 import Sportsbook from "./Sportsbook.jsx";
 import MenuTooltip from "./MenuTooltip.jsx";
+import EventBanner from "./EventBanner.jsx";
+import Event from "./Event.jsx";
 
 import packData from "./json/packs.json";
 
@@ -79,6 +83,7 @@ function App() {
   const [goal, setGoal] = useState(0);
   const [hoveredPack, setHoveredPack] = useState(null);
   const [mousePos, setMousePos] = useState([]);
+  const [currentEvent, setCurrentEvent] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -99,6 +104,7 @@ function App() {
     hearts,
     maxHearts,
     mobileMenuIndex,
+    currentEvent,
   ]);
 
   function saveData() {
@@ -119,6 +125,7 @@ function App() {
       charmShopEntries: charmShopEntries,
       purchasedCharms: purchasedCharms,
       mobileMenuIndex: mobileMenuIndex,
+      currentEvent: currentEvent,
     };
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
@@ -147,6 +154,7 @@ function App() {
           setMobileMenuIndex(saveData.mobileMenuIndex);
         }
         setSportsbookEntries(saveData.sportsbookEntries);
+        setCurrentEvent(saveData.currentEvent);
 
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
@@ -439,6 +447,29 @@ function App() {
     setCharmShopEntries(newCharmShopEntries);
   };
 
+  const generateEvent = () => {
+    var n = rollEventNumber(numbers);
+    setCurrentEvent({
+      n: n,
+      endTime: Date.now() + 900000, //15 min
+      isNew: true,
+      addedChance: 5,
+    });
+  };
+
+  const rollForEvent = () => {
+    if (hearts <= 1) {
+      return;
+    }
+
+    setHearts(hearts - 2);
+    if (!nextHeartRefreshTime) {
+      setNextHeartRefreshTime(Date.now() + REFRESH_TIME);
+    }
+    var rolledNumber = rollEvent(currentEvent);
+    showRolledNumber(rolledNumber, false);
+  };
+
   return (
     <div
       id="content"
@@ -460,6 +491,7 @@ function App() {
         rollNumber={rollNumber}
         generatePackShopEntry={generatePackShopEntry}
         setTimeMultiplier={setTimeMultiplier}
+        generateEvent={generateEvent}
       />
       {showOutOfHearts && (
         <OutOfHeartsContainer
@@ -501,6 +533,9 @@ function App() {
       )}
       {hoveredPack && (
         <MenuTooltip cardPack={hoveredPack} mousePos={mousePos} />
+      )}
+      {currentEvent && currentEvent.isNew && (
+        <EventBanner event={currentEvent} setCurrentEvent={setCurrentEvent} />
       )}
       <div className="goal-container">YOU ARE AT {getGoalPercent()}%</div>
       {!isMobile && (
@@ -620,6 +655,16 @@ function App() {
                 rolls={rolls}
                 generateBet={generateBet}
               />
+            )}
+            {currentEvent && !currentEvent.isNew && (
+              <div className="event-container">
+                <Event
+                  event={currentEvent}
+                  setCurrentEvent={setCurrentEvent}
+                  isBanner={false}
+                  rollForEvent={rollForEvent}
+                />
+              </div>
             )}
           </div>
         )}

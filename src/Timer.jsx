@@ -29,7 +29,7 @@ function Timer(props) {
     }
   }, [endTime]);
 
-  var timeLeftString = timeLeft != null ? msToTime(timeLeft, true) : "";
+  var timeLeftString = timeLeft != null ? msToTime(timeLeft, true, true) : "";
   return <span className="timer">{timeLeftString}</span>;
 }
 
