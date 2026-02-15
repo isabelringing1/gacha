@@ -2,7 +2,8 @@ import { getRarityData } from "./Util";
 import Timer from "./Timer";
 import { DitherShader } from "./dither-shader";
 export default function Event(props) {
-  var { event, setCurrentEvent, isBanner, rollForEvent } = props;
+  var { event, setCurrentEvent, isBanner, rollForEvent, isRollButtonDisabled } =
+    props;
   var n = event.n;
 
   var digits =
@@ -75,8 +76,12 @@ export default function Event(props) {
                 OK
               </button>
             ) : (
-              <button className="event-button" onClick={rollForEvent}>
-                Roll (2&hearts;&#xfe0e;)
+              <button
+                className="event-button"
+                onClick={rollForEvent}
+                disabled={isRollButtonDisabled()}
+              >
+                Roll (1&hearts;&#xfe0e;)
               </button>
             )}
           </div>

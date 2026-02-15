@@ -84,38 +84,44 @@ export default function OutOfHeartsContainer(props) {
     >
       <div className={"out-of-hearts-outer" + (showMath != 0 ? " flip" : "")}>
         <div className={"out-of-hearts-inner" + (showMath != 0 ? " flip" : "")}>
-          <div className={"out-of-hearts-popup"}>
-            <div className="out-of-hearts-title">Out of &hearts;&#xfe0e;!</div>
-            {nextHeartRefreshTime && (
-              <div>
-                Next &hearts;&#xfe0e; in{" "}
-                <Timer
-                  endTime={nextHeartRefreshTime}
-                  onTimerEnd={() => {
-                    setShowOutOfHearts(false);
-                  }}
-                />
-              </div>
-            )}
-            <button
-              className="out-of-hearts-button"
-              onClick={() => {
-                setShowMath(1);
-                generateMathProblems();
-              }}
-            >
-              Do Easy Math Problems <div>(+{EASY_HEARTS} &hearts;&#xfe0e;)</div>
-            </button>
+          <div className={"out-of-hearts-popup dither-bg"}>
+            <div className="out-of-hearts-title title">
+              OUT OF &hearts;&#xfe0e;!
+            </div>
+            <div className="out-of-hearts-popup-inner">
+              {nextHeartRefreshTime && (
+                <div>
+                  Next &hearts;&#xfe0e; in{" "}
+                  <Timer
+                    endTime={nextHeartRefreshTime}
+                    onTimerEnd={() => {
+                      setShowOutOfHearts(false);
+                    }}
+                  />
+                </div>
+              )}
+              <button
+                className="out-of-hearts-button"
+                onClick={() => {
+                  setShowMath(1);
+                  generateMathProblems();
+                }}
+              >
+                Do Easy Math Problems{" "}
+                <div>(+{EASY_HEARTS} &hearts;&#xfe0e;)</div>
+              </button>
 
-            <button
-              className="out-of-hearts-button"
-              onClick={() => {
-                setShowMath(2);
-                generateMathProblems(true);
-              }}
-            >
-              Do Hard Math Problems <div>(+{HARD_HEARTS} &hearts;&#xfe0e;)</div>
-            </button>
+              <button
+                className="out-of-hearts-button"
+                onClick={() => {
+                  setShowMath(2);
+                  generateMathProblems(true);
+                }}
+              >
+                Do Hard Math Problems{" "}
+                <div>(+{HARD_HEARTS} &hearts;&#xfe0e;)</div>
+              </button>
+            </div>
           </div>
 
           <div className="math-problems">

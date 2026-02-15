@@ -449,6 +449,19 @@ button:disabled {
   padding: 1.2dvh;
 }
 
+.bets-container-locked {
+  border-radius: 2.5dvh;
+  padding: 1.5dvh 2dvh;
+  height: 22dvh;
+  border: 0.3dvh solid black;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+  width: 90%;
+}
+
 .sportsbook-header {
   width: 100%;
   text-align: right;
@@ -626,9 +639,10 @@ button:disabled {
   font-size: 1.9dvh;
 }
 
-.bet-rolls-container {
+.bet-small-info-container {
   font-size: 1.9dvh;
   font-weight: bold;
+  text-align: right;
 }
 
 .bet-confirmed-button-container {
@@ -685,8 +699,7 @@ button:disabled {
 }
 
 #menu-tooltip {
-  width: 150px;
-  height: 100px;
+  width: 17dvh;
   border-radius: 2dvh;
   position: absolute;
   z-index: 3;
@@ -696,10 +709,40 @@ button:disabled {
   filter: drop-shadow(0 0.2dvh 0.4dvh rgba(0, 0, 0, 0.2));
 }
 
+.menu-tooltip-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-tooltip-title {
+  padding-top: 2dvh;
+  font-size: 1.8dvh;
+}
+
+.menu-tooltip-text {
+  font-size: 1.4dvh;
+  padding: 0.2dvh 1dvh;
+}
+
+.menu-tooltip-text.rarity-tooltip-text {
+  margin-bottom: 1dvh;
+  width: fit-content;
+  padding: 0.2dvh 1dvh;
+}
+
 .tooltip-tail {
   width: 30px;
   position: absolute;
   transform: translate(60px, -24px);
+}
+
+.menus-tail-bottom {
+  rotate: 180deg;
+  transform: translate(-60px, -77px);
 }
 
 .number-tail {
@@ -1197,6 +1240,13 @@ button:disabled {
   paint-order: stroke fill;
 }
 
+.text {
+  width: 100%;
+  text-align: center;
+  font-size: 1.5dvh;
+  padding: 0.4dvh 0;
+}
+
 .pack-shop-packs {
   width: 100%;
   height: 100%;
@@ -1208,12 +1258,32 @@ button:disabled {
   background-color: white;
 }
 
+.pack-shop-locked {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  border: 0.3dvh solid black;
+  border-radius: 2dvh;
+  background-color: rgb(235, 235, 235);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 3 / 5;
+}
+
 .pack-shop-entry {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   aspect-ratio: 3 / 5;
+}
+
+.locked-entry {
+  margin: 8%;
+  border-radius: 2dvh;
+  background-color: rgb(235, 235, 235);
 }
 
 .pack-shop-entry-img-container {
@@ -1308,6 +1378,17 @@ button:disabled {
   padding: 1.2dvh;
 }
 
+.charm-shop-locked {
+  height: 20dvh;
+  background-color: rgb(235, 235, 235);
+  border: 0.3dvh solid black;
+  border-radius: 1dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .charm-shop-entry {
   display: flex;
   justify-content: center;
@@ -1315,6 +1396,13 @@ button:disabled {
 
   padding: 1dvh;
   background-color: white;
+  height: 10dvh;
+  border: 0.3dvh solid black;
+}
+
+.empty-charm-shop-entry {
+  padding: 1dvh;
+  background-color: rgb(235, 235, 235);
   height: 10dvh;
   border: 0.3dvh solid black;
 }
@@ -1415,11 +1503,9 @@ button:disabled {
 
 .out-of-hearts-popup {
   z-index: 11;
-  width: 40dvh;
-  padding: 3dvh 0;
-  background-color: white;
+  padding: 1dvh;
+  width: 35dvh;
   border-radius: 3dvh;
-  border: 0.2dvh solid black;
   display: flex;
   justify-content: start;
   align-items: center;
@@ -1428,6 +1514,13 @@ button:disabled {
   -webkit-backface-visibility: hidden; /* Safari */
   backface-visibility: hidden;
   position: absolute;
+}
+
+.out-of-hearts-popup-inner {
+  background-color: white;
+  border-radius: 3dvh;
+  padding: 2dvh;
+  border: 0.2dvh solid black;
 }
 
 .math-problems {
@@ -1442,9 +1535,9 @@ button:disabled {
   font-size: 2.5dvh;
 }
 
-#out-of-hearts-button {
-  margin-bottom: 0dvh;
-  margin-left: 3dvh;
+.out-of-hearts-button {
+  height: 6dvh;
+  margin-top: 2dvh;
 }
 
 .hearts-span {
@@ -1717,6 +1810,18 @@ input[type="number"] {
   padding-top: 1dvh;
 }
 
+.history-container {
+  position: absolute;
+  bottom: 0;
+  height: 36dvh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translate(400vw, 0);
+  pointer-events: none;
+}
+
 @media (max-width: 1000px) {
   .layout {
     grid-template-columns: 3fr 4fr 3fr;
@@ -1857,11 +1962,9 @@ input[type="number"] {
     text-align: center;
   }
 
-  .pack-shop-mobile {
+  .pack-shop {
     width: 80%;
-    height: 90%;
-    left: 2vw;
-    top: 4dvh;
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: start;
@@ -1870,22 +1973,24 @@ input[type="number"] {
     padding: 1.2dvh;
   }
 
+  .pack-shop-locked {
+    aspect-ratio: auto;
+  }
+
   .pack-shop-container {
     position: absolute;
-    bottom: 0;
+    bottom: 2dvh;
     height: 36dvh;
     width: 100vw;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: start;
     transform: translate(100vw, 0);
   }
 
   .pack-shop-entry {
     height: 14dvh;
     padding: 0 1dvh;
-    flex-direction: row;
-    margin: 0.5dvh;
     aspect-ratio: auto;
   }
 
@@ -1898,6 +2003,7 @@ input[type="number"] {
     height: 4dvh;
     padding: 0;
     width: 100%;
+    position: relative;
   }
 
   .pack-shop-entry-buy-button-container {
@@ -2001,7 +2107,7 @@ input[type="number"] {
 
   .goal-container {
     font-size: 2vh;
-    top: 1.6vh;
+    top: 0.5vh;
   }
 
   .sportsbook-container {
@@ -2028,5 +2134,10 @@ input[type="number"] {
 
   #column-2 {
     width: 100vw;
+  }
+
+  .history {
+    width: 80%;
+    position: relative;
   }
 }

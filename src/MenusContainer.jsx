@@ -1,46 +1,43 @@
 import { useState, useEffect } from "react";
 
-import PackShopMobile from "./PackShopMobile";
-import CharmShopMobile from "./CharmShopMobile.jsx";
+import PackShop from "./PackShop";
+import CharmShop from "./CharmShop.jsx";
 import Sportsbook from "./Sportsbook.jsx";
 import Timer from "./Timer";
+import History from "./History";
 
 import { NUM_TABS, isMobile } from "./constants.js";
-import packData from "./json/packs.json";
 
 export default function MenusContainer(props) {
   var {
+    packShopState,
+    canUnlockPackShop,
+    unlockPackShop,
+    charmShopState,
+    canUnlockCharmShop,
+    unlockCharmShop,
+    sportsbookState,
+    setSportsbookState,
+    canUnlockSportsbook,
+    unlockSportsbook,
     nextHeartRefreshTime,
-    setNextHeartRefreshTime,
     diamonds,
     setDiamonds,
     hearts,
-    setHearts,
-    maxHearts,
-    setMaxHearts,
     charmShopEntries,
-    setCharmShopEntries,
     setHighlightedNumbers,
     cardShopEntries,
-    setCardShopEntries,
-    purchasedCharms,
-    setPurchasedCharms,
     mobileMenuIndex,
     bigNumberQueue,
-    setBigNumberQueue,
     packShopEntriesUnlocked,
     setPackShopEntriesUnlocked,
     generatePackShopEntry,
     charmShopState,
-    setCharmShopState,
     packShopState,
     setPackShopState,
-    showingRoll,
-    animating,
     rollNumber,
     sportsbookState,
     setSportsbookState,
-    setTimeMultiplier,
     refreshHearts,
     trySwipe,
     setShowOutOfHearts,
@@ -58,28 +55,14 @@ export default function MenusContainer(props) {
     unlockShopEntry,
     buyCharm,
     setHoveredPack,
-    generateCharmShopEntry,
+    isRollButtonDisabled,
+    lastPackOpened,
   } = props;
 
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
 
   const minSwipeDistance = 50;
-
-  useEffect(() => {
-    if (diamonds > 0 && packShopState == "hidden") {
-      setPackShopState("unlocked");
-      generatePackShopEntry(2);
-    }
-    if (diamonds > 0 && charmShopState == "hidden") {
-      setCharmShopState("unlocked");
-      generateCharmShopEntry([0, 1], purchasedCharms);
-    }
-    if (diamonds > 0 && sportsbookState == "hidden") {
-      setSportsbookState("unlocked");
-      generateBet([0, 1]);
-    }
-  }, [diamonds]);
 
   const onTouchStart = (e) => {
     if (currentPack) {
@@ -130,12 +113,7 @@ export default function MenusContainer(props) {
           <span className="hearts-span">
             <button
               id="roll-button"
-              disabled={
-                showingRoll != -1 ||
-                hearts <= 0 ||
-                animating ||
-                bigNumberQueue.length > 0
-              }
+              disabled={isRollButtonDisabled()}
               onClick={rollNumber}
             >
               Roll (1&hearts;&#xfe0e;)
@@ -162,7 +140,10 @@ export default function MenusContainer(props) {
 
         {/* MOBILE */}
         {packShopState != "hidden" && isMobile && (
-          <PackShopMobile
+          <PackShop
+            packShopState={packShopState}
+            canUnlockPackShop={canUnlockPackShop}
+            unlockPackShop={unlockPackShop}
             packShopEntriesUnlocked={packShopEntriesUnlocked}
             setPackShopEntriesUnlocked={setPackShopEntriesUnlocked}
             openPack={openPack}
@@ -179,13 +160,17 @@ export default function MenusContainer(props) {
             getRefreshEntryCost={getRefreshEntryCost}
             refreshPackShopEntry={refreshPackShopEntry}
             setHoveredPack={setHoveredPack}
+            lastPackOpened={lastPackOpened}
           />
         )}
         {charmShopState != "hidden" && isMobile && (
-          <CharmShopMobile
+          <CharmShop
             diamonds={diamonds}
             charmShopEntries={charmShopEntries}
             buyCharm={buyCharm}
+            charmShopState={charmShopState}
+            canUnlockCharmShop={canUnlockCharmShop}
+            unlockCharmShop={unlockCharmShop}
           />
         )}
 
@@ -198,6 +183,12 @@ export default function MenusContainer(props) {
             rolls={rolls}
             generateBet={generateBet}
           />
+        )}
+
+        {isMobile && (
+          <div className="history-container">
+            <History rolls={rolls} />
+          </div>
         )}
       </div>
     </div>

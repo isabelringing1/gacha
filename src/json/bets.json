@@ -7,13 +7,15 @@
     "rolls": 1
   },
   {
-    "id": "next-three-rolls-hundred",
-    "text": "Next **3** rolls > **100**?",
+    "id": "next-three-rolls",
+    "text": "Next **3** rolls sum to > **150**?",
     "text_after": [
-      "Next **3** rolls > **100**!",
-      "Next **3** rolls ≤ **100**!"
+      "Next **3** rolls sum to > **150**!",
+      "Next **3** rolls sum to ≤ **150**!"
     ],
     "options": ["YES", "NO"],
-    "rolls": 3
+    "chances": [54.3, 45.7],
+    "rolls": 3,
+    "total": 150
   }
 ]

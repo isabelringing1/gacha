@@ -15,6 +15,7 @@ export default function PackShopEntry(props) {
     trashPack,
     setHighlightedNumbers,
     setHoveredPack,
+    lastPackOpened,
   } = props;
 
   function canBuy() {
@@ -25,7 +26,11 @@ export default function PackShopEntry(props) {
     if (isMobile) {
       return;
     }
-    setHighlightedNumbers(getNumbersInPack(pack));
+    setHighlightedNumbers(
+      pack.id == "copycat"
+        ? getNumbersInPack(lastPackOpened)
+        : getNumbersInPack(pack.id),
+    );
     setHoveredPack(pack);
   }
 
@@ -38,7 +43,11 @@ export default function PackShopEntry(props) {
   }
 
   function onTouchStart() {
-    setHighlightedNumbers(getNumbersInPack(pack));
+    setHighlightedNumbers(
+      pack.id == "copycat"
+        ? getNumbersInPack(lastPackOpened)
+        : getNumbersInPack(pack.id),
+    );
     setHoveredPack(pack);
   }
 
@@ -113,6 +122,7 @@ export default function PackShopEntry(props) {
                   <Timer
                     endTime={shopEntry.expirationTime}
                     onTimerEnd={() => {
+                      setHoveredPack(null);
                       trashPack(shopEntry);
                     }}
                   />

@@ -5,8 +5,15 @@ import { getRarityData } from "./Util";
 import { isMobile } from "./constants.js";
 
 function Number(props) {
-  const { n, data, isHighlighted, isRolled, showingRoll, bigNumberQueue } =
-    props;
+  const {
+    n,
+    data,
+    isHighlighted,
+    isRolled,
+    showingRoll,
+    bigNumberQueue,
+    rarityHighlightUnlocked,
+  } = props;
   const [hover, setHover] = useState(false);
 
   var opacity = 0.1;
@@ -17,8 +24,16 @@ function Number(props) {
     numTimesRolled = data;
     opacity = scale(numTimesRolled / n, 0, 1, 0.1, 1);
   }
-  var containerClass = "number-container number-container-" + rarityData.id;
-  var numberClass = "number number-" + rarityData.id;
+  var containerClass = "number-container";
+  var numberClass = "number";
+  if (rarityHighlightUnlocked) {
+    containerClass += " number-container-" + rarityData.id;
+    numberClass += " number-" + rarityData.id;
+  } else {
+    containerClass += " number-container-common";
+    numberClass += " number-common";
+  }
+
   if (numTimesRolled == 0) {
     containerClass += " unrolled";
     numberClass += " unrolled";

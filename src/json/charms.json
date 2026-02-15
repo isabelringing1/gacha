@@ -18,6 +18,13 @@
         "new_time_multiplier": 0.7
       },
       {
+        "id": "rarity-highlight",
+        "category": "rarity-highlight",
+        "name": "Acorn",
+        "desc": "Unlock Rarity Highlight",
+        "cost": 300
+      },
+      {
         "id": "speed-up-3",
         "category": "speed-up",
         "name": "Wishbone",
@@ -88,7 +95,7 @@
         "id": "heart-upgrade-5",
         "category": "heart-upgrade",
         "name": "Shooting Star",
-        "desc": "+5 Max &hearts;&#xfe0e;",
+        "desc": "+5 Max \u2665\uFE0E",
         "cost": 1500,
         "heart_upgrade": 5
       }

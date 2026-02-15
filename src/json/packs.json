@@ -153,6 +153,13 @@
       "art": "/mini_card_pack.png",
       "rarity": 2,
       "amount": 5
+    },
+    "copycat": {
+      "id": "copycat",
+      "name": "Copycat Pack",
+      "desc": "Copies last pack  (**%s**)",
+      "art": "/mini_card_pack.png",
+      "rarity": 0
     }
   },
   "disabled": {

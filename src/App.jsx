@@ -26,6 +26,7 @@ import Sportsbook from "./Sportsbook.jsx";
 import MenuTooltip from "./MenuTooltip.jsx";
 import EventBanner from "./EventBanner.jsx";
 import Event from "./Event.jsx";
+import History from "./History.jsx";
 
 import packData from "./json/packs.json";
 
@@ -39,6 +40,9 @@ import {
   BASE_MAX_HEARTS,
   PACK_LIFETIME,
   NUM_TABS,
+  UNLOCK_PACK_SHOP_COST,
+  UNLOCK_CHARM_SHOP_COST,
+  UNLOCK_SPORTSBOOK_COST,
   isMobile,
 } from "./constants.js";
 
@@ -84,15 +88,45 @@ function App() {
   const [hoveredPack, setHoveredPack] = useState(null);
   const [mousePos, setMousePos] = useState([]);
   const [currentEvent, setCurrentEvent] = useState(null);
+  const [lastPackOpened, setLastPackOpened] = useState(null);
+  const [rarityHighlightUnlocked, setRarityHighlightUnlocked] = useState(false);
 
   useEffect(() => {
     loadData();
-    document.addEventListener("keydown", (e) => {
-      if (e.key == " ") {
-        rollNumber();
-      }
-    });
   }, []);
+
+  useEffect(() => {
+    console.log("adding");
+    document.addEventListener("keydown", onSpacePressed);
+    return () => window.removeEventListener("keydown", onSpacePressed);
+  }, [showingRoll, hearts, animating, bigNumberQueue]);
+
+  const onSpacePressed = (e) => {
+    if (e.key == " " && !isRollButtonDisabled()) {
+      console.log("rolling");
+      rollNumber();
+    }
+  };
+
+  useEffect(() => {
+    if (rolls.length >= 3 && packShopState == "hidden") {
+      setPackShopState("locked");
+    }
+    if (
+      rolls.length >= 11 &&
+      bigNumberQueue.length == 0 &&
+      charmShopState == "hidden"
+    ) {
+      setCharmShopState("locked");
+    }
+    if (
+      rolls.length >= 30 &&
+      bigNumberQueue.length == 0 &&
+      sportsbookState == "hidden"
+    ) {
+      setSportsbookState("locked");
+    }
+  }, [rolls, bigNumberQueue]);
 
   useEffect(() => {
     saveData();
@@ -105,6 +139,7 @@ function App() {
     maxHearts,
     mobileMenuIndex,
     currentEvent,
+    rarityHighlightUnlocked,
   ]);
 
   function saveData() {
@@ -126,6 +161,8 @@ function App() {
       purchasedCharms: purchasedCharms,
       mobileMenuIndex: mobileMenuIndex,
       currentEvent: currentEvent,
+      lastPackOpened: lastPackOpened,
+      rarityHighlightUnlocked: rarityHighlightUnlocked,
     };
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
@@ -155,6 +192,8 @@ function App() {
         }
         setSportsbookEntries(saveData.sportsbookEntries);
         setCurrentEvent(saveData.currentEvent);
+        setLastPackOpened(saveData.lastPackOpened);
+        setRarityHighlightUnlocked(saveData.rarityHighlightUnlocked);
 
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
@@ -314,6 +353,45 @@ function App() {
     return 0;
   };
 
+  const canUnlockPackShop = () => {
+    return packShopState == "locked" && diamonds >= UNLOCK_PACK_SHOP_COST;
+  };
+
+  const unlockPackShop = (cheat = false) => {
+    if (!cheat && !canUnlockPackShop()) {
+      return;
+    }
+    setPackShopState("unlocked");
+    setDiamonds(diamonds - UNLOCK_PACK_SHOP_COST);
+    generatePackShopEntry(2);
+  };
+
+  const canUnlockCharmShop = () => {
+    return charmShopState == "locked" && diamonds >= UNLOCK_CHARM_SHOP_COST;
+  };
+
+  const unlockCharmShop = (cheat = false) => {
+    if (!cheat && !canUnlockCharmShop()) {
+      return;
+    }
+    setCharmShopState("unlocked");
+    setDiamonds(diamonds - UNLOCK_CHARM_SHOP_COST);
+    generateCharmShopEntry([0, 1], purchasedCharms);
+  };
+
+  const canUnlockSportsbook = () => {
+    return sportsbookState == "locked" && diamonds >= UNLOCK_SPORTSBOOK_COST;
+  };
+
+  const unlockSportsbook = (cheat = false) => {
+    if (!cheat && !canUnlockSportsbook()) {
+      return;
+    }
+    setSportsbookState("unlocked");
+    setDiamonds(diamonds - UNLOCK_SPORTSBOOK_COST);
+    generateBet([0, 1]);
+  };
+
   const buyPack = (shopEntry) => {
     var pack = packData.packs[shopEntry.id];
     setDiamonds(diamonds - getPackCost(pack));
@@ -395,6 +473,9 @@ function App() {
   };
 
   const openPack = (pack) => {
+    if (pack.id == "copycat") {
+      pack = packData.packs[lastPackOpened];
+    }
     var rolledNumbers = rollMultiple(
       pack.amount,
       pack.multiple,
@@ -415,6 +496,7 @@ function App() {
         fromPack: true,
       });
     }
+    setLastPackOpened(pack.id);
 
     setTimeout(() => {
       setBigNumberQueue([...bigNumberQueue, ...newBigNumbers]);
@@ -429,6 +511,8 @@ function App() {
     } else if (shopEntry.category == "heart-upgrade") {
       setMaxHearts(maxHearts + shopEntry.heart_upgrade);
       setHearts(hearts + shopEntry.heart_upgrade);
+    } else if (shopEntry.category == "rarity-highlight") {
+      setRarityHighlightUnlocked(true);
     }
     generateCharmShopEntry([index], newPurchasedCharms);
     setPurchasedCharms(newPurchasedCharms);
@@ -439,35 +523,61 @@ function App() {
     var newCharmShopEntries = [...charmShopEntries];
     for (var i = 0; i < indices.length; i++) {
       var index = indices[i];
+      newCharmShopEntries[index] = null;
       var nextCharm = getNextCharm(index, newPurchasedCharms);
+      console.log(nextCharm);
       if (nextCharm) {
         newCharmShopEntries[index] = nextCharm.id;
       }
     }
+    console.log(newCharmShopEntries);
     setCharmShopEntries(newCharmShopEntries);
   };
 
   const generateEvent = () => {
     var n = rollEventNumber(numbers);
+    var rarity = getRarity(n);
+    var addedChance = 10;
+    if (rarity == "epic") {
+      addedChance = 5;
+    } else if (rarity == "legendary") {
+      addedChance = 3;
+    }
     setCurrentEvent({
       n: n,
       endTime: Date.now() + 900000, //15 min
       isNew: true,
-      addedChance: 5,
+      addedChance: addedChance,
     });
   };
 
   const rollForEvent = () => {
-    if (hearts <= 1) {
+    if (hearts <= 0) {
       return;
     }
 
-    setHearts(hearts - 2);
+    setHearts(hearts - 1);
     if (!nextHeartRefreshTime) {
       setNextHeartRefreshTime(Date.now() + REFRESH_TIME);
     }
     var rolledNumber = rollEvent(currentEvent);
     showRolledNumber(rolledNumber, false);
+  };
+
+  const checkForEvent = () => {
+    if (Object.keys(numbers).length < 50 || currentEvent) {
+      return;
+    }
+    if (Math.random() * 5 < 100) {
+      console.log("Event procced, generating");
+      generateEvent();
+    }
+  };
+
+  const isRollButtonDisabled = () => {
+    return (
+      showingRoll != -1 || hearts <= 0 || animating || bigNumberQueue.length > 0
+    );
   };
 
   return (
@@ -492,6 +602,16 @@ function App() {
         generatePackShopEntry={generatePackShopEntry}
         setTimeMultiplier={setTimeMultiplier}
         generateEvent={generateEvent}
+        setCurrentEvent={setCurrentEvent}
+        packShopState={packShopState}
+        setPackShopState={setPackShopState}
+        unlockPackShop={unlockPackShop}
+        charmShopState={charmShopState}
+        setCharmShopState={setCharmShopState}
+        unlockCharmShop={unlockCharmShop}
+        sportsbookState={sportsbookState}
+        setSportsbookState={setSportsbookState}
+        unlockSportsbook={unlockSportsbook}
       />
       {showOutOfHearts && (
         <OutOfHeartsContainer
@@ -521,6 +641,7 @@ function App() {
           setDiamonds={setDiamonds}
           rolls={rolls}
           setRolls={setRolls}
+          checkForEvent={checkForEvent}
         />
       )}
       {currentPack && (
@@ -532,32 +653,26 @@ function App() {
         />
       )}
       {hoveredPack && (
-        <MenuTooltip cardPack={hoveredPack} mousePos={mousePos} />
+        <MenuTooltip
+          cardPack={hoveredPack}
+          mousePos={mousePos}
+          lastPackOpened={lastPackOpened}
+        />
       )}
-      {currentEvent && currentEvent.isNew && (
+      {currentEvent && currentEvent.isNew && bigNumberQueue.length == 0 && (
         <EventBanner event={currentEvent} setCurrentEvent={setCurrentEvent} />
       )}
       <div className="goal-container">YOU ARE AT {getGoalPercent()}%</div>
-      {!isMobile && (
-        <div className="history">
-          {rolls.map((r, i) => {
-            return (
-              <span
-                className={"history-num " + getRarity(r)}
-                key={"history-num-" + i}
-              >
-                {r}
-              </span>
-            );
-          })}
-        </div>
-      )}
+      {!isMobile && <History rolls={rolls} />}
 
       <div id="columns">
         {!isMobile && (
           <div id="column-1">
             {packShopState != "hidden" && (
               <PackShop
+                packShopState={packShopState}
+                canUnlockPackShop={canUnlockPackShop}
+                unlockPackShop={unlockPackShop}
                 packShopEntriesUnlocked={packShopEntriesUnlocked}
                 setPackShopEntriesUnlocked={setPackShopEntriesUnlocked}
                 openPack={openPack}
@@ -574,6 +689,7 @@ function App() {
                 getRefreshEntryCost={getRefreshEntryCost}
                 refreshPackShopEntry={refreshPackShopEntry}
                 setHoveredPack={setHoveredPack}
+                lastPackOpened={lastPackOpened}
               />
             )}
           </div>
@@ -592,6 +708,7 @@ function App() {
                   isRolled={rolledNumber === n}
                   showingRoll={showingRoll === n}
                   bigNumberQueue={bigNumberQueue}
+                  rarityHighlightUnlocked={rarityHighlightUnlocked}
                 />
               );
             })}
@@ -643,6 +760,9 @@ function App() {
                 diamonds={diamonds}
                 charmShopEntries={charmShopEntries}
                 buyCharm={buyCharm}
+                charmShopState={charmShopState}
+                canUnlockCharmShop={canUnlockCharmShop}
+                unlockCharmShop={unlockCharmShop}
               />
             )}
 
@@ -654,6 +774,9 @@ function App() {
                 setDiamonds={setDiamonds}
                 rolls={rolls}
                 generateBet={generateBet}
+                sportsbookState={sportsbookState}
+                canUnlockSportsbook={canUnlockSportsbook}
+                unlockSportsbook={unlockSportsbook}
               />
             )}
             {currentEvent && !currentEvent.isNew && (
@@ -663,6 +786,7 @@ function App() {
                   setCurrentEvent={setCurrentEvent}
                   isBanner={false}
                   rollForEvent={rollForEvent}
+                  isRollButtonDisabled={isRollButtonDisabled}
                 />
               </div>
             )}
@@ -671,37 +795,28 @@ function App() {
       </div>
 
       <MenusContainer
+        packShopState={packShopState}
+        canUnlockPackShop={canUnlockPackShop}
+        unlockPackShop={unlockPackShop}
+        charmShopState={charmShopState}
+        canUnlockCharmShop={canUnlockCharmShop}
+        unlockCharmShop={unlockCharmShop}
+        sportsbookState={sportsbookState}
+        setSportsbookState={setSportsbookState}
+        canUnlockSportsbook={canUnlockSportsbook}
+        unlockSportsbook={unlockSportsbook}
         nextHeartRefreshTime={nextHeartRefreshTime}
-        setNextHeartRefreshTime={setNextHeartRefreshTime}
         diamonds={diamonds}
         setDiamonds={setDiamonds}
         hearts={hearts}
-        setHearts={setHearts}
-        maxHearts={maxHearts}
-        setMaxHearts={setMaxHearts}
         charmShopEntries={charmShopEntries}
-        setCharmShopEntries={setCharmShopEntries}
         cardShopEntries={cardShopEntries}
-        setCardShopEntries={setCardShopEntries}
-        setHighlightedNumbers={setHighlightedNumbers}
-        purchasedCharms={purchasedCharms}
-        setPurchasedCharms={setPurchasedCharms}
         mobileMenuIndex={mobileMenuIndex}
         bigNumberQueue={bigNumberQueue}
-        setBigNumberQueue={setBigNumberQueue}
         packShopEntriesUnlocked={packShopEntriesUnlocked}
         setPackShopEntriesUnlocked={setPackShopEntriesUnlocked}
         generatePackShopEntry={generatePackShopEntry}
-        charmShopState={charmShopState}
-        setCharmShopState={setCharmShopState}
-        packShopState={packShopState}
-        setPackShopState={setPackShopState}
-        showingRoll={showingRoll}
-        animating={animating}
         rollNumber={rollNumber}
-        sportsbookState={sportsbookState}
-        setSportsbookState={setSportsbookState}
-        setTimeMultiplier={setTimeMultiplier}
         refreshHearts={refreshHearts}
         trySwipe={trySwipe}
         setShowOutOfHearts={setShowOutOfHearts}
@@ -719,7 +834,8 @@ function App() {
         openPack={openPack}
         buyCharm={buyCharm}
         setHoveredPack={setHoveredPack}
-        generateCharmShopEntry={generateCharmShopEntry}
+        isRollButtonDisabled={isRollButtonDisabled}
+        lastPackOpened={lastPackOpened}
       />
     </div>
   );

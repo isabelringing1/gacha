@@ -14,6 +14,7 @@ const Bet = (props) => {
   const [betResult, setBetResult] = useState(null);
 
   const setBetInputRef = useRef(null);
+  var defaultBetValue = Math.floor(diamonds / 2);
 
   useEffect(() => {
     if (betEntry.payout) {
@@ -37,6 +38,14 @@ const Bet = (props) => {
       setBetResult(null);
     }
   }, [betEntry]);
+
+  useEffect(() => {
+    if (defaultBetValue >= 10000) {
+      setBetInputClassName("bet-input-smaller");
+    } else if (defaultBetValue >= 1000) {
+      setBetInputClassName("bet-input-small");
+    }
+  }, []);
 
   const onBetButtonPressed = (i) => {
     setBetButtonPressed(i);
@@ -111,7 +120,7 @@ const Bet = (props) => {
           {betButtonPressed != -1 ? bet.text_after[betButtonPressed] : bet.text}
         </Markdown>
       </div>
-      {confirmedBet == -1 && (
+      {confirmedBet == -1 && betButtonPressed == -1 && (
         <div className="bet-options">
           {betButtonPressed == -1 && (
             <div className="bet-option" id="bet-option-0">
@@ -173,7 +182,7 @@ const Bet = (props) => {
               id="set-bet-input"
               className={betInputClassName}
               ref={setBetInputRef}
-              defaultValue={Math.floor(diamonds / 2)}
+              defaultValue={defaultBetValue}
               autoFocus={true}
             ></input>
           </div>
@@ -251,9 +260,14 @@ const Bet = (props) => {
         <div className="bet-right-column bet-confirmed-right">
           <div>
             {confirmedBet != -1 && (
-              <span className="bet-rolls-container">
+              <div className="bet-small-info-container">
                 {betEntry.rolls.length}/{bet.rolls}
-              </span>
+              </div>
+            )}
+            {confirmedBet != -1 && bet.id == "next-three-rolls" && (
+              <div className="bet-small-info-container">
+                {betEntry.rolls.reduce((a, v) => a + v, 0)}/{bet.total}
+              </div>
             )}
           </div>
         </div>

@@ -1,15 +1,22 @@
 const isMobile = window.innerWidth <= 600;
 
-const NUM_TABS = 4;
+const NUM_TABS = 5;
 
 // Hearts
 const REFRESH_TIME = 60000;
 const BASE_MAX_HEARTS = 10;
 
 // Pack Shop
+const UNLOCK_PACK_SHOP_COST = 100;
 const UNLOCK_ENTRY_COST = 200;
 const REFRESH_ENTRY_BASE_COST = 50;
 const PACK_LIFETIME = 300000;
+
+// Charm Shop
+const UNLOCK_CHARM_SHOP_COST = 200;
+
+// Sportsbook
+const UNLOCK_SPORTSBOOK_COST = 400;
 
 // Math Problems
 const EASY_HEARTS = 5;
@@ -24,5 +31,8 @@ export {
   HARD_HEARTS,
   PACK_LIFETIME,
   NUM_TABS,
+  UNLOCK_PACK_SHOP_COST,
+  UNLOCK_CHARM_SHOP_COST,
+  UNLOCK_SPORTSBOOK_COST,
   isMobile,
 };

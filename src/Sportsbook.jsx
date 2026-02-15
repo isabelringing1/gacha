@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { getBet } from "./Util";
+import { UNLOCK_SPORTSBOOK_COST } from "./constants.js";
 
 import Bet from "./Bet";
 
@@ -12,10 +13,16 @@ export default function Sportsbook(props) {
     setSportsbookEntries,
     numbers,
     generateBet,
+    sportsbookState,
+    unlockSportsbook,
+    canUnlockSportsbook,
   } = props;
 
   // only triggers after initial mount
   useEffect(() => {
+    if (sportsbookState == "locked") {
+      return;
+    }
     var newSportsbookEntries = [...sportsbookEntries];
     for (var i = 0; i < sportsbookEntries.length; i++) {
       if (sportsbookEntries[i].active) {
@@ -52,7 +59,7 @@ export default function Sportsbook(props) {
       console.log(rolls, option, rolls[0] % 2);
       return rolls[0] % 2 == (option == 0 ? 1 : 0);
     }
-    if (betId == "next-three-rolls-hundred") {
+    if (betId == "next-three-rolls") {
       return rolls.reduce((acc, curr) => acc + curr, 0) >= 100;
     }
   };
@@ -77,23 +84,37 @@ export default function Sportsbook(props) {
     <div className="sportsbook-container">
       <div className="sportsbook dither-bg">
         <div className="title">SPORTSBOOK</div>
-        <div className="bets-container">
-          {sportsbookEntries &&
-            sportsbookEntries.map((betEntry, i) => {
-              var bet = getBet(betEntry.id);
-              return bet ? (
-                <Bet
-                  betEntry={betEntry}
-                  diamonds={diamonds}
-                  bet={bet}
-                  index={i}
-                  onBetConfirmed={onBetConfirmed}
-                  key={"bet-" + i}
-                  generateBet={generateBet}
-                />
-              ) : null;
-            })}
-        </div>
+        {sportsbookState == "locked" && (
+          <div className="bets-container-locked">
+            <div className="title">UNLOCK</div>
+            <button
+              disabled={!canUnlockSportsbook()}
+              onClick={unlockSportsbook}
+            >
+              &diams;&#xfe0e; {UNLOCK_SPORTSBOOK_COST}
+            </button>
+            <div className="text">Wait, this game has betting?</div>
+          </div>
+        )}
+        {sportsbookState == "unlocked" && (
+          <div className="bets-container">
+            {sportsbookEntries &&
+              sportsbookEntries.map((betEntry, i) => {
+                var bet = getBet(betEntry.id);
+                return bet ? (
+                  <Bet
+                    betEntry={betEntry}
+                    diamonds={diamonds}
+                    bet={bet}
+                    index={i}
+                    onBetConfirmed={onBetConfirmed}
+                    key={"bet-" + i}
+                    generateBet={generateBet}
+                  />
+                ) : null;
+              })}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ export default function SplashDisplayBack(props) {
     setDiamonds,
     rolls,
     setRolls,
+    checkForEvent,
   } = props;
 
   const [cn, setCn] = useState("big-number-container");
@@ -49,6 +50,7 @@ export default function SplashDisplayBack(props) {
       setDiamonds(diamonds + n);
       setRolls([n, ...rolls]);
       diamondsContainer.classList.remove("pulse-delay");
+      checkForEvent();
     }, 700);
   }
 
