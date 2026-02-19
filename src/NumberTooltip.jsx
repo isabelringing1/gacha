@@ -1,22 +1,27 @@
-import { useState } from "react";
 import { factors, getRarity } from "./Util";
 import Markdown from "react-markdown";
-import { isMobile } from "./constants.js";
 import tail from "/tail.png";
+import { getRarityData } from "./Util";
 
 export default function NumberTooltip(props) {
-  const { n, numTimesRolled, isMobile } = props;
+  const { n, numTimesRolled, isMobile, isCombat } = props;
   var cn = "number-tooltip dither-bg";
   var cnTail = "tooltip-tail number-tail";
-  if (n <= 20) {
-    cn += " top";
-    cnTail += " tail-top";
-  }
-  if (n % 10 == 1 && isMobile) {
-    cn += " left";
-  }
-  if (n % 10 == 0 && isMobile) {
-    cn += " right";
+
+  if (isCombat) {
+    cn += " combat-tooltip";
+    cnTail += " combat-tooltip-tail";
+  } else {
+    if (n <= 20) {
+      cn += " top";
+      cnTail += " tail-top";
+    }
+    if (n % 10 == 1 && isMobile) {
+      cn += " left";
+    }
+    if (n % 10 == 0 && isMobile) {
+      cn += " right";
+    }
   }
 
   var factorsText = n + " is **prime**.";
@@ -34,18 +39,57 @@ export default function NumberTooltip(props) {
     }
     factorsText += ".";
   }
+
+  function getCritChance() {
+    var data = getRarityData(n);
+    var chance = data.combat_crit_chance;
+    return chance + "%";
+  }
+
   return (
     <div className={cn} id={"number-tooltip-" + n}>
       <div className="number-tooltip-inner">
         <img className={cnTail} src={tail} />
+
+        {isCombat && (
+          <div className="number-tooltip-text">
+            Attacks for <b>{n}</b>
+          </div>
+        )}
+
+        {isCombat && (
+          <div className="number-tooltip-text">
+            Crit chance <b>{getCritChance()}</b>
+          </div>
+        )}
+
         <div
-          className={"rarity-tooltip-text rarity-tooltip-text-" + getRarity(n)}
+          style={{
+            display: "flex",
+            justifyContent: "space-evenly",
+            alignItems: "center",
+            width: "100%",
+          }}
         >
-          <Markdown>{getRarity(n).toUpperCase()}</Markdown>
+          {isCombat && (
+            <div className="number-tooltip-text">
+              <b>Lvl 5</b>
+            </div>
+          )}
+          <div
+            className={
+              "rarity-tooltip-text rarity-tooltip-text-" + getRarity(n)
+            }
+          >
+            <Markdown>{getRarity(n).toUpperCase()}</Markdown>
+          </div>
         </div>
-        <div>
-          Rolled {numTimesRolled ?? "0"}/{n} times
-        </div>
+
+        {!isCombat && (
+          <div className="number-tooltip-text">
+            Rolled {numTimesRolled ?? "0"} time{numTimesRolled == 1 ? "" : "s"}
+          </div>
+        )}
       </div>
     </div>
   );

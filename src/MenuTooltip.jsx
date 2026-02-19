@@ -18,11 +18,14 @@ export default function MenuTooltip(props) {
         top: mousePos[1] - (isMobile ? 180 : 0) + "px",
       }}
     >
-      <img
-        className={"tooltip-tail " + (isMobile ? "menus-tail-bottom" : "")}
-        src={tail}
-      />
       <div id="menu-tooltip-inner">
+        <img
+          className={
+            "tooltip-tail menu-tooltip-tail " +
+            (isMobile ? "menus-tail-bottom" : "")
+          }
+          src={tail}
+        />
         {cardPack && (
           <div className="menu-tooltip-content">
             <div className="menu-tooltip-title">{cardPack.name}</div>

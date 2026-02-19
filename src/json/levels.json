@@ -1,0 +1,79 @@
+[
+  {
+    "level": 0,
+    "rolls": 0,
+    "shields": 1,
+    "canDivide": false,
+    "critBoost": 0
+  },
+  {
+    "level": 1,
+    "rolls": 1,
+    "shields": 1,
+    "canDivide": false,
+    "critBoost": 0
+  },
+  {
+    "level": 2,
+    "rolls": 3,
+    "shields": 2,
+    "canDivide": false,
+    "critBoost": 5
+  },
+  {
+    "level": 3,
+    "rolls": 6,
+    "shields": 2,
+    "canDivide": true,
+    "critBoost": 10
+  },
+  {
+    "level": 4,
+    "rolls": 10,
+    "shields": 3,
+    "canDivide": true,
+    "critBoost": 15
+  },
+  {
+    "level": 5,
+    "rolls": 15,
+    "shields": 3,
+    "canDivide": true,
+    "critBoost": 20
+  },
+  {
+    "level": 6,
+    "rolls": 21,
+    "shields": 4,
+    "canDivide": true,
+    "critBoost": 25
+  },
+  {
+    "level": 7,
+    "rolls": 28,
+    "shields": 4,
+    "canDivide": true,
+    "critBoost": 30
+  },
+  {
+    "level": 8,
+    "rolls": 36,
+    "shields": 5,
+    "canDivide": true,
+    "critBoost": 35
+  },
+  {
+    "level": 9,
+    "rolls": 45,
+    "shields": 5,
+    "canDivide": true,
+    "critBoost": 40
+  },
+  {
+    "level": 10,
+    "rolls": 55,
+    "shields": 6,
+    "canDivide": true,
+    "critBoost": 45
+  }
+]

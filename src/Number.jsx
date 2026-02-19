@@ -13,6 +13,8 @@ function Number(props) {
     showingRoll,
     bigNumberQueue,
     rarityHighlightUnlocked,
+    selectingIndex,
+    selectNumber,
   } = props;
   const [hover, setHover] = useState(false);
 
@@ -47,9 +49,13 @@ function Number(props) {
     containerClass += " rolled";
     numberClass += " rolled";
   }
-  if (numTimesRolled >= n) {
-    containerClass += " completed";
+
+  if (selectingIndex != -1 && numTimesRolled > 0) {
+    numberClass += " pulse-continuous";
   }
+  /*if (numTimesRolled >= n) {
+    containerClass += " completed";
+  }*/
 
   function scale(number, inMin, inMax, outMin, outMax) {
     var scaled =
@@ -77,7 +83,8 @@ function Number(props) {
         id={"number-" + n}
         style={{
           scale: hover ? 1.1 : 1,
-          opacity: opacity,
+          opacity:
+            hover && selectingIndex != -1 && numTimesRolled > 0 ? 1 : opacity,
         }}
         onMouseOver={() => {
           if (isMobile) {
@@ -90,6 +97,11 @@ function Number(props) {
             return;
           }
           setHover(false);
+        }}
+        onClick={() => {
+          if (selectingIndex != -1 && numTimesRolled > 0) {
+            selectNumber(n, selectingIndex);
+          }
         }}
         onTouchStart={() => {
           setHover(true);

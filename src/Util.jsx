@@ -4,6 +4,7 @@ import rarityData from "./json/rarity.json";
 import packData from "./json/packs.json";
 import charmData from "./json/charms.json";
 import betData from "./json/bets.json";
+import levelData from "./json/levels.json";
 
 //https://www.joshwcomeau.com/snippets/react-hooks/use-interval/
 function useInterval(callback, delay) {
@@ -436,6 +437,22 @@ function chance3SumGreaterThan(goal = 100) {
   return chance;
 }
 
+function getLevelData(numRolls) {
+  for (var i = 0; i < levelData.length; i++) {
+    if (levelData[i].rolls <= numRolls) {
+      return levelData[i];
+    }
+  }
+}
+
+function getLevel(numRolls) {
+  for (var i = 0; i < levelData.length; i++) {
+    if (levelData[i].rolls <= numRolls) {
+      return levelData[i].level;
+    }
+  }
+}
+
 export {
   useInterval,
   msToTime,
@@ -458,4 +475,6 @@ export {
   rollEventNumber,
   rollEvent,
   chance3SumGreaterThan,
+  getLevelData,
+  getLevel,
 };

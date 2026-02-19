@@ -27,7 +27,8 @@ import MenuTooltip from "./MenuTooltip.jsx";
 import EventBanner from "./EventBanner.jsx";
 import Event from "./Event.jsx";
 import History from "./History.jsx";
-
+import Combat from "./Combat.jsx";
+import CombatEntry from "./CombatEntry.jsx";
 import packData from "./json/packs.json";
 
 import arrow from "/arrow.png";
@@ -90,6 +91,9 @@ function App() {
   const [currentEvent, setCurrentEvent] = useState(null);
   const [lastPackOpened, setLastPackOpened] = useState(null);
   const [rarityHighlightUnlocked, setRarityHighlightUnlocked] = useState(false);
+  const [showCombat, setShowCombat] = useState(false);
+  const [selectingIndex, setSelectingIndex] = useState(-1);
+  const [combatTeam, setCombatTeam] = useState([null, null, null]);
 
   useEffect(() => {
     loadData();
@@ -140,6 +144,7 @@ function App() {
     mobileMenuIndex,
     currentEvent,
     rarityHighlightUnlocked,
+    combatTeam,
   ]);
 
   function saveData() {
@@ -163,6 +168,7 @@ function App() {
       currentEvent: currentEvent,
       lastPackOpened: lastPackOpened,
       rarityHighlightUnlocked: rarityHighlightUnlocked,
+      combatTeam: combatTeam,
     };
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
@@ -194,6 +200,7 @@ function App() {
         setCurrentEvent(saveData.currentEvent);
         setLastPackOpened(saveData.lastPackOpened);
         setRarityHighlightUnlocked(saveData.rarityHighlightUnlocked);
+        setCombatTeam(saveData.combatTeam);
 
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
@@ -234,6 +241,7 @@ function App() {
       return;
     }
     var rolledNumber = cheatNumber;
+    setSelectingIndex(-1);
 
     if (cheatNumber == -1) {
       setHearts(hearts - 1);
@@ -580,6 +588,16 @@ function App() {
     );
   };
 
+  function selectNumber(n, i) {
+    setCombatTeam((prevCombatTeam) => {
+      var newCombatTeam = [...prevCombatTeam];
+      newCombatTeam[i] = n;
+      console.log(prevCombatTeam, newCombatTeam);
+      return newCombatTeam;
+    });
+    setSelectingIndex(-1);
+  }
+
   return (
     <div
       id="content"
@@ -664,6 +682,14 @@ function App() {
       )}
       <div className="goal-container">YOU ARE AT {getGoalPercent()}%</div>
       {!isMobile && <History rolls={rolls} />}
+      {showCombat && (
+        <Combat
+          team={combatTeam}
+          enemy={500}
+          setShowCombat={setShowCombat}
+          numbers={numbers}
+        />
+      )}
 
       <div id="columns">
         {!isMobile && (
@@ -692,6 +718,15 @@ function App() {
                 lastPackOpened={lastPackOpened}
               />
             )}
+            <div className="combat-entry-container">
+              <CombatEntry
+                slots={combatTeam}
+                setShowCombat={setShowCombat}
+                setSelectingIndex={setSelectingIndex}
+                selectingIndex={selectingIndex}
+                enemy={3030}
+              />
+            </div>
           </div>
         )}
         <div id="column-2">
@@ -709,6 +744,8 @@ function App() {
                   showingRoll={showingRoll === n}
                   bigNumberQueue={bigNumberQueue}
                   rarityHighlightUnlocked={rarityHighlightUnlocked}
+                  selectingIndex={selectingIndex}
+                  selectNumber={selectNumber}
                 />
               );
             })}
