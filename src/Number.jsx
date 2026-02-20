@@ -21,10 +21,11 @@ function Number(props) {
   var opacity = 0.1;
   var numTimesRolled = 0;
   var rarityData = getRarityData(n);
+  var total = 55; // rn this maxes out the levels. subject to change
 
   if (data) {
     numTimesRolled = data;
-    opacity = scale(numTimesRolled / n, 0, 1, 0.1, 1);
+    opacity = scale(numTimesRolled / total, 0, 1, 0.1, 1);
   }
   var containerClass = "number-container";
   var numberClass = "number";

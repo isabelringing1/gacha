@@ -7,6 +7,7 @@ import shield from "/shield.png";
 export default function CombatNumber(props) {
   const {
     number,
+    numTimesRolled,
     index,
     onAttack,
     combatState,
@@ -15,6 +16,7 @@ export default function CombatNumber(props) {
     setTeamState,
     onNumberDivide,
     level,
+    buttonContainerHeight,
   } = props;
   var intervalRef = useRef(null);
   var lastAttackTimeRef = useRef(null);
@@ -159,7 +161,13 @@ export default function CombatNumber(props) {
   return (
     teamState && (
       <div className="combat-number-container">
-        {hover && <NumberTooltip n={number} isCombat={true} />}
+        {hover && (
+          <NumberTooltip
+            n={number}
+            isCombat={true}
+            numTimesRolled={numTimesRolled}
+          />
+        )}
 
         <div
           className="combat-number-container-top"
@@ -206,7 +214,10 @@ export default function CombatNumber(props) {
           <div className="block" style={{ opacity: block ? 1 : 0 }}></div>
         </div>
 
-        <div className="combat-number-button-container">
+        <div
+          className="combat-number-button-container"
+          style={{ height: buttonContainerHeight + "dvh" }}
+        >
           {/*<CombatButton
             id="block"
             text="Block"
@@ -215,14 +226,16 @@ export default function CombatNumber(props) {
             clickAction={onBlock}
             isDisabled={!alive}
           />*/}
-          <CombatButton
-            id="heal"
-            text="Heal"
-            cooldown={3}
-            startActive={true}
-            clickAction={onHeal}
-            isDisabled={!canHeal()}
-          />
+          {teamState[index].initialShields > 0 && (
+            <CombatButton
+              id="heal"
+              text="Heal"
+              cooldown={3}
+              startActive={true}
+              clickAction={onHeal}
+              isDisabled={!canHeal()}
+            />
+          )}
           {level.canDivide && (
             <CombatButton
               id="divide"

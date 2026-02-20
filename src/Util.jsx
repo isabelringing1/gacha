@@ -439,18 +439,20 @@ function chance3SumGreaterThan(goal = 100) {
 
 function getLevelData(numRolls) {
   for (var i = 0; i < levelData.length; i++) {
-    if (levelData[i].rolls <= numRolls) {
-      return levelData[i];
+    if (levelData[i].rolls > numRolls) {
+      return levelData[i - 1];
     }
   }
+  console.log("ERROR: can't get for rolls " + numRolls);
 }
 
 function getLevel(numRolls) {
   for (var i = 0; i < levelData.length; i++) {
-    if (levelData[i].rolls <= numRolls) {
-      return levelData[i].level;
+    if (levelData[i].rolls > numRolls) {
+      return levelData[i].level - 1;
     }
   }
+  console.log("ERROR: can't get for rolls " + numRolls);
 }
 
 export {

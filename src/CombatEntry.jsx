@@ -7,10 +7,8 @@ export default function CombatEntry(props) {
   var digits = String(enemy)
     .split("")
     .map((digit) => Number(digit));
-  console.log(String(enemy));
 
   function onEdit(index) {
-    console.log("Index is " + index);
     setSelectingIndex(index);
   }
 

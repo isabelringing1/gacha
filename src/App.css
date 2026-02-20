@@ -672,11 +672,11 @@ button:disabled {
 
 .number-tooltip {
   width: 150px;
-  height: 150px;
+  height: 130px;
 
   border-radius: 2dvh;
   background-color: white;
-  font-size: 1.5dvh;
+  font-size: 1.8dvh;
 
   position: absolute;
   z-index: 2;
@@ -711,7 +711,6 @@ button:disabled {
   border: 0.25dvh solid black;
   border-radius: 2dvh;
   z-index: 3;
-  padding: 1dvh 1dvh;
   position: relative;
 }
 

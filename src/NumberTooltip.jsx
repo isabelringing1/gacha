@@ -1,7 +1,7 @@
 import { factors, getRarity } from "./Util";
 import Markdown from "react-markdown";
 import tail from "/tail.png";
-import { getRarityData } from "./Util";
+import { getRarityData, getLevel } from "./Util";
 
 export default function NumberTooltip(props) {
   const { n, numTimesRolled, isMobile, isCombat } = props;
@@ -53,6 +53,12 @@ export default function NumberTooltip(props) {
 
         {isCombat && (
           <div className="number-tooltip-text">
+            <b>Lvl {getLevel(numTimesRolled)}</b>
+          </div>
+        )}
+
+        {isCombat && (
+          <div className="number-tooltip-text">
             Attacks for <b>{n}</b>
           </div>
         )}
@@ -71,11 +77,6 @@ export default function NumberTooltip(props) {
             width: "100%",
           }}
         >
-          {isCombat && (
-            <div className="number-tooltip-text">
-              <b>Lvl 5</b>
-            </div>
-          )}
           <div
             className={
               "rarity-tooltip-text rarity-tooltip-text-" + getRarity(n)
@@ -87,9 +88,10 @@ export default function NumberTooltip(props) {
 
         {!isCombat && (
           <div className="number-tooltip-text">
-            Rolled {numTimesRolled ?? "0"} time{numTimesRolled == 1 ? "" : "s"}
+            <b>Lvl {getLevel(numTimesRolled)} </b>
           </div>
         )}
+        {!isCombat && <div className="number-tooltip-text">3 to upgrade</div>}
       </div>
     </div>
   );

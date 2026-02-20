@@ -63,7 +63,7 @@ export default function Combat(props) {
     if (enemyRef.current == 0) {
       setCombatState("win");
     } else {
-      showCrit();
+      showEnemyDamage();
       if (didCrit) {
         console.log(n + " crit!");
 
@@ -134,7 +134,7 @@ export default function Combat(props) {
     return Math.random() * 100 <= chance;
   }
 
-  function showCrit() {
+  function showEnemyDamage() {
     var enemyDiv = document.getElementById("enemy-number");
     enemyDiv.classList.remove("damage");
     void enemyDiv.offsetWidth;
@@ -142,6 +142,20 @@ export default function Combat(props) {
     setTimeout(() => {
       enemyDiv.classList.remove("damage");
     }, 200);
+  }
+
+  function getButtonContainerHeight() {
+    var canHeal = false;
+    var canDivide = false;
+    for (var i = 0; i < teamState.length; i++) {
+      if (teamState[i].initialShields > 0) {
+        canHeal = true;
+      }
+      if (teamState[i].canDivide) {
+        canDivide = true;
+      }
+    }
+    return (canHeal ? 4 : 0) + (canDivide ? 4 : 0);
   }
 
   return (
@@ -196,6 +210,8 @@ export default function Combat(props) {
                       onNumberDivide={onDivide}
                       combatStateRef={combatStateRef}
                       level={getLevelData(numbers[n])}
+                      numTimesRolled={numbers[n]}
+                      buttonContainerHeight={getButtonContainerHeight()}
                     />
                   ))}
               </div>
