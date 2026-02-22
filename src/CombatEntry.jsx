@@ -1,7 +1,7 @@
 import CombatEntrySlot from "./CombatEntrySlot";
 
 export default function CombatEntry(props) {
-  var { slots, enemy, setShowCombat, setSelectingIndex, selectingIndex } =
+  var { slots, enemy, setShowCombatSetup, setSelectingIndex, selectingIndex } =
     props;
 
   var digits = String(enemy)
@@ -45,7 +45,10 @@ export default function CombatEntry(props) {
                 );
               })}
             </div>
-            <button className="combat-entry-button" onClick={setShowCombat}>
+            <button
+              className="combat-entry-button"
+              onClick={() => setShowCombatSetup(true)}
+            >
               Start
             </button>
           </div>

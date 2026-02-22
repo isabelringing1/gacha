@@ -9,6 +9,7 @@ import {
   getNextCharm,
   rollEventNumber,
   rollEvent,
+  rollForCombatEnemy,
 } from "./Util";
 import "./App.css";
 
@@ -28,6 +29,7 @@ import EventBanner from "./EventBanner.jsx";
 import Event from "./Event.jsx";
 import History from "./History.jsx";
 import Combat from "./Combat.jsx";
+import CombatSetup from "./CombatSetup.jsx";
 import CombatEntry from "./CombatEntry.jsx";
 import packData from "./json/packs.json";
 
@@ -91,9 +93,11 @@ function App() {
   const [currentEvent, setCurrentEvent] = useState(null);
   const [lastPackOpened, setLastPackOpened] = useState(null);
   const [rarityHighlightUnlocked, setRarityHighlightUnlocked] = useState(false);
+  const [showCombatSetup, setShowCombatSetup] = useState(false);
   const [showCombat, setShowCombat] = useState(false);
   const [selectingIndex, setSelectingIndex] = useState(-1);
   const [combatTeam, setCombatTeam] = useState([null, null, null]);
+  const [combatState, setCombatState] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -104,6 +108,19 @@ function App() {
     document.addEventListener("keydown", onSpacePressed);
     return () => window.removeEventListener("keydown", onSpacePressed);
   }, [showingRoll, hearts, animating, bigNumberQueue]);
+
+  useEffect(() => {
+    if (!combatState) {
+      setCombatState({
+        level: 1,
+        enemy: rollForCombatEnemy(1),
+      });
+    }
+  }, [combatState]);
+
+  function getCurrentEnemy() {
+    return combatState ? combatState.enemy : 0;
+  }
 
   const onSpacePressed = (e) => {
     if (e.key == " " && !isRollButtonDisabled()) {
@@ -145,6 +162,7 @@ function App() {
     currentEvent,
     rarityHighlightUnlocked,
     combatTeam,
+    combatState,
   ]);
 
   function saveData() {
@@ -169,6 +187,7 @@ function App() {
       lastPackOpened: lastPackOpened,
       rarityHighlightUnlocked: rarityHighlightUnlocked,
       combatTeam: combatTeam,
+      combatState: combatState,
     };
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
@@ -201,6 +220,7 @@ function App() {
         setLastPackOpened(saveData.lastPackOpened);
         setRarityHighlightUnlocked(saveData.rarityHighlightUnlocked);
         setCombatTeam(saveData.combatTeam);
+        setCombatState(saveData.combatState);
 
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
@@ -682,12 +702,24 @@ function App() {
       )}
       <div className="goal-container">YOU ARE AT {getGoalPercent()}%</div>
       {!isMobile && <History rolls={rolls} />}
+      {showCombatSetup && (
+        <CombatSetup
+          slots={combatTeam}
+          setSlots={setCombatTeam}
+          combatState={combatState}
+          numbers={numbers}
+          setShowCombatSetup={setShowCombatSetup}
+          setShowCombat={setShowCombat}
+        />
+      )}
       {showCombat && (
         <Combat
           team={combatTeam}
-          enemy={500}
+          combatState={combatState}
           setShowCombat={setShowCombat}
+          setShowCombatSetup={setShowCombatSetup}
           numbers={numbers}
+          setCombatState={setCombatState}
         />
       )}
 
@@ -721,10 +753,10 @@ function App() {
             <div className="combat-entry-container">
               <CombatEntry
                 slots={combatTeam}
-                setShowCombat={setShowCombat}
+                setShowCombatSetup={setShowCombatSetup}
                 setSelectingIndex={setSelectingIndex}
                 selectingIndex={selectingIndex}
-                enemy={3030}
+                enemy={getCurrentEnemy()}
               />
             </div>
           </div>

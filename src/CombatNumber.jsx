@@ -49,7 +49,6 @@ export default function CombatNumber(props) {
     if (teamState[index].health <= 0) {
       setAlive(false);
     }
-    console.log(teamState);
   }, [teamState]);
 
   useEffect(() => {

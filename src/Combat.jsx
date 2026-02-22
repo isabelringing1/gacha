@@ -1,17 +1,24 @@
 import { useRef, useState, useEffect } from "react";
 import CombatNumber from "./CombatNumber";
-import { getRarityData, getLevelData } from "./Util";
+import { getRarityData, getLevelData, rollForCombatEnemy } from "./Util";
 import EnemyNumber from "./EnemyNumber";
 
 export default function Combat(props) {
-  const { team, enemy, setShowCombat, numbers } = props;
-  const [enemyState, setEnemyState] = useState(enemy);
-  const [combatState, setCombatState] = useState("combat");
+  const {
+    team,
+    combatState,
+    setShowCombat,
+    setShowCombatSetup,
+    setCombatState,
+    numbers,
+  } = props;
+  const [enemyState, setEnemyState] = useState(combatState.enemy);
+  const [winState, setWinState] = useState("combat");
   const [teamState, setTeamState] = useState(null);
   const [records, setRecords] = useState([]);
-  const enemyRef = useRef(enemy);
+  const enemyRef = useRef(combatState.enemy);
   const healthArrayRef = useRef();
-  const combatStateRef = useRef(combatState);
+  const winStateRef = useRef(winState);
 
   useEffect(() => {
     var newTeamState = [];
@@ -35,8 +42,8 @@ export default function Combat(props) {
   }, []);
 
   useEffect(() => {
-    combatStateRef.current = combatState;
-  }, [combatState]);
+    winStateRef.current = winState;
+  }, [winState]);
 
   useEffect(() => {
     if (!teamState) {
@@ -51,7 +58,7 @@ export default function Combat(props) {
       }
     }
     if (allHealhZero) {
-      setCombatState("lose");
+      setWinState("lose");
     }
     healthArrayRef.current = healthArray;
   }, [teamState]);
@@ -61,7 +68,7 @@ export default function Combat(props) {
     var damage = didCrit ? n * 2 : n;
     enemyRef.current = Math.max(0, Math.floor(enemyRef.current - damage));
     if (enemyRef.current == 0) {
-      setCombatState("win");
+      setWinState("win");
     } else {
       showEnemyDamage();
       if (didCrit) {
@@ -84,7 +91,7 @@ export default function Combat(props) {
     }
     enemyRef.current = Math.max(0, Math.floor(enemyRef.current / n));
     if (enemyRef.current == 0) {
-      setCombatState("win");
+      setWinState("win");
     }
   }
 
@@ -158,25 +165,53 @@ export default function Combat(props) {
     return (canHeal ? 4 : 0) + (canDivide ? 4 : 0);
   }
 
+  function onWin() {
+    setCombatState((oldCombatState) => {
+      var newCombatState = { ...oldCombatState };
+      newCombatState.level += 1;
+      newCombatState.enemy = rollForCombatEnemy(newCombatState.level);
+      if (!newCombatState.numberStates) {
+        newCombatState.numberStates = [];
+      }
+      for (var i = 0; i < teamState.length; i++) {
+        if (!newCombatState.numberStates[teamState[i].n]) {
+          newCombatState.numberStates[teamState[i].n] = {};
+        }
+        newCombatState.numberStates[teamState[i].n].shields =
+          teamState[i].shields;
+        newCombatState.numberStates[teamState[i].n].health =
+          teamState[i].health;
+      }
+      console.log(newCombatState);
+      return newCombatState;
+    });
+    setShowCombat(false);
+    setShowCombatSetup(true);
+  }
+
+  function onLose() {
+    setCombatState((oldCombatState) => {
+      var newCombatState = { ...oldCombatState };
+      newCombatState.level = 1;
+      newCombatState.enemy = rollForCombatEnemy(newCombatState.level);
+      return newCombatState;
+    });
+    setShowCombat(false);
+  }
+
   return (
     <div className="combat-container">
       <div className="combat-popup dither-bg">
         <div className="title">BATTLE</div>
         <div className="combat-popup-inner">
-          <div className="combat-outcome">
-            {combatState == "win"
-              ? "Win!"
-              : combatState == "lose"
-                ? "Lost!"
-                : ""}
-          </div>
+          <div className="title">LVL {combatState.level}</div>
           <div className="combat-view">
             <div className="enemy-section">
               <EnemyNumber
                 enemyRef={enemyRef}
                 onAttack={onEnemyAttack}
-                combatState={combatState}
-                combatStateRef={combatStateRef}
+                combatState={winState}
+                combatStateRef={winStateRef}
               />
               <div className="enemy-text-container">
                 {records.map((r, i) => {
@@ -195,6 +230,13 @@ export default function Combat(props) {
                 })}
               </div>
             </div>
+            <div className="combat-outcome">
+              {winState == "win"
+                ? "You won!"
+                : winState == "lose"
+                  ? "You lost!"
+                  : ""}
+            </div>
             <div className="player-numbers-section">
               <div className="player-numbers">
                 {teamState &&
@@ -204,11 +246,11 @@ export default function Combat(props) {
                       number={n}
                       index={i}
                       onAttack={onAttack}
-                      combatState={combatState}
+                      combatState={winState}
                       teamState={teamState}
                       setTeamState={setTeamState}
                       onNumberDivide={onDivide}
-                      combatStateRef={combatStateRef}
+                      combatStateRef={winStateRef}
                       level={getLevelData(numbers[n])}
                       numTimesRolled={numbers[n]}
                       buttonContainerHeight={getButtonContainerHeight()}
@@ -219,12 +261,9 @@ export default function Combat(props) {
           </div>
 
           <div className="combat-buttons-container">
-            {combatState == "combat" && (
-              <button onClick={() => setShowCombat(false)}>Escape</button>
-            )}
-            {(combatState == "win" || combatState == "lose") && (
-              <button onClick={() => setShowCombat(false)}>Close</button>
-            )}
+            {winState == "combat" && <button onClick={onLose}>Retreat</button>}
+            {winState == "win" && <button onClick={onWin}>Next</button>}
+            {winState == "lose" && <button onClick={onLose}>Back</button>}
           </div>
         </div>
       </div>

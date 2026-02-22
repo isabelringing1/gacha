@@ -5,6 +5,7 @@ import packData from "./json/packs.json";
 import charmData from "./json/charms.json";
 import betData from "./json/bets.json";
 import levelData from "./json/levels.json";
+import combatData from "./json/combat.json";
 
 //https://www.joshwcomeau.com/snippets/react-hooks/use-interval/
 function useInterval(callback, delay) {
@@ -455,6 +456,13 @@ function getLevel(numRolls) {
   console.log("ERROR: can't get for rolls " + numRolls);
 }
 
+function rollForCombatEnemy(level) {
+  var levelData = combatData.find((l, i) => l.level == level);
+  return Math.floor(
+    Math.random() * (levelData.max - levelData.min) + levelData.min,
+  );
+}
+
 export {
   useInterval,
   msToTime,
@@ -479,4 +487,5 @@ export {
   chance3SumGreaterThan,
   getLevelData,
   getLevel,
+  rollForCombatEnemy,
 };

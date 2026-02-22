@@ -14,6 +14,7 @@ export default function CombatEntrySlot(props) {
         } else {
           onEdit(index);
         }
+        setHover(false);
       }}
     >
       {hover && !selectingIndex && (

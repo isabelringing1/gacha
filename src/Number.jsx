@@ -15,6 +15,7 @@ function Number(props) {
     rarityHighlightUnlocked,
     selectingIndex,
     selectNumber,
+    isDead,
   } = props;
   const [hover, setHover] = useState(false);
 
@@ -51,9 +52,6 @@ function Number(props) {
     numberClass += " rolled";
   }
 
-  if (selectingIndex != -1 && numTimesRolled > 0) {
-    numberClass += " pulse-continuous";
-  }
   /*if (numTimesRolled >= n) {
     containerClass += " completed";
   }*/
@@ -111,7 +109,7 @@ function Number(props) {
           setHover(false);
         }}
       >
-        {numTimesRolled == 0 ? "?" : n}
+        {isDead ? "×" : numTimesRolled == 0 ? "?" : n}
       </div>
     </div>
   );
