@@ -10,8 +10,8 @@ export default function CombatNumber(props) {
     numTimesRolled,
     index,
     onAttack,
-    combatState,
-    combatStateRef,
+    winState,
+    winStateRef,
     teamState,
     setTeamState,
     onNumberDivide,
@@ -30,12 +30,6 @@ export default function CombatNumber(props) {
   var [hover, setHover] = useState(false);
 
   useEffect(() => {
-    lastAttackTimeRef.current = Date.now();
-
-    setAttackInterval();
-  }, []);
-
-  useEffect(() => {
     if (!teamState) {
       return;
     }
@@ -52,7 +46,11 @@ export default function CombatNumber(props) {
   }, [teamState]);
 
   useEffect(() => {
-    if (combatState != "combat" || healthRef.current == 0) {
+    if (winState == "combat") {
+      lastAttackTimeRef.current = Date.now();
+      setAttackInterval();
+    }
+    if (winState != "combat" || healthRef.current == 0) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
@@ -62,7 +60,7 @@ export default function CombatNumber(props) {
         timeoutRef.current = null;
       }
     }
-  }, [combatState]);
+  }, [winState]);
 
   useEffect(() => {
     if (timeoutRef.current) {
@@ -103,7 +101,7 @@ export default function CombatNumber(props) {
   }
 
   function onNumberAttack() {
-    if (combatStateRef.current !== "combat" || healthRef.current === 0) {
+    if (winStateRef.current !== "combat" || healthRef.current === 0) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
@@ -188,7 +186,7 @@ export default function CombatNumber(props) {
           <div
             className="combat-number-cooldown"
             style={{
-              opacity: alive && combatState == "combat" ? 1 : 0,
+              opacity: alive && winState == "combat" ? 1 : 0,
               "--animation-duration": number / 10 + "s",
             }}
           ></div>

@@ -10,12 +10,10 @@ function Number(props) {
     data,
     isHighlighted,
     isRolled,
-    showingRoll,
-    bigNumberQueue,
     rarityHighlightUnlocked,
     selectingIndex,
     selectNumber,
-    isDead,
+    combatState,
   } = props;
   const [hover, setHover] = useState(false);
 
@@ -23,6 +21,11 @@ function Number(props) {
   var numTimesRolled = 0;
   var rarityData = getRarityData(n);
   var total = 55; // rn this maxes out the levels. subject to change
+  var isDead =
+    combatState &&
+    combatState.numberStates &&
+    combatState.numberStates[n] &&
+    combatState.numberStates[n].health <= 0;
 
   if (data) {
     numTimesRolled = data;
@@ -64,6 +67,14 @@ function Number(props) {
     return scaled;
   }
 
+  if (selectingIndex != -1 && numTimesRolled > 0) {
+    numberClass += " pulse-continuous";
+  }
+
+  if (isDead && numTimesRolled > 0) {
+    numberClass += " num-dead";
+  }
+
   return (
     <div
       className={containerClass}
@@ -76,6 +87,7 @@ function Number(props) {
       {hover && numTimesRolled > 0 && (
         <NumberTooltip n={n} numTimesRolled={numTimesRolled} />
       )}
+      {isDead && <div className="num-dead-x">×</div>}
 
       <div
         className={numberClass}
@@ -109,7 +121,7 @@ function Number(props) {
           setHover(false);
         }}
       >
-        {isDead ? "×" : numTimesRolled == 0 ? "?" : n}
+        {numTimesRolled == 0 ? "?" : n}
       </div>
     </div>
   );

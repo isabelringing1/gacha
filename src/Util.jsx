@@ -56,47 +56,6 @@ function msToTime(
   return strtime;
 }
 
-/*const roll = (
-  multiple = 1,
-  min = 0,
-  max = 0,
-  modulo = 0,
-  remainder = 0,
-  pool = [],
-  drop_table = data.chance,
-) => {
-  var totalSum = 0;
-  min = min == 0 ? 1 : min;
-  max = max == 0 ? 100 : max;
-  for (var n in data.drop_rates) {
-    n = parseInt(n);
-    if (!isNumberValid(n, multiple, min, max, modulo, remainder, pool)) {
-      continue;
-    }
-    var rarity = data.drop_rates[n];
-    var dropRate = drop_table[rarity];
-    totalSum += dropRate;
-  }
-
-  var random = Math.random() * totalSum;
-
-  var counter = 0;
-  for (var n in data.drop_rates) {
-    n = parseInt(n);
-    if (!isNumberValid(n, multiple, min, max, modulo, remainder, pool)) {
-      continue;
-    }
-
-    var rarity = data.drop_rates[n];
-    var dropRate = drop_table[rarity];
-    counter += dropRate;
-    if (counter >= random) {
-      console.log(n, getRarity(n));
-      return parseInt(n);
-    }
-  }
-};*/
-
 const roll = (
   multiple = 1,
   min = 0,

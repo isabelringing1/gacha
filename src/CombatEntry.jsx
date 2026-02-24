@@ -1,56 +1,24 @@
-import CombatEntrySlot from "./CombatEntrySlot";
-
 export default function CombatEntry(props) {
-  var { slots, enemy, setShowCombatSetup, setSelectingIndex, selectingIndex } =
-    props;
+  var { enemy, setShowCombat } = props;
 
-  var digits = String(enemy)
-    .split("")
-    .map((digit) => Number(digit));
-
-  function onEdit(index) {
-    setSelectingIndex(index);
-  }
+  var letters = String("ENTER >").split("");
 
   return (
     <div className={"combat-entry-outer dither-bg"}>
       <div className="title">BATTLE</div>
-      <div className="combat-entry-inner">
+      <div className="combat-entry-inner" onClick={() => setShowCombat(true)}>
         <div className="combat-entry-inner-inner">
           <div className="combat-entry-big-num">
-            {digits.map((digit, i) => {
+            {letters.map((l, i) => {
               return (
                 <div
                   id={"combat-entry-big-num-" + i}
                   key={"combat-entry-big-num-" + i}
                 >
-                  {digit}
+                  {l}
                 </div>
               );
             })}
-          </div>
-          <div className="combat-entry-info">
-            <div className="combat-entry-text">TEAM</div>
-
-            <div className="combat-slots-container">
-              {slots.map((n, i) => {
-                return (
-                  <CombatEntrySlot
-                    key={"slot-" + i}
-                    number={n}
-                    index={i}
-                    onEdit={onEdit}
-                    selectingIndex={selectingIndex == i}
-                  />
-                );
-              })}
-            </div>
-            <button
-              className="combat-entry-button"
-              onClick={() => setShowCombatSetup(true)}
-            >
-              Start
-            </button>
           </div>
         </div>
       </div>

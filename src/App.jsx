@@ -29,7 +29,6 @@ import EventBanner from "./EventBanner.jsx";
 import Event from "./Event.jsx";
 import History from "./History.jsx";
 import Combat from "./Combat.jsx";
-import CombatSetup from "./CombatSetup.jsx";
 import CombatEntry from "./CombatEntry.jsx";
 import packData from "./json/packs.json";
 
@@ -93,7 +92,6 @@ function App() {
   const [currentEvent, setCurrentEvent] = useState(null);
   const [lastPackOpened, setLastPackOpened] = useState(null);
   const [rarityHighlightUnlocked, setRarityHighlightUnlocked] = useState(false);
-  const [showCombatSetup, setShowCombatSetup] = useState(false);
   const [showCombat, setShowCombat] = useState(false);
   const [selectingIndex, setSelectingIndex] = useState(-1);
   const [combatTeam, setCombatTeam] = useState([null, null, null]);
@@ -633,7 +631,9 @@ function App() {
     >
       <Debug
         rolls={rolls}
+        setRolls={setRolls}
         numbers={numbers}
+        setNumbers={setNumbers}
         setHearts={setHearts}
         setDiamonds={setDiamonds}
         rollNumber={rollNumber}
@@ -700,32 +700,33 @@ function App() {
       {currentEvent && currentEvent.isNew && bigNumberQueue.length == 0 && (
         <EventBanner event={currentEvent} setCurrentEvent={setCurrentEvent} />
       )}
-      <div className="goal-container">YOU ARE AT {getGoalPercent()}%</div>
+      <div className="goal-container">
+        {showCombat
+          ? "YOU HAVE CLEARED 10%"
+          : "YOU ARE AT " + getGoalPercent() + "%"}
+      </div>
       {!isMobile && <History rolls={rolls} />}
-      {showCombatSetup && (
-        <CombatSetup
-          slots={combatTeam}
-          setSlots={setCombatTeam}
-          combatState={combatState}
-          numbers={numbers}
-          setShowCombatSetup={setShowCombatSetup}
-          setShowCombat={setShowCombat}
-        />
-      )}
+
       {showCombat && (
         <Combat
           team={combatTeam}
+          setTeam={setCombatTeam}
           combatState={combatState}
           setShowCombat={setShowCombat}
-          setShowCombatSetup={setShowCombatSetup}
           numbers={numbers}
           setCombatState={setCombatState}
+          setSelectingIndex={setSelectingIndex}
+          selectingIndex={selectingIndex}
         />
       )}
 
       <div id="columns">
         {!isMobile && (
-          <div id="column-1">
+          <div
+            className="column"
+            id="column-1"
+            style={{ opacity: showCombat ? 0 : 1 }}
+          >
             {packShopState != "hidden" && (
               <PackShop
                 packShopState={packShopState}
@@ -752,17 +753,17 @@ function App() {
             )}
             <div className="combat-entry-container">
               <CombatEntry
-                slots={combatTeam}
-                setShowCombatSetup={setShowCombatSetup}
-                setSelectingIndex={setSelectingIndex}
-                selectingIndex={selectingIndex}
+                setShowCombat={setShowCombat}
                 enemy={getCurrentEnemy()}
               />
             </div>
           </div>
         )}
-        <div id="column-2">
-          <div id="numbers-grid">
+        <div className="column" id="column-2">
+          <div
+            id="numbers-grid"
+            style={{ marginRight: showCombat ? "40vw" : 0 }}
+          >
             {Array.from({ length: 100 }, (_, i) => i + 1).map((n) => {
               return (
                 <Number
@@ -773,11 +774,10 @@ function App() {
                     highlightedNumber === n || highlightedNumbers.includes(n)
                   }
                   isRolled={rolledNumber === n}
-                  showingRoll={showingRoll === n}
-                  bigNumberQueue={bigNumberQueue}
                   rarityHighlightUnlocked={rarityHighlightUnlocked}
                   selectingIndex={selectingIndex}
                   selectNumber={selectNumber}
+                  combatState={combatState}
                 />
               );
             })}
@@ -801,7 +801,10 @@ function App() {
               )}
             </div>
           )}
-          <div className="wallet-container">
+          <div
+            className="wallet-container"
+            style={{ opacity: showCombat ? 0 : 1 }}
+          >
             <div className="hearts-container">
               <div>
                 &hearts;&#xfe0e;: {hearts}/{maxHearts}
@@ -823,7 +826,11 @@ function App() {
           </div>
         </div>
         {!isMobile && (
-          <div id="column-3">
+          <div
+            className="column"
+            id="column-3"
+            style={{ opacity: showCombat ? 0 : 1 }}
+          >
             {charmShopState != "hidden" && (
               <CharmShop
                 diamonds={diamonds}
@@ -905,6 +912,7 @@ function App() {
         setHoveredPack={setHoveredPack}
         isRollButtonDisabled={isRollButtonDisabled}
         lastPackOpened={lastPackOpened}
+        showCombat={showCombat}
       />
     </div>
   );

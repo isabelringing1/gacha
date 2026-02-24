@@ -57,6 +57,7 @@ export default function MenusContainer(props) {
     setHoveredPack,
     isRollButtonDisabled,
     lastPackOpened,
+    showCombat,
   } = props;
 
   const [touchStart, setTouchStart] = useState(null);
@@ -94,6 +95,7 @@ export default function MenusContainer(props) {
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
+      style={{ opacity: showCombat ? 0 : 1 }}
     >
       {isMobile && (
         <div className="dots-container">

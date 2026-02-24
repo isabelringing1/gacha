@@ -24,14 +24,14 @@
     "level": 3,
     "rolls": 6,
     "shields": 1,
-    "canDivide": true,
+    "canDivide": false,
     "critBoost": 10
   },
   {
     "level": 4,
     "rolls": 10,
     "shields": 2,
-    "canDivide": true,
+    "canDivide": false,
     "critBoost": 15
   },
   {

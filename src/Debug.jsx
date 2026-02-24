@@ -1,11 +1,13 @@
 import { useRef, useState, useEffect } from "react";
-import { getRarity, rollForPack, chance3SumGreaterThan } from "./Util";
+import { rollMultiple, chance3SumGreaterThan } from "./Util";
 import { setDragLock, time } from "motion";
 
 const Debug = (props) => {
   const {
     rolls,
     numbers,
+    setRolls,
+    setNumbers,
     setHearts,
     rollNumber,
     generatePackShopEntry,
@@ -21,7 +23,7 @@ const Debug = (props) => {
     unlockCharmShop,
     sportsbookState,
     setSportsbookState,
-    unlockSportsbook
+    unlockSportsbook,
   } = props;
   const [showDebug, setShowDebug] = useState(false);
   const heartsInputRef = useRef(null);
@@ -29,6 +31,7 @@ const Debug = (props) => {
   const numberInputRef = useRef(null);
   const timeMultiplierRef = useRef(null);
   const chances3Ref = useRef(null);
+  const simulateRef = useRef(null);
 
   var isLocalHost =
     location.hostname === "localhost" || location.hostname === "127.0.0.1";
@@ -45,6 +48,17 @@ const Debug = (props) => {
     });
   }, []);
 
+  function simulateRolls(numRolls) {
+    var newRolls = rollMultiple(numRolls);
+    var newNumbers = { ...numbers };
+    for (var i = 0; i < newRolls.length; i++) {
+      var n = rolls[i];
+      newNumbers[n] = newNumbers[n] ? newNumbers[n] + 1 : 1;
+    }
+    setNumbers(newNumbers);
+    setRolls([...newRolls, ...rolls]);
+  }
+
   return (
     showDebug && (
       <div id="debug">
@@ -56,7 +70,7 @@ const Debug = (props) => {
               console.log(chance3SumGreaterThan(chances3Ref.current.value));
             }}
           >
-            Calculate sum > x
+            Calculate sum grt. x
           </button>
         </div>
 
@@ -64,38 +78,37 @@ const Debug = (props) => {
           className="debug-button"
           onClick={() => {
             if (sportsbookState == "hidden") {
-              setSportsbookState("locked")
-            }
-            else if (sportsbookState == "locked") {
-              unlockSportsbook(true)
+              setSportsbookState("locked");
+            } else if (sportsbookState == "locked") {
+              unlockSportsbook(true);
             }
           }}
         >
-          {sportsbookState == "hidden" ? "Show Sportsbook" : "Unlock Sportsbook"}
+          {sportsbookState == "hidden"
+            ? "Show Sportsbook"
+            : "Unlock Sportsbook"}
         </button>
-       
-         <button
+
+        <button
           className="debug-button"
           onClick={() => {
             if (charmShopState == "hidden") {
-              setCharmShopState("locked")
-            }
-            else if (charmShopState == "locked") {
-              unlockCharmShop(true)
+              setCharmShopState("locked");
+            } else if (charmShopState == "locked") {
+              unlockCharmShop(true);
             }
           }}
         >
           {charmShopState == "hidden" ? "Show Charm Shop" : "Unlock Charm Shop"}
         </button>
 
-         <button
+        <button
           className="debug-button"
           onClick={() => {
             if (packShopState == "hidden") {
-              setPackShopState("locked")
-            }
-            else if (packShopState == "locked") {
-              unlockPackShop(true)
+              setPackShopState("locked");
+            } else if (packShopState == "locked") {
+              unlockPackShop(true);
             }
           }}
         >
@@ -173,6 +186,18 @@ const Debug = (props) => {
         >
           Generate Event
         </button>
+
+        <div>
+          <input type="number" ref={simulateRef} />
+          <button
+            className="simulate-button"
+            onClick={() => {
+              simulateRolls(parseInt(simulateRef.current.value));
+            }}
+          >
+            Simulate Rolls
+          </button>
+        </div>
 
         <button
           className="debug-button"

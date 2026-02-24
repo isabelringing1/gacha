@@ -2,25 +2,31 @@ import { time } from "motion";
 import { useEffect, useRef, useState } from "react";
 
 export default function EnemyNumber(props) {
-  const { enemyRef, onAttack, combatState, combatStateRef } = props;
+  const { isSetup, enemyRef, onAttack, winState, winStateRef } = props;
 
   var timeoutRef = useRef(null);
 
   useEffect(() => {
-    timeoutRef.current = setTimeout(() => {
-      onEnemyAttack();
-    }, getRandomAttackInterval());
-  }, []);
+    if (isSetup) {
+      return;
+    }
 
-  useEffect(() => {
-    if (combatState != "combat" && timeoutRef.current) {
+    if (winState == "combat") {
+      console.log("Combat, setting attack");
+      timeoutRef.current = setTimeout(() => {
+        onEnemyAttack();
+      }, getRandomAttackInterval());
+    }
+
+    if (winState != "combat" && timeoutRef.current) {
+      console.log("clearing attack");
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
-  }, [combatState]);
+  }, [isSetup, winState]);
 
   function onEnemyAttack() {
-    if (combatStateRef.current != "combat") {
+    if (winStateRef.current != "combat") {
       return;
     }
     onAttack();
@@ -32,8 +38,9 @@ export default function EnemyNumber(props) {
   }
   return (
     <div
-      className={"enemy-number " + (combatState == "win" ? " dead" : "")}
+      className={"enemy-number " + (winState == "win" ? " dead" : "")}
       id="enemy-number"
+      style={{ opacity: isSetup ? 0 : 1 }}
     >
       {enemyRef.current.toLocaleString()}
     </div>
