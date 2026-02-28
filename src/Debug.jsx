@@ -24,6 +24,7 @@ const Debug = (props) => {
     sportsbookState,
     setSportsbookState,
     unlockSportsbook,
+    setCombatUnlocked,
   } = props;
   const [showDebug, setShowDebug] = useState(false);
   const heartsInputRef = useRef(null);
@@ -113,6 +114,15 @@ const Debug = (props) => {
           }}
         >
           {packShopState == "hidden" ? "Show Pack Shop" : "Unlock Pack Shop"}
+        </button>
+
+        <button
+          className="debug-button"
+          onClick={() => {
+            setCombatUnlocked(true);
+          }}
+        >
+          Unlock Combat
         </button>
 
         <div>

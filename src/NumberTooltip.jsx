@@ -4,7 +4,7 @@ import tail from "/tail.png";
 import { getRarityData, getLevel } from "./Util";
 
 export default function NumberTooltip(props) {
-  const { n, numTimesRolled, isMobile, isCombat } = props;
+  const { n, numTimesRolled, isMobile, isCombat, attackNumber } = props;
   var cn = "number-tooltip dither-bg";
   var cnTail = "tooltip-tail number-tail";
 
@@ -59,7 +59,7 @@ export default function NumberTooltip(props) {
 
         {isCombat && (
           <div className="number-tooltip-text">
-            Attacks for <b>{n}</b>
+            Attacks for <b>{attackNumber}</b>
           </div>
         )}
 

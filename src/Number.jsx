@@ -14,6 +14,7 @@ function Number(props) {
     selectingIndex,
     selectNumber,
     combatState,
+    showCombat,
   } = props;
   const [hover, setHover] = useState(false);
 
@@ -85,9 +86,13 @@ function Number(props) {
       }}
     >
       {hover && numTimesRolled > 0 && (
-        <NumberTooltip n={n} numTimesRolled={numTimesRolled} />
+        <NumberTooltip
+          n={n}
+          numTimesRolled={numTimesRolled}
+          isCombat={showCombat}
+        />
       )}
-      {isDead && <div className="num-dead-x">×</div>}
+      {isDead && showCombat && <div className="num-dead-x">×</div>}
 
       <div
         className={numberClass}

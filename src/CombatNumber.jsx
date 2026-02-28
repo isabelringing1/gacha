@@ -12,8 +12,8 @@ export default function CombatNumber(props) {
     onAttack,
     winState,
     winStateRef,
-    teamState,
-    setTeamState,
+    combatState,
+    setCombatState,
     onNumberDivide,
     level,
     buttonContainerHeight,
@@ -30,24 +30,23 @@ export default function CombatNumber(props) {
   var [hover, setHover] = useState(false);
 
   useEffect(() => {
-    if (!teamState) {
+    if (!combatState) {
       return;
     }
-    if (healthRef.current == null) {
-      // first set
-      onNumberAttack();
-    }
-    var s = teamState[index];
+
+    var s = combatState.numberStates[number];
     healthRef.current = s.health;
-    setBlock(teamState[index].block);
-    if (teamState[index].health <= 0) {
+    setBlock(combatState.numberStates[number].block);
+    if (combatState.numberStates[number].health <= 0) {
       setAlive(false);
     }
-  }, [teamState]);
+  }, [combatState]);
 
   useEffect(() => {
     if (winState == "combat") {
       lastAttackTimeRef.current = Date.now();
+      console.log(winState, healthRef.current);
+      onNumberAttack(); //uncomment if you don't want numbers to attack at once
       setAttackInterval();
     }
     if (winState != "combat" || healthRef.current == 0) {
@@ -60,6 +59,10 @@ export default function CombatNumber(props) {
         timeoutRef.current = null;
       }
     }
+    return () => {
+      clearInterval(intervalRef.current);
+      clearTimeout(timeoutRef.current);
+    };
   }, [winState]);
 
   useEffect(() => {
@@ -101,7 +104,7 @@ export default function CombatNumber(props) {
   }
 
   function onNumberAttack() {
-    if (winStateRef.current !== "combat" || healthRef.current === 0) {
+    if (winState !== "combat" || healthRef.current === 0) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
@@ -109,7 +112,7 @@ export default function CombatNumber(props) {
       return;
     }
     var numberDiv = document.getElementById("combat-number-" + index);
-    onAttack(number);
+    onAttack(healthRef.current);
 
     lastAttackTimeRef.current = Date.now();
 
@@ -119,13 +122,16 @@ export default function CombatNumber(props) {
   }
 
   function onHeal() {
-    setTeamState((prevTeamState) => {
-      var newTeamState = [...prevTeamState];
-      if (newTeamState[index].shields < newTeamState[index].initialShields) {
-        newTeamState[index].shields += 1;
+    setCombatState((prevCombatState) => {
+      var newCombatState = { ...prevCombatState };
+      if (
+        newCombatState.numberStates[number].shields <
+        newCombatState.numberStates[number].initialShields
+      ) {
+        newCombatState.numberStates[number].shields += 1;
       }
 
-      return newTeamState;
+      return newCombatState;
     });
   }
 
@@ -134,35 +140,41 @@ export default function CombatNumber(props) {
   }
 
   function onBlock() {
-    if (teamState[index].block) {
+    if (combatState.numberStates[number].block) {
       return;
     }
-    setTeamState((prevTeamState) => {
-      var newTeamState = [...prevTeamState];
-      newTeamState[index].block = true;
-      return newTeamState;
+    setCombatState((prevCombatState) => {
+      var newCombatState = { ...prevCombatState };
+      newCombatState.numberStates[number].block = true;
+      return newCombatState;
     });
+
     setTimeout(() => {
-      setTeamState((prevTeamState) => {
-        var newTeamState = [...prevTeamState];
-        newTeamState[index].block = false;
-        return newTeamState;
+      setCombatState((prevCombatState) => {
+        var newCombatState = { ...prevCombatState };
+        newCombatState.numberStates[number].block = false;
+        return newCombatState;
       });
     }, 3000);
   }
 
   function canHeal() {
-    return alive && teamState[index].shields < teamState[index].initialShields;
+    return (
+      alive &&
+      combatState.numberStates[number].shields <
+        combatState.numberStates[number].initialShields
+    );
   }
 
   return (
-    teamState && (
-      <div className="combat-number-container">
+    combatState && (
+      <div className="combat-number-container walk-forward">
         {hover && (
           <NumberTooltip
             n={number}
             isCombat={true}
             numTimesRolled={numTimesRolled}
+            attackNumber={healthRef.current}
           />
         )}
 
@@ -177,45 +189,54 @@ export default function CombatNumber(props) {
         >
           <div
             className={
-              "combat-number " + (teamState[index].health == 0 ? " dead" : "")
+              "combat-number " +
+              (combatState.numberStates[number].health == 0 ? " dead" : "")
             }
             id={"combat-number-" + index}
           >
-            {teamState[index].health}
+            {combatState.numberStates[number].health}
           </div>
-          <div
-            className="combat-number-cooldown"
-            style={{
-              opacity: alive && winState == "combat" ? 1 : 0,
-              "--animation-duration": number / 10 + "s",
-            }}
-          ></div>
+          {winState == "combat" && (
+            <div
+              className="combat-number-cooldown"
+              style={{
+                opacity: alive && winState == "combat" ? 1 : 0,
+                "--animation-duration": number / 10 + "s",
+              }}
+            ></div>
+          )}
 
-          <div className="armor-container">
-            {Array(teamState[index].initialShields)
-              .fill(0)
-              .map((_, i) => {
-                return (
-                  <div
-                    className="armor"
-                    key={"armor-" + index + "-" + i}
-                    style={{
-                      opacity: i < teamState[index].shields ? 1 : 0.2,
-                    }}
-                  >
-                    <img src={shield} className="shield-img" />
-                  </div>
-                );
-              })}
-          </div>
+          {winState != "precombat" && (
+            <div className="armor-container">
+              {Array(combatState.numberStates[number].initialShields)
+                .fill(0)
+                .map((_, i) => {
+                  return (
+                    <div
+                      className="armor"
+                      key={"armor-" + index + "-" + i}
+                      style={{
+                        opacity:
+                          i < combatState.numberStates[number].shields
+                            ? 1
+                            : 0.2,
+                      }}
+                    >
+                      <img src={shield} className="shield-img" />
+                    </div>
+                  );
+                })}
+            </div>
+          )}
           <div className="block" style={{ opacity: block ? 1 : 0 }}></div>
         </div>
 
-        <div
-          className="combat-number-button-container"
-          style={{ height: buttonContainerHeight + "dvh" }}
-        >
-          {/*<CombatButton
+        {winState != "precombat" && (
+          <div
+            className="combat-number-button-container"
+            style={{ height: buttonContainerHeight + "dvh" }}
+          >
+            {/*<CombatButton
             id="block"
             text="Block"
             cooldown={6}
@@ -223,27 +244,28 @@ export default function CombatNumber(props) {
             clickAction={onBlock}
             isDisabled={!alive}
           />*/}
-          {teamState[index].initialShields > 0 && (
-            <CombatButton
-              id="heal"
-              text="Heal"
-              cooldown={3}
-              startActive={true}
-              clickAction={onHeal}
-              isDisabled={!canHeal()}
-            />
-          )}
-          {level.canDivide && (
-            <CombatButton
-              id="divide"
-              text="Divide"
-              cooldown={5 + number / 2}
-              startActive={false}
-              clickAction={onDivide}
-              isDisabled={!alive}
-            />
-          )}
-        </div>
+            {combatState.numberStates[number].initialShields > 0 && (
+              <CombatButton
+                id="heal"
+                text="Heal"
+                cooldown={3}
+                startActive={true}
+                clickAction={onHeal}
+                isDisabled={!canHeal()}
+              />
+            )}
+            {level.canDivide && (
+              <CombatButton
+                id="divide"
+                text="Divide"
+                cooldown={5 + number / 2}
+                startActive={false}
+                clickAction={onDivide}
+                isDisabled={!alive}
+              />
+            )}
+          </div>
+        )}
       </div>
     )
   );

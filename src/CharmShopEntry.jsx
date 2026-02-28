@@ -1,7 +1,7 @@
 export default function CharmShopEntry(props) {
-  const { shopEntry, buyCharm, diamonds, index } = props;
+  const { shopEntry, buyCharm, clubs, index } = props;
   function canBuy() {
-    return diamonds >= shopEntry.cost;
+    return clubs >= shopEntry.cost;
   }
 
   return (
@@ -15,7 +15,7 @@ export default function CharmShopEntry(props) {
             className="charm-shop-entry-buy-button"
             disabled={!canBuy()}
           >
-            ♦ {shopEntry.cost}
+            &#x2663;&#xfe0e; {shopEntry.cost}
           </button>
         </div>
       </div>

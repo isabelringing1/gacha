@@ -1,6 +1,8 @@
 import { useState } from "react";
+import NumberTooltip from "./NumberTooltip";
+
 export default function CombatEntrySlot(props) {
-  var { index, number, onEdit, selectingIndex } = props;
+  var { index, number, onEdit, selectingIndex, numTimesRolled, isDead } = props;
 
   var [hover, setHover] = useState(false);
   return (
@@ -20,8 +22,16 @@ export default function CombatEntrySlot(props) {
       {hover && !selectingIndex && (
         <div className="combat-slot-hover-view">EDIT</div>
       )}
+      {hover && number && (
+        <NumberTooltip
+          n={number}
+          isCombat={true}
+          numTimesRolled={numTimesRolled}
+        />
+      )}
       {selectingIndex && <div className="combat-slot-hover-view">PICK</div>}
       {number ? number : ""}
+      {isDead && <div className="num-dead-x">×</div>}
     </div>
   );
 }

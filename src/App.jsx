@@ -35,6 +35,8 @@ import packData from "./json/packs.json";
 import arrow from "/arrow.png";
 var hearts = "&hearts;&#xfe0e;";
 var diamonds = "&diams;&#xfe0e;";
+var club = "&#x2663;&#xfe0e;";
+var spade = "&#x2660;&#xfe0e;";
 
 import {
   REFRESH_TIME,
@@ -94,27 +96,20 @@ function App() {
   const [rarityHighlightUnlocked, setRarityHighlightUnlocked] = useState(false);
   const [showCombat, setShowCombat] = useState(false);
   const [selectingIndex, setSelectingIndex] = useState(-1);
-  const [combatTeam, setCombatTeam] = useState([null, null, null]);
+  const [combatUnlocked, setCombatUnlocked] = useState(false);
   const [combatState, setCombatState] = useState(null);
+  const [combatHighScore, setCombatHighScore] = useState(null);
+  const [clubs, setClubs] = useState(0);
+  const [spades, setSpades] = useState(0);
 
   useEffect(() => {
     loadData();
   }, []);
 
   useEffect(() => {
-    console.log("adding");
     document.addEventListener("keydown", onSpacePressed);
     return () => window.removeEventListener("keydown", onSpacePressed);
   }, [showingRoll, hearts, animating, bigNumberQueue]);
-
-  useEffect(() => {
-    if (!combatState) {
-      setCombatState({
-        level: 1,
-        enemy: rollForCombatEnemy(1),
-      });
-    }
-  }, [combatState]);
 
   function getCurrentEnemy() {
     return combatState ? combatState.enemy : 0;
@@ -131,8 +126,11 @@ function App() {
     if (rolls.length >= 3 && packShopState == "hidden") {
       setPackShopState("locked");
     }
+    if (rolls.length >= 10 && !combatUnlocked) {
+      setCombatUnlocked(true);
+    }
     if (
-      rolls.length >= 11 &&
+      rolls.length >= 15 &&
       bigNumberQueue.length == 0 &&
       charmShopState == "hidden"
     ) {
@@ -155,12 +153,15 @@ function App() {
     timeMultiplier,
     diamonds,
     hearts,
+    spades,
+    clubs,
     maxHearts,
     mobileMenuIndex,
     currentEvent,
     rarityHighlightUnlocked,
-    combatTeam,
     combatState,
+    combatHighScore,
+    combatUnlocked,
   ]);
 
   function saveData() {
@@ -184,8 +185,11 @@ function App() {
       currentEvent: currentEvent,
       lastPackOpened: lastPackOpened,
       rarityHighlightUnlocked: rarityHighlightUnlocked,
-      combatTeam: combatTeam,
       combatState: combatState,
+      combatHighScore: combatHighScore,
+      combatUnlocked: combatUnlocked,
+      spades: spades,
+      clubs: clubs,
     };
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
@@ -217,8 +221,11 @@ function App() {
         setCurrentEvent(saveData.currentEvent);
         setLastPackOpened(saveData.lastPackOpened);
         setRarityHighlightUnlocked(saveData.rarityHighlightUnlocked);
-        setCombatTeam(saveData.combatTeam);
         setCombatState(saveData.combatState);
+        setCombatUnlocked(saveData.combatUnlocked);
+        setCombatHighScore(saveData.combatHighScore);
+        setSpades(saveData.spades);
+        setClubs(saveData.clubs);
 
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
@@ -241,6 +248,13 @@ function App() {
         return null;
       }
       return saveData;
+    } else {
+      setCombatState({
+        level: 1,
+        enemy: rollForCombatEnemy(1),
+        team: [null, null, null],
+        numberStates: {},
+      });
     }
     return null;
   }
@@ -253,6 +267,10 @@ function App() {
       setNextHeartRefreshTime(nextHeartRefreshTime + REFRESH_TIME);
     }
   };
+
+  useEffect(() => {
+    console.log("Combat state: ", combatState);
+  }, [combatState]);
 
   const rollNumber = (e, cheatNumber = -1) => {
     if (hearts <= 0 && cheatNumber == -1) {
@@ -530,7 +548,7 @@ function App() {
   };
 
   const buyCharm = (shopEntry, index = 0) => {
-    setDiamonds(diamonds - shopEntry.cost);
+    setClubs(clubs - shopEntry.cost);
     var newPurchasedCharms = [...purchasedCharms, shopEntry.id];
     if (shopEntry.category == "speed-up") {
       setTimeMultiplier(shopEntry.new_time_multiplier);
@@ -607,13 +625,29 @@ function App() {
   };
 
   function selectNumber(n, i) {
-    setCombatTeam((prevCombatTeam) => {
-      var newCombatTeam = [...prevCombatTeam];
-      newCombatTeam[i] = n;
-      console.log(prevCombatTeam, newCombatTeam);
-      return newCombatTeam;
+    setCombatState((prevCombatState) => {
+      var newCombatState = { ...prevCombatState };
+      newCombatState.team[i] = n;
+      return newCombatState;
     });
     setSelectingIndex(-1);
+  }
+
+  function claimRewards(rewards) {
+    for (const [id, amt] of Object.entries(rewards)) {
+      if (id == "diamonds") {
+        setDiamonds(diamonds + amt);
+      }
+      if (id == "hearts") {
+        setHearts(hearts + amt);
+      }
+      if (id == "spades") {
+        setSpades(spades + amt);
+      }
+      if (id == "clubs") {
+        setClubs(clubs + amt);
+      }
+    }
   }
 
   return (
@@ -650,6 +684,7 @@ function App() {
         sportsbookState={sportsbookState}
         setSportsbookState={setSportsbookState}
         unlockSportsbook={unlockSportsbook}
+        setCombatUnlocked={setCombatUnlocked}
       />
       {showOutOfHearts && (
         <OutOfHeartsContainer
@@ -708,15 +743,28 @@ function App() {
       {!isMobile && <History rolls={rolls} />}
 
       {showCombat && (
+        <button
+          className="combat-back-button"
+          onClick={() => {
+            setShowCombat(false);
+          }}
+        >
+          {"<"}
+        </button>
+      )}
+      {showCombat && (
         <Combat
-          team={combatTeam}
-          setTeam={setCombatTeam}
           combatState={combatState}
           setShowCombat={setShowCombat}
           numbers={numbers}
           setCombatState={setCombatState}
           setSelectingIndex={setSelectingIndex}
           selectingIndex={selectingIndex}
+          claimRewards={claimRewards}
+          setDiamonds={setDiamonds}
+          diamonds={diamonds}
+          highScore={combatHighScore}
+          setHighScore={setCombatHighScore}
         />
       )}
 
@@ -751,12 +799,17 @@ function App() {
                 lastPackOpened={lastPackOpened}
               />
             )}
-            <div className="combat-entry-container">
-              <CombatEntry
-                setShowCombat={setShowCombat}
-                enemy={getCurrentEnemy()}
-              />
-            </div>
+            {currentEvent && !currentEvent.isNew && (
+              <div className="event-container">
+                <Event
+                  event={currentEvent}
+                  setCurrentEvent={setCurrentEvent}
+                  isBanner={false}
+                  rollForEvent={rollForEvent}
+                  isRollButtonDisabled={isRollButtonDisabled}
+                />
+              </div>
+            )}
           </div>
         )}
         <div className="column" id="column-2">
@@ -778,6 +831,7 @@ function App() {
                   selectingIndex={selectingIndex}
                   selectNumber={selectNumber}
                   combatState={combatState}
+                  showCombat={showCombat}
                 />
               );
             })}
@@ -805,23 +859,33 @@ function App() {
             className="wallet-container"
             style={{ opacity: showCombat ? 0 : 1 }}
           >
-            <div className="hearts-container">
-              <div>
-                &hearts;&#xfe0e;: {hearts}/{maxHearts}
-              </div>
-              {!isMobile && nextHeartRefreshTime && (
-                <div className="next-heart-container">
-                  Next &hearts;&#xfe0e; in{" "}
-                  <Timer
-                    endTime={nextHeartRefreshTime}
-                    onTimerEnd={refreshHearts}
-                  />
+            <div>
+              <div className="hearts-container">
+                <div>
+                  &hearts;&#xfe0e; {hearts}/{maxHearts}{" "}
+                  {!isMobile && nextHeartRefreshTime && (
+                    <span className="next-heart-container">
+                      next &hearts;&#xfe0e; in{" "}
+                      <Timer
+                        endTime={nextHeartRefreshTime}
+                        onTimerEnd={refreshHearts}
+                      />
+                    </span>
+                  )}
                 </div>
-              )}
-            </div>
+              </div>
 
-            <div id="diamonds-container">
-              &diams;&#xfe0e; {diamonds.toLocaleString()}
+              <div id="diamonds-container">
+                &diams;&#xfe0e; {diamonds.toLocaleString()}
+              </div>
+            </div>
+            <div>
+              <div id="clubs-container">
+                &#x2663;&#xfe0e; {clubs.toLocaleString()}
+              </div>
+              <div id="spades-container">
+                &#x2660;&#xfe0e; {spades.toLocaleString()}
+              </div>
             </div>
           </div>
         </div>
@@ -833,7 +897,7 @@ function App() {
           >
             {charmShopState != "hidden" && (
               <CharmShop
-                diamonds={diamonds}
+                clubs={clubs}
                 charmShopEntries={charmShopEntries}
                 buyCharm={buyCharm}
                 charmShopState={charmShopState}
@@ -855,14 +919,11 @@ function App() {
                 unlockSportsbook={unlockSportsbook}
               />
             )}
-            {currentEvent && !currentEvent.isNew && (
-              <div className="event-container">
-                <Event
-                  event={currentEvent}
-                  setCurrentEvent={setCurrentEvent}
-                  isBanner={false}
-                  rollForEvent={rollForEvent}
-                  isRollButtonDisabled={isRollButtonDisabled}
+            {combatUnlocked && (
+              <div className="combat-entry-container">
+                <CombatEntry
+                  setShowCombat={setShowCombat}
+                  enemy={getCurrentEnemy()}
                 />
               </div>
             )}

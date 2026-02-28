@@ -4,7 +4,7 @@ import { UNLOCK_CHARM_SHOP_COST } from "./constants.js";
 
 export default function CharmShop(props) {
   const {
-    diamonds,
+    clubs,
     charmShopEntries,
     buyCharm,
     charmShopState,
@@ -35,7 +35,7 @@ export default function CharmShop(props) {
                   key={"charm-shop-entry-" + i}
                   shopEntry={charm}
                   buyCharm={buyCharm}
-                  diamonds={diamonds}
+                  clubs={clubs}
                 />
               ) : (
                 <div className={"empty-charm-shop-entry entry-" + i}></div>

@@ -403,7 +403,7 @@ function getLevelData(numRolls) {
       return levelData[i - 1];
     }
   }
-  console.log("ERROR: can't get for rolls " + numRolls);
+  return levelData[0];
 }
 
 function getLevel(numRolls) {
@@ -420,6 +420,40 @@ function rollForCombatEnemy(level) {
   return Math.floor(
     Math.random() * (levelData.max - levelData.min) + levelData.min,
   );
+}
+
+function generateCombatRewards(level, enemy) {
+  var levelData = combatData.find((l, i) => l.level == level);
+  var total =
+    levelData.base_total_rewards +
+    linMap(enemy, levelData.min, levelData.max, levelData.base_total_rewards);
+  var rewards = {};
+  for (const [key, value] of Object.entries(levelData.rewards)) {
+    rewards[key] = Math.floor((value * total) / 100);
+  }
+  return rewards;
+}
+
+function linMap(value, min, max, total) {
+  const t = (value - min) / (max - min);
+  const clampedT = Math.min(Math.max(t, 0), 1);
+  return clampedT * (0.25 * total);
+}
+
+function getCurrencyIcon(id) {
+  if (id == "hearts") {
+    return "\u{2665}\u{FE0E}";
+  }
+  if (id == "diamonds") {
+    return "\u{2666}\u{FE0E}";
+  }
+  if (id == "clubs") {
+    return "\u{2660}\u{FE0E}";
+  }
+
+  if (id == "spades") {
+    return "\u{2663}\u{FE0E}";
+  }
 }
 
 export {
@@ -447,4 +481,6 @@ export {
   getLevelData,
   getLevel,
   rollForCombatEnemy,
+  generateCombatRewards,
+  getCurrencyIcon,
 };

@@ -2,12 +2,23 @@
   {
     "level": 1,
     "min": 300,
-    "max": 500
+    "max": 500,
+    "base_total_rewards": 100,
+    "rewards": {
+      "diamonds": 90,
+      "hearts": 10
+    }
   },
   {
     "level": 2,
     "min": 1000,
-    "max": 3000
+    "max": 3000,
+    "base_total_rewards": 200,
+    "rewards": {
+      "diamonds": 80,
+      "hearts": 15,
+      "clubs": 5
+    }
   },
   {
     "level": 3,

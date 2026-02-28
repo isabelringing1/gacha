@@ -12,7 +12,7 @@ export default function CombatEntry(props) {
             {letters.map((l, i) => {
               return (
                 <div
-                  id={"combat-entry-big-num-" + i}
+                  className={"floating-letter floating-letter-" + i}
                   key={"combat-entry-big-num-" + i}
                 >
                   {l}

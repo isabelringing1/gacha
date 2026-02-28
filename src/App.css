@@ -53,8 +53,11 @@ p {
 
 #column-2 {
   height: 100dvh;
+  flex-direction: column;
   display: flex;
-  justify-content: center;
+  justify-content: start;
+  align-items: center;
+  position: relative;
 }
 
 #column-3 {
@@ -69,7 +72,7 @@ p {
   max-width: 1000px;
   aspect-ratio: 1/1;
   height: 78%;
-  width: 90%;
+
   padding-top: 4dvh;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
@@ -676,18 +679,17 @@ button:disabled {
 
 .wallet-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: start;
+  align-items: start;
+  justify-content: space-around;
   position: absolute;
-  bottom: 0dvh;
-  height: 12dvh;
-  left: 50vw;
-  transform: translate(-50%, 0);
+  bottom: 0%;
+  height: 17dvh;
+  width: 100%;
+  font-size: 1.8dvh;
 }
 
-.hearts-container {
-  text-align: center;
+.next-heart-container {
+  color: gray;
 }
 
 .number-tooltip {
@@ -1684,8 +1686,9 @@ input[type="number"] {
   position: absolute;
   width: 100vw;
   bottom: 0;
-  height: 4vh;
-  overflow: scroll;
+  height: 5vh;
+  overflow-x: scroll;
+  overflow-y: hidden;
   display: flex;
   align-items: center;
   padding-left: 1vh;
@@ -1700,7 +1703,6 @@ input[type="number"] {
   margin: 0 0.2vh;
   width: auto;
   aspect-ratio: 1/1;
-  padding: 0.5dvh;
 }
 
 .history-num.common {
@@ -1747,8 +1749,8 @@ input[type="number"] {
 }
 
 .event-in-menu {
+  max-width: 550px;
   width: 80%;
-  max-width: 500px;
   padding: 2.7dvh 1.2dvh;
 }
 
@@ -1882,8 +1884,7 @@ input[type="number"] {
   flex-direction: column;
   z-index: 2;
   width: 20vw;
-  height: 74%;
-  margin-bottom: 8%;
+  height: 80%;
 }
 
 .combat-view {
@@ -1903,6 +1904,7 @@ input[type="number"] {
   padding: 2dvh;
   text-align: center;
   font-size: 3.8dvh;
+  background-color: white;
 }
 
 .enemy-section {
@@ -1920,8 +1922,17 @@ input[type="number"] {
 
 .combat-buttons-container {
   display: flex;
-  width: 100%;
+  align-items: center;
   justify-content: space-around;
+  flex-direction: column;
+  background-color: white;
+  padding-top: 1dvh;
+}
+
+.your-team {
+  background-color: white;
+  width: auto;
+  padding: 1dvh;
 }
 
 .combat-outcome-popup {
@@ -1939,6 +1950,7 @@ input[type="number"] {
   justify-content: space-around;
   align-items: center;
   padding: 1dvh;
+  z-index: 1;
 }
 
 .combat-outcome-popup-text {
@@ -1958,6 +1970,10 @@ input[type="number"] {
 
 .damage {
   animation: damage 0.15s;
+}
+
+.crit {
+  color: red;
 }
 
 .enemy-attack-0 {
@@ -1989,7 +2005,7 @@ input[type="number"] {
     transform: translate(0%, 0);
   }
   50% {
-    transform: translate(200%, -15dvh);
+    transform: translate(80%, -15dvh);
   }
   100% {
     transform: translate(0%, 0);
@@ -2001,7 +2017,7 @@ input[type="number"] {
     transform: translate(0%, 0);
   }
   50% {
-    transform: translate(-200%, -15dvh);
+    transform: translate(-80%, -15dvh);
   }
   100% {
     transform: translate(0%, 0);
@@ -2025,7 +2041,7 @@ input[type="number"] {
     transform: translate(0%, 0);
   }
   50% {
-    transform: translate(-200%, 15dvh);
+    transform: translate(-50%, 15dvh);
   }
   100% {
     transform: translate(0%, 0);
@@ -2037,7 +2053,7 @@ input[type="number"] {
     transform: translate(0%, 0);
   }
   50% {
-    transform: translate(200%, 15dvh);
+    transform: translate(50%, 15dvh);
   }
   100% {
     transform: translate(0%, 0);
@@ -2318,56 +2334,80 @@ input[type="number"] {
 }
 
 .combat-entry-big-num {
-  font-size: 10dvh;
-  padding-left: 0.5dvh;
+  font-size: 5dvh;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+}
+
+.floating-letter {
+  animation: floating-ribbon-text 3s infinite ease-in-out;
+  -webkit-animation: floating-ribbon-text 3s infinite ease-in-out;
   font-family: "Song Myung", serif;
   color: #353535;
   -webkit-text-stroke: 0.05dvh #353535;
-  display: flex;
-  justify-content: center;
   -webkit-text-stroke: 1dvh #ffffffb0;
   paint-order: stroke fill;
-  position: absolute;
-  left: 0;
+  padding-left: 0.3dvh;
 }
 
-#combat-entry-big-num-0 {
-  animation: floating-ribbon-text 3s infinite ease-in-out -0.1s;
-  -webkit-animation: floating-ribbon-text 3s infinite ease-in-out -0.1s;
-  display: flex;
-  align-items: center;
+.floating-letter-0 {
+  animation-delay: -0.1s;
+  -webkit-animation-delay: -0.1s;
 }
 
-#combat-entry-big-num-1 {
-  animation: floating-ribbon-text 3s infinite ease-in-out -0.4s;
-  -webkit-animation: floating-ribbon-text 3s infinite ease-in-out -0.4s;
-  display: flex;
-  align-items: center;
+.floating-letter-1 {
+  animation-delay: -0.4s;
+  -webkit-animation-delay: -0.4s;
 }
 
-#combat-entry-big-num-2 {
-  animation: floating-ribbon-text 3s infinite ease-in-out 0.2s;
-  -webkit-animation: floating-ribbon-text 3s infinite ease-in-out 0.2s;
-  display: flex;
-  align-items: center;
+.floating-letter-2 {
+  animation-delay: 0.2s;
+  -webkit-animation-delay: 0.2s;
 }
 
-#combat-entry-big-num-3 {
-  animation: floating-ribbon-text 3s infinite ease-in-out;
-  -webkit-animation: floating-ribbon-text 3s infinite ease-in-out;
+.floating-letter-3 {
+}
+
+#floating-letter-4 {
+  animation-delay: 0.1s;
+  -webkit-animation-delay: 0.1s;
+}
+
+#floating-letter-5 {
+  animation-delay: -0.2s;
+  -webkit-animation-delay: -0.2s;
+}
+
+#floating-letter-6 {
+  animation-delay: 0.05s;
+  -webkit-animation-delay: 0.05s;
+}
+
+.round-container {
   display: flex;
-  align-items: center;
+  justify-content: center;
+  font-size: 6dvh;
 }
 
 .player-numbers-section {
-  padding: 1dvh 0dvh;
-  border-radius: 5dvh;
-  background-color: white;
+  padding: 1dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  height: 40%;
+  align-items: center;
 }
 
 .player-numbers {
   display: flex;
   align-items: end;
+}
+
+.player-numbers-animate {
+  transition: transform 1.5s linear;
 }
 
 .combat-setup {
@@ -2415,6 +2455,10 @@ input[type="number"] {
   font-size: 1.6dvh;
   color: gray;
   z-index: -1;
+}
+
+.path-animate {
+  transition: margin-top 1.5s linear;
 }
 
 .stomp-in {
@@ -2465,17 +2509,7 @@ input[type="number"] {
   }
 }
 
-.team-setup-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-content: center;
-  padding: 1dvh 1dvh;
-  border-radius: 5dvh;
-  background-color: white;
-}
-
-@media (max-width: 1000px) {
+@media (max-width: 1600px) {
   .layout {
     grid-template-columns: 3fr 4fr 3fr;
   }
@@ -2491,6 +2525,43 @@ input[type="number"] {
   .sportsbook {
     width: 100%;
   }
+
+  #numbers-grid {
+    width: 90% !important;
+  }
+}
+
+.walk-forward {
+  animation: walk-forward 0.3s ease-in-out;
+  -webkit-animation: walk-forward 0.3s ease-in-out;
+  animation-iteration-count: 5;
+  -webkit-animation-iteration-count: 5;
+}
+
+@keyframes walk-forward {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3dvh);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.score-container {
+  position: absolute;
+  bottom: -4%;
+  background-color: white;
+  font-size: 2dvh;
+}
+
+.combat-back-button {
+  position: absolute;
+  top: 2dvh;
+  left: 2dvh;
+  z-index: 1;
 }
 
 /* Mobile */
@@ -2748,9 +2819,6 @@ input[type="number"] {
   #roll-button {
     padding: 3vh 2vh;
     font-size: 3vh;
-  }
-
-  .next-heart-container {
   }
 
   .card-pack {
