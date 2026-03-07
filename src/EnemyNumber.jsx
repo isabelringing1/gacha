@@ -42,7 +42,7 @@ export default function EnemyNumber(props) {
       id="enemy-number"
       style={{ opacity: isSetup ? 0 : 1 }}
     >
-      {enemyRef.current.toLocaleString()}
+      {enemyRef.current && enemyRef.current.toLocaleString()}
     </div>
   );
 }

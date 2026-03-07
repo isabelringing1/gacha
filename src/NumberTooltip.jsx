@@ -57,10 +57,14 @@ export default function NumberTooltip(props) {
           </div>
         )}
 
-        {isCombat && (
+        {isCombat && attackNumber > 0 && (
           <div className="number-tooltip-text">
-            Attacks for <b>{attackNumber}</b>
+            Attacks for <b>{attackNumber}</b> every {n / 10} seconds
           </div>
+        )}
+
+        {isCombat && attackNumber <= 0 && (
+          <div className="number-tooltip-text">DEAD</div>
         )}
 
         {isCombat && (

@@ -53,11 +53,12 @@ const Debug = (props) => {
     var newRolls = rollMultiple(numRolls);
     var newNumbers = { ...numbers };
     for (var i = 0; i < newRolls.length; i++) {
-      var n = rolls[i];
+      var n = newRolls[i];
       newNumbers[n] = newNumbers[n] ? newNumbers[n] + 1 : 1;
     }
     setNumbers(newNumbers);
     setRolls([...newRolls, ...rolls]);
+    console.log(newNumbers);
   }
 
   return (

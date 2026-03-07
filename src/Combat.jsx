@@ -11,6 +11,8 @@ import {
 import { COMBAT_START_COST, isMobile } from "./constants.js";
 import EnemyNumber from "./EnemyNumber";
 import ascii from "/path.txt?raw";
+import CombatMap from "./CombatMap.jsx";
+import shield from "/shield.png";
 
 export default function Combat(props) {
   const {
@@ -25,18 +27,20 @@ export default function Combat(props) {
     setDiamonds,
     highScore,
     setHighScore,
+    showReequip,
+    setShowReequip,
   } = props;
-  const [enemyState, setEnemyState] = useState(0);
-  const [winState, setWinState] = useState("precombat");
+  const [enemyState, setEnemyState] = useState(null);
+  const [winState, setWinState] = useState("map");
   const [records, setRecords] = useState([]);
-  const [showCombatSetup, setShowCombatSetup] = useState(true);
   const [levelRewards, setLevelRewards] = useState({});
-  const [pathMarginTop, setPathMarginTop] = useState(0);
+  const [pathMarginTop, setPathMarginTop] = useState(-20);
   const [numbersMarginBottom, setNumbersMarginBottom] = useState(0);
   const [score, setScore] = useState(0);
   const [isNewHighScore, setIsNewHighScore] = useState(false);
+  const [narration, setNarration] = useState([]);
 
-  const enemyRef = useRef(0);
+  const enemyRef = useRef(null);
   const healthArrayRef = useRef();
   const winStateRef = useRef(winState);
   const scoreRef = useRef(0);
@@ -61,11 +65,10 @@ export default function Combat(props) {
           shields: level.shields,
           initialShields: level.shields,
           canDivide: level.canDivide,
+          team: [null, null, null],
         };
       }
       setCombatState(newCombatState);
-      setEnemyState(combatState.enemy);
-      enemyRef.current = combatState.enemy;
     } else {
       resetCombatState();
     }
@@ -120,6 +123,8 @@ export default function Combat(props) {
     enemyRef.current = Math.max(0, Math.floor(enemyRef.current - damage));
     if (enemyRef.current == 0) {
       setWinState("win");
+      setEnemyState(null);
+      enemyRef.current = null;
     } else {
       showEnemyDamage();
       if (didCrit) {
@@ -142,7 +147,7 @@ export default function Combat(props) {
     }
     enemyRef.current = Math.max(0, Math.floor(enemyRef.current / n));
     if (enemyRef.current == 0) {
-      setWinState("win");
+      setWinState("map");
     }
   }
 
@@ -214,9 +219,10 @@ export default function Combat(props) {
   }
 
   function getButtonContainerHeight() {
-    if (!combatState || combatState.numberStates.length == 0) {
+    if (!combatState || Object.keys(combatState.numberStates).length == 0) {
       return;
     }
+    console.log(combatState);
     var canHeal = false;
     var canDivide = false;
     for (var i = 0; i < combatState.team.length; i++) {
@@ -230,13 +236,73 @@ export default function Combat(props) {
     return (canHeal ? 4 : 0) + (canDivide ? 4 : 0);
   }
 
+  function onStep(tile) {
+    showStep();
+    if (rollForEncounter(tile)) {
+      var enemy = rollForCombatEnemy(1);
+      console.log("encounter triggered, enemy " + enemy);
+      setEnemyState(enemy);
+      enemyRef.current = enemy;
+
+      var enemyDiv = document.getElementById("enemy-number");
+      enemyDiv.classList.remove("stomp-in-short");
+      void enemyDiv.offsetWidth;
+      enemyDiv.classList.add("stomp-in-short");
+
+      var newN = "A wild " + enemy + " appeared!";
+      setNarration((oldNarration) => [newN, ...oldNarration]);
+      setTimeout(() => {
+        enemyDiv.classList.remove("stomp-in-short");
+        var combatContainer = document.getElementById("combat-container");
+        combatContainer.classList.remove("damage");
+        void combatContainer.offsetWidth;
+        combatContainer.classList.add("damage");
+
+        setTimeout(() => {
+          setWinState("combat");
+        }, 100);
+      }, 150);
+    }
+  }
+
+  function showStep() {
+    var combatNumbers = document.getElementsByClassName(
+      "combat-number-container",
+    );
+    var playerNumbers = document.getElementById("player-numbers");
+
+    for (var i = 0; i < combatNumbers.length; i++) {
+      combatNumbers[i].classList.remove("walk-forward-short");
+    }
+    path.classList.remove("path-animate-short");
+    playerNumbers.classList.remove("player-numbers-animate");
+
+    void path.offsetWidth;
+
+    playerNumbers.classList.add("player-numbers-animate");
+    for (var i = 0; i < combatNumbers.length; i++) {
+      combatNumbers[i].classList.add("walk-forward-short");
+    }
+    path.classList.add("path-animate-short");
+    setPathMarginTop(pathMarginTop + 1);
+  }
+
+  function rollForEncounter(tile) {
+    if (tile == ".") {
+      return Math.random() < 0.15;
+    }
+    if (tile == "#") {
+      return Math.random() < 0.07;
+    }
+    return false;
+  }
+
   function canStartCombat() {
     return diamonds >= COMBAT_START_COST;
   }
 
   function startCombat() {
     setShowCombat(true);
-    setShowCombatSetup(false);
 
     setDiamonds(diamonds - COMBAT_START_COST);
     setPathMarginTop(pathMarginTop + 25);
@@ -251,8 +317,8 @@ export default function Combat(props) {
     setTimeout(() => {
       for (var i = 0; i < combatNumbers.length; i++) {
         combatNumbers[i].classList.remove("walk-forward");
-        path.classList.remove("path-animate");
       }
+      path.classList.remove("path-animate");
       playerNumbers.classList.remove("player-numbers-animate");
 
       var enemy = document.getElementById("enemy-number");
@@ -279,31 +345,21 @@ export default function Combat(props) {
   }
 
   function onNext() {
-    var newEnemy = rollForCombatEnemy(combatState.level + 1);
     setCombatState((oldCombatState) => {
       var newCombatState = { ...oldCombatState };
       newCombatState.level += 1;
-      newCombatState.enemy = newEnemy;
 
-      for (var i = 0; i < newCombatState.team.length; i++) {
-        newCombatState.numberStates[newCombatState.team[i]].health =
-          newCombatState.team[i]; // restore health to default
-      }
       console.log(newCombatState);
       return newCombatState;
     });
-    enemyRef.current = newEnemy;
-    setShowCombatSetup(true);
-    setWinState("precombat");
-    setNumbersMarginBottom(0);
+
+    setWinState("map");
   }
 
   function resetCombatState() {
-    var newEnemy = rollForCombatEnemy(1);
     setCombatState((oldCombatState) => {
       var newCombatState = { ...oldCombatState };
       newCombatState.level = 1;
-      newCombatState.enemy = newEnemy;
       newCombatState.numberStates = [];
       for (var i = 1; i <= 100; i++) {
         var level = getLevelData(numbers[i]);
@@ -321,8 +377,8 @@ export default function Combat(props) {
 
       return newCombatState;
     });
-    enemyRef.current = newEnemy;
-    setPathMarginTop(0);
+    setPathMarginTop(-20);
+    setPathMarginTop(-20);
     setNumbersMarginBottom(0);
     setIsNewHighScore(false);
   }
@@ -330,18 +386,23 @@ export default function Combat(props) {
   function onBack() {
     resetCombatState();
     setShowCombat(false);
-    setWinState("precombat");
-  }
-
-  function onTryAgain() {
-    resetCombatState();
-    setShowCombatSetup(true);
-    setWinState("precombat");
   }
 
   return (
     <div className="combat-container" id="combat-container">
-      {winState != "precombat" && (
+      <CombatMap
+        combatState={combatState}
+        setWinState={setWinState}
+        winState={winState}
+        onStep={onStep}
+        narration={narration}
+        setNarration={setNarration}
+        enemyState={enemyState}
+        enemyRef={enemyRef}
+        showReequip={showReequip}
+        setShowReequip={setShowReequip}
+      />
+      {winState == "combat" && (
         <div className="score-container">Score: {score.toLocaleString()}</div>
       )}
       {winState == "win" && (
@@ -362,7 +423,7 @@ export default function Combat(props) {
                 );
               })}
           </div>
-          <button onClick={onNext}>Next</button>
+          <button onClick={onNext}>Continue</button>
         </div>
       )}
       {winState == "lose" && (
@@ -376,20 +437,20 @@ export default function Combat(props) {
           <div className="combat-outcome-popup-text">
             You shake yourself off and take a deep breath.
           </div>
-          <button onClick={onTryAgain}>Try Again</button>
           <button onClick={onBack}>Back</button>
         </div>
       )}
-
-      <div
-        className="path"
-        id="path"
-        style={{ marginTop: pathMarginTop + "dvh" }}
-      >
-        <pre>{ascii}</pre>
-      </div>
       <div className="combat-view">
-        {showCombatSetup && combatState && (
+        <div
+          className="path"
+          id="path"
+          style={{
+            marginTop: pathMarginTop + "dvh",
+          }}
+        >
+          <pre>{ascii}</pre>
+        </div>
+        {/*{showReequip && combatState && (
           <div className="round-container">
             {("Round  " + combatState.level).split("").map((c, i) => (
               <span
@@ -400,14 +461,15 @@ export default function Combat(props) {
               </span>
             ))}
           </div>
-        )}
+        )}*/}
+
         <div className="enemy-section">
           <EnemyNumber
             enemyRef={enemyRef}
             onAttack={onEnemyAttack}
             winState={winState}
             winStateRef={winStateRef}
-            isSetup={showCombatSetup}
+            isSetup={showReequip}
           />
           <div className="enemy-text-container">
             {records.map((r, i) => {
@@ -426,16 +488,19 @@ export default function Combat(props) {
             })}
           </div>
         </div>
+
         <div className="player-numbers-section">
-          {showCombatSetup && <div className="title your-team">YOUR TEAM</div>}
+          {showReequip && <div className="title your-team">YOUR TEAM</div>}
           <div
             className="player-numbers"
             id="player-numbers"
-            style={{ transform: "translateY(-" + numbersMarginBottom + "dvh)" }}
+            style={{
+              transform: "translateY(-" + numbersMarginBottom + "dvh)",
+            }}
           >
-            {/* PRECOMBAT */}
+            {/* setup */}
             {combatState &&
-              showCombatSetup &&
+              showReequip &&
               combatState.team.map((n, i) => {
                 return (
                   <CombatEntrySlot
@@ -458,7 +523,8 @@ export default function Combat(props) {
 
             {/* COMBAT */}
             {combatState &&
-              !showCombatSetup &&
+              Object.keys(combatState.numberStates).length > 0 &&
+              !showReequip &&
               combatState.team.map((n, i) => (
                 <CombatNumber
                   key={"combat-number-" + i}
@@ -478,12 +544,15 @@ export default function Combat(props) {
           </div>
 
           <div className="combat-buttons-container">
-            {showCombatSetup && (
-              <button onClick={startCombat} disabled={!canStartCombat()}>
-                Embark (&diams;&#xfe0e; {COMBAT_START_COST})
+            {showReequip && (
+              <button
+                onClick={() => {
+                  setShowReequip(false);
+                }}
+              >
+                Done
               </button>
             )}
-            {winState == "combat" && <button onClick={onBack}>Retreat</button>}
           </div>
         </div>
       </div>

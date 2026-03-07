@@ -109,7 +109,8 @@ const roll = (
   if (!rolledPool) {
     console.error(rolledRarity, raritiesToNumber);
   }
-  return rolledPool[Math.floor(Math.random() * rolledPool.length)];
+  var index = Math.floor(Math.random() * rolledPool.length);
+  return rolledPool[index];
 };
 
 const rollMultiple = (
@@ -123,8 +124,10 @@ const rollMultiple = (
 ) => {
   var rolls = [];
   for (var i = 0; i < amount; i++) {
-    rolls.push(roll(multiple, min, max, modulo, remainder, pool));
+    var newRoll = roll(multiple, min, max, modulo, remainder, pool);
+    rolls.push(newRoll);
   }
+  console.log(rolls);
   return rolls;
 };
 

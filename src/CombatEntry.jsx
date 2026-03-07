@@ -1,25 +1,35 @@
+import CombatEntrySlot from "./CombatEntrySlot";
 export default function CombatEntry(props) {
-  var { enemy, setShowCombat } = props;
-
-  var letters = String("ENTER >").split("");
+  var {
+    setShowCombat,
+    combatState,
+    setCombatState,
+    selectingIndex,
+    setSelectingIndex,
+  } = props;
 
   return (
     <div className={"combat-entry-outer dither-bg"}>
-      <div className="title">BATTLE</div>
-      <div className="combat-entry-inner" onClick={() => setShowCombat(true)}>
+      <div className="title">ADVENTURE</div>
+      <div className="combat-entry-inner">
         <div className="combat-entry-inner-inner">
-          <div className="combat-entry-big-num">
-            {letters.map((l, i) => {
-              return (
-                <div
-                  className={"floating-letter floating-letter-" + i}
-                  key={"combat-entry-big-num-" + i}
-                >
-                  {l}
-                </div>
-              );
-            })}
+          <div className="combat-slots-container">
+            {combatState &&
+              combatState.team.map((n, i) => {
+                return (
+                  <CombatEntrySlot
+                    key={"slot-" + i}
+                    number={n}
+                    index={i}
+                    onEdit={() => {
+                      setSelectingIndex(i);
+                    }}
+                    selectingIndex={selectingIndex == i}
+                  />
+                );
+              })}
           </div>
+          <button onClick={() => setShowCombat(true)}>Go</button>
         </div>
       </div>
     </div>

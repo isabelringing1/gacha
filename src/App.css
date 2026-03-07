@@ -714,7 +714,8 @@ button:disabled {
 
 .combat-tooltip {
   width: 200px;
-  margin-bottom: -23dvh;
+  margin-bottom: -29dvh;
+  height: 200px;
 }
 
 .number-tooltip-text {
@@ -1875,25 +1876,25 @@ input[type="number"] {
 
 .combat-container {
   position: absolute;
-  right: 20vw;
   display: flex;
   justify-content: center;
   align-items: center;
   font-family: HelveticaBold;
   font-size: 3dvh;
-  flex-direction: column;
   z-index: 2;
-  width: 20vw;
-  height: 80%;
+  height: 100%;
+  width: 100%;
 }
 
 .combat-view {
-  width: 100%;
   justify-content: space-between;
   align-items: center;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 80%;
+  width: 50%;
+
+  transition: opacity 0.2s;
 }
 
 .combat-number-container {
@@ -1904,7 +1905,6 @@ input[type="number"] {
   padding: 2dvh;
   text-align: center;
   font-size: 3.8dvh;
-  background-color: white;
 }
 
 .enemy-section {
@@ -1937,11 +1937,11 @@ input[type="number"] {
 
 .combat-outcome-popup {
   font-size: 2dvh;
-  height: 2dvh;
+  font-family: Helvetica;
   text-align: center;
   position: absolute;
   height: 30dvh;
-  width: 80%;
+  width: 30dvh;
   border: 0.3dvh solid black;
   border-radius: 2dvh;
   background-color: white;
@@ -1951,6 +1951,37 @@ input[type="number"] {
   align-items: center;
   padding: 1dvh;
   z-index: 1;
+}
+
+.combat-popup {
+  font-size: 2dvh;
+  font-family: Helvetica;
+  text-align: center;
+  position: absolute;
+  width: 25dvh;
+  height: 15dvh;
+  border: 0.3dvh solid black;
+  border-radius: 2dvh;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 1dvh;
+  z-index: 1;
+}
+
+.combat-popup-button-container {
+  width: 80%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.combat-shop-row {
+  width: 50%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .combat-outcome-popup-text {
@@ -2104,10 +2135,11 @@ input[type="number"] {
   display: flex;
   flex-direction: column;
   margin-top: 1dvh;
+  background-color: white;
 }
 
 .dead {
-  opacity: 0.2;
+  color: #c1c1c1;
 }
 
 .armor-container {
@@ -2128,6 +2160,11 @@ input[type="number"] {
   width: 1.3dvh;
   height: 1.3dvh;
   display: block;
+}
+
+.shield-img-inline {
+  width: 1.2dvh;
+  height: 1.3dvh;
 }
 
 .combat-button {
@@ -2215,6 +2252,7 @@ input[type="number"] {
   pointer-events: none;
   background-color: #d4d4d4;
   display: flex;
+  flex-direction: column;
   justify-content: end;
   position: relative;
 }
@@ -2287,11 +2325,13 @@ input[type="number"] {
 
 .combat-number {
   position: relative;
-  width: 5dvh;
+  width: 7dvh;
   height: 5dvh;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: white;
+  border-radius: 1dvh;
 }
 
 .combat-number-cooldown {
@@ -2461,8 +2501,16 @@ input[type="number"] {
   transition: margin-top 1.5s linear;
 }
 
+.path-animate-short {
+  transition: margin-top 0.2s linear;
+}
+
 .stomp-in {
   animation: stomp-in 2s forwards;
+}
+
+.stomp-in-short {
+  animation: stomp-in-short 0.15s ease-in forwards;
 }
 
 @keyframes stomp-in {
@@ -2509,6 +2557,15 @@ input[type="number"] {
   }
 }
 
+@keyframes stomp-in-short {
+  0% {
+    margin-top: -18dvh;
+  }
+  100% {
+    margin-top: 0dvh;
+  }
+}
+
 @media (max-width: 1600px) {
   .layout {
     grid-template-columns: 3fr 4fr 3fr;
@@ -2538,12 +2595,17 @@ input[type="number"] {
   -webkit-animation-iteration-count: 5;
 }
 
+.walk-forward-short {
+  animation: walk-forward 0.1s ease-in-out;
+  -webkit-animation: walk-forward 0.1s ease-in-out;
+}
+
 @keyframes walk-forward {
   0% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-3dvh);
+    transform: translateY(-0.5dvh);
   }
   100% {
     transform: translateY(0);
@@ -2561,7 +2623,37 @@ input[type="number"] {
   position: absolute;
   top: 2dvh;
   left: 2dvh;
-  z-index: 1;
+  z-index: 3;
+}
+
+.combat-map-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  font-family: monospace;
+  white-space: pre;
+  font-size: 1.6dvh;
+  width: 50%;
+  transition: opacity 0.2s linear;
+}
+
+.map {
+  border: 0.2dvh solid rgb(181, 181, 181);
+  line-height: 1;
+}
+
+.narration-container {
+  font-size: 1.5dvh;
+  font-family: "Helvetica";
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.red {
+  color: red;
 }
 
 /* Mobile */

@@ -38,6 +38,7 @@ export default function CombatNumber(props) {
     healthRef.current = s.health;
     setBlock(combatState.numberStates[number].block);
     if (combatState.numberStates[number].health <= 0) {
+      console.log("setting alive false ", number, combatState);
       setAlive(false);
     }
   }, [combatState]);
@@ -168,7 +169,7 @@ export default function CombatNumber(props) {
 
   return (
     combatState && (
-      <div className="combat-number-container walk-forward">
+      <div className="combat-number-container">
         {hover && (
           <NumberTooltip
             n={number}
@@ -206,7 +207,7 @@ export default function CombatNumber(props) {
             ></div>
           )}
 
-          {winState != "precombat" && (
+          {winState != "setup" && (
             <div className="armor-container">
               {Array(combatState.numberStates[number].initialShields)
                 .fill(0)
@@ -231,7 +232,7 @@ export default function CombatNumber(props) {
           <div className="block" style={{ opacity: block ? 1 : 0 }}></div>
         </div>
 
-        {winState != "precombat" && (
+        {winState == "combat" && (
           <div
             className="combat-number-button-container"
             style={{ height: buttonContainerHeight + "dvh" }}

@@ -97,10 +97,16 @@ function App() {
   const [showCombat, setShowCombat] = useState(false);
   const [selectingIndex, setSelectingIndex] = useState(-1);
   const [combatUnlocked, setCombatUnlocked] = useState(false);
-  const [combatState, setCombatState] = useState(null);
+  const [combatState, setCombatState] = useState({
+    level: 1,
+    enemy: rollForCombatEnemy(1),
+    team: [null, null, null],
+    numberStates: {},
+  });
   const [combatHighScore, setCombatHighScore] = useState(null);
   const [clubs, setClubs] = useState(0);
   const [spades, setSpades] = useState(0);
+  const [showReequip, setShowReequip] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -740,7 +746,7 @@ function App() {
           ? "YOU HAVE CLEARED 10%"
           : "YOU ARE AT " + getGoalPercent() + "%"}
       </div>
-      {!isMobile && <History rolls={rolls} />}
+      {!isMobile && !showCombat && <History rolls={rolls} />}
 
       {showCombat && (
         <button
@@ -765,6 +771,8 @@ function App() {
           diamonds={diamonds}
           highScore={combatHighScore}
           setHighScore={setCombatHighScore}
+          showReequip={showReequip}
+          setShowReequip={setShowReequip}
         />
       )}
 
@@ -815,7 +823,10 @@ function App() {
         <div className="column" id="column-2">
           <div
             id="numbers-grid"
-            style={{ marginRight: showCombat ? "40vw" : 0 }}
+            style={{
+              marginRight: !showCombat ? 0 : showReequip ? "40vw" : "200vw",
+              zIndex: showReequip ? 3 : 0,
+            }}
           >
             {Array.from({ length: 100 }, (_, i) => i + 1).map((n) => {
               return (
@@ -922,8 +933,12 @@ function App() {
             {combatUnlocked && (
               <div className="combat-entry-container">
                 <CombatEntry
+                  combatState={combatState}
+                  setCombatState={setCombatState}
                   setShowCombat={setShowCombat}
                   enemy={getCurrentEnemy()}
+                  setSelectingIndex={setSelectingIndex}
+                  selectingIndex={selectingIndex}
                 />
               </div>
             )}
