@@ -41,6 +41,7 @@ export default function CombatEntry(props) {
                     index={i}
                     onEdit={onEdit}
                     selectingIndex={selectingIndex == i}
+                    inCombatEntry={true}
                   />
                 );
               })}

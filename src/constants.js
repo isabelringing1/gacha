@@ -24,6 +24,7 @@ const HARD_HEARTS = 10;
 
 // Combat
 const COMBAT_START_COST = 200;
+const PYRAMID_LEVELS = 15;
 
 export {
   REFRESH_TIME,
@@ -38,5 +39,6 @@ export {
   UNLOCK_CHARM_SHOP_COST,
   UNLOCK_SPORTSBOOK_COST,
   COMBAT_START_COST,
+  PYRAMID_LEVELS,
   isMobile,
 };

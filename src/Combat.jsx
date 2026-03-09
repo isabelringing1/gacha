@@ -4,14 +4,13 @@ import CombatEntrySlot from "./CombatEntrySlot";
 import {
   getRarityData,
   getLevelData,
-  rollForCombatEnemy,
   generateCombatRewards,
   getCurrencyIcon,
+  generateEnemies,
 } from "./Util";
-import { COMBAT_START_COST, isMobile } from "./constants.js";
+import { isMobile } from "./constants.js";
 import EnemyNumber from "./EnemyNumber";
-import ascii from "/path.txt?raw";
-import CombatMap from "./CombatMap.jsx";
+import CombatPyramid from "./CombatPyramid.jsx";
 import shield from "/shield.png";
 
 export default function Combat(props) {
@@ -31,21 +30,16 @@ export default function Combat(props) {
     setShowReequip,
   } = props;
   const [enemyState, setEnemyState] = useState(null);
-  const [winState, setWinState] = useState("map");
+  const [winState, setWinState] = useState("pyramid");
   const [records, setRecords] = useState([]);
   const [levelRewards, setLevelRewards] = useState({});
-  const [pathMarginTop, setPathMarginTop] = useState(-20);
-  const [numbersMarginBottom, setNumbersMarginBottom] = useState(0);
   const [score, setScore] = useState(0);
   const [isNewHighScore, setIsNewHighScore] = useState(false);
-  const [narration, setNarration] = useState([]);
 
   const enemyRef = useRef(null);
   const healthArrayRef = useRef();
   const winStateRef = useRef(winState);
   const scoreRef = useRef(0);
-
-  const walkUpSpeed = 1500;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -67,6 +61,9 @@ export default function Combat(props) {
           canDivide: level.canDivide,
           team: [null, null, null],
         };
+      }
+      if (!newCombatState.pyramidEnemies) {
+        newCombatState.pyramidEnemies = generateEnemies();
       }
       setCombatState(newCombatState);
     } else {
@@ -147,7 +144,7 @@ export default function Combat(props) {
     }
     enemyRef.current = Math.max(0, Math.floor(enemyRef.current / n));
     if (enemyRef.current == 0) {
-      setWinState("map");
+      setWinState("pyramid");
     }
   }
 
@@ -236,124 +233,19 @@ export default function Combat(props) {
     return (canHeal ? 4 : 0) + (canDivide ? 4 : 0);
   }
 
-  function onStep(tile) {
-    showStep();
-    if (rollForEncounter(tile)) {
-      var enemy = rollForCombatEnemy(1);
-      console.log("encounter triggered, enemy " + enemy);
-      setEnemyState(enemy);
-      enemyRef.current = enemy;
-
-      var enemyDiv = document.getElementById("enemy-number");
-      enemyDiv.classList.remove("stomp-in-short");
-      void enemyDiv.offsetWidth;
-      enemyDiv.classList.add("stomp-in-short");
-
-      var newN = "A wild " + enemy + " appeared!";
-      setNarration((oldNarration) => [newN, ...oldNarration]);
-      setTimeout(() => {
-        enemyDiv.classList.remove("stomp-in-short");
-        var combatContainer = document.getElementById("combat-container");
-        combatContainer.classList.remove("damage");
-        void combatContainer.offsetWidth;
-        combatContainer.classList.add("damage");
-
-        setTimeout(() => {
-          setWinState("combat");
-        }, 100);
-      }, 150);
-    }
-  }
-
-  function showStep() {
-    var combatNumbers = document.getElementsByClassName(
-      "combat-number-container",
-    );
-    var playerNumbers = document.getElementById("player-numbers");
-
-    for (var i = 0; i < combatNumbers.length; i++) {
-      combatNumbers[i].classList.remove("walk-forward-short");
-    }
-    path.classList.remove("path-animate-short");
-    playerNumbers.classList.remove("player-numbers-animate");
-
-    void path.offsetWidth;
-
-    playerNumbers.classList.add("player-numbers-animate");
-    for (var i = 0; i < combatNumbers.length; i++) {
-      combatNumbers[i].classList.add("walk-forward-short");
-    }
-    path.classList.add("path-animate-short");
-    setPathMarginTop(pathMarginTop + 1);
-  }
-
-  function rollForEncounter(tile) {
-    if (tile == ".") {
-      return Math.random() < 0.15;
-    }
-    if (tile == "#") {
-      return Math.random() < 0.07;
-    }
-    return false;
-  }
-
-  function canStartCombat() {
-    return diamonds >= COMBAT_START_COST;
-  }
-
-  function startCombat() {
-    setShowCombat(true);
-
-    setDiamonds(diamonds - COMBAT_START_COST);
-    setPathMarginTop(pathMarginTop + 25);
-    setNumbersMarginBottom(numbersMarginBottom + 15);
-    var combatNumbers = document.getElementsByClassName(
-      "combat-number-container",
-    );
-    var playerNumbers = document.getElementById("player-numbers");
-    playerNumbers.classList.add("player-numbers-animate");
-    var path = document.getElementById("path");
-    path.classList.add("path-animate");
-    setTimeout(() => {
-      for (var i = 0; i < combatNumbers.length; i++) {
-        combatNumbers[i].classList.remove("walk-forward");
-      }
-      path.classList.remove("path-animate");
-      playerNumbers.classList.remove("player-numbers-animate");
-
-      var enemy = document.getElementById("enemy-number");
-      enemy.classList.remove("stomp-in");
-      void enemy.offsetWidth;
-      enemy.classList.add("stomp-in");
-      setTimeout(() => {
-        enemy.classList.remove("stomp-in");
-        setWinState("combat");
-      }, 2000);
-    }, walkUpSpeed);
-
-    for (var i = 0; i < 3; i++) {
-      setTimeout(
-        () => {
-          var combatContainer = document.getElementById("combat-container");
-          combatContainer.classList.remove("damage");
-          void combatContainer.offsetWidth;
-          combatContainer.classList.add("damage");
-        },
-        walkUpSpeed + 480 + i * 760,
-      );
-    }
-  }
-
   function onNext() {
     setCombatState((oldCombatState) => {
       var newCombatState = { ...oldCombatState };
-      newCombatState.level += 1;
-
-      console.log(newCombatState);
+      var coords = newCombatState.selectedEnemyCoords;
+      if (coords && newCombatState.pyramidEnemies) {
+        newCombatState.pyramidEnemies[coords[0]][coords[1]] = {
+          ...newCombatState.pyramidEnemies[coords[0]][coords[1]],
+          isDefeated: true,
+        };
+      }
       return newCombatState;
     });
-
-    setWinState("map");
+    setWinState("pyramid");
   }
 
   function resetCombatState() {
@@ -377,31 +269,29 @@ export default function Combat(props) {
 
       return newCombatState;
     });
-    setPathMarginTop(-20);
-    setPathMarginTop(-20);
-    setNumbersMarginBottom(0);
     setIsNewHighScore(false);
   }
 
   function onBack() {
-    resetCombatState();
-    setShowCombat(false);
+    setWinState("pyramid");
   }
 
   return (
     <div className="combat-container" id="combat-container">
-      <CombatMap
-        combatState={combatState}
-        setWinState={setWinState}
-        winState={winState}
-        onStep={onStep}
-        narration={narration}
-        setNarration={setNarration}
-        enemyState={enemyState}
-        enemyRef={enemyRef}
-        showReequip={showReequip}
-        setShowReequip={setShowReequip}
-      />
+      {winState == "pyramid" && (
+        <CombatPyramid
+          combatState={combatState}
+          setCombatState={setCombatState}
+          setWinState={setWinState}
+          selectingIndex={selectingIndex}
+          setSelectingIndex={setSelectingIndex}
+          numbers={numbers}
+          showReequip={showReequip}
+          setShowReequip={setShowReequip}
+          enemyRef={enemyRef}
+          setEnemyState={setEnemyState}
+        />
+      )}
       {winState == "combat" && (
         <div className="score-container">Score: {score.toLocaleString()}</div>
       )}
@@ -440,122 +330,99 @@ export default function Combat(props) {
           <button onClick={onBack}>Back</button>
         </div>
       )}
-      <div className="combat-view">
-        <div
-          className="path"
-          id="path"
-          style={{
-            marginTop: pathMarginTop + "dvh",
-          }}
-        >
-          <pre>{ascii}</pre>
-        </div>
-        {/*{showReequip && combatState && (
-          <div className="round-container">
-            {("Round  " + combatState.level).split("").map((c, i) => (
-              <span
-                key={"round-string-" + i}
-                className={"floating-letter floating-letter-" + i}
-              >
-                {c}
-              </span>
-            ))}
-          </div>
-        )}*/}
-
-        <div className="enemy-section">
-          <EnemyNumber
-            enemyRef={enemyRef}
-            onAttack={onEnemyAttack}
-            winState={winState}
-            winStateRef={winStateRef}
-            isSetup={showReequip}
-          />
-          <div className="enemy-text-container">
-            {records.map((r, i) => {
-              if (i > 0) {
-                return null;
-              }
-              var text = "";
-              if (r[0] == "c") {
-                text = "Crit!";
-              }
-              return (
-                <div className="enemy-text" key={"enemy-text-" + i}>
-                  {text}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="player-numbers-section">
-          {showReequip && <div className="title your-team">YOUR TEAM</div>}
-          <div
-            className="player-numbers"
-            id="player-numbers"
-            style={{
-              transform: "translateY(-" + numbersMarginBottom + "dvh)",
-            }}
-          >
-            {/* setup */}
-            {combatState &&
-              showReequip &&
-              combatState.team.map((n, i) => {
+      {winState !== "pyramid" && (
+        <div className="combat-view">
+          <div className="enemy-section">
+            <EnemyNumber
+              enemyRef={enemyRef}
+              onAttack={onEnemyAttack}
+              winState={winState}
+              winStateRef={winStateRef}
+              isSetup={showReequip}
+            />
+            <div className="enemy-text-container">
+              {records.map((r, i) => {
+                if (i > 0) {
+                  return null;
+                }
+                var text = "";
+                if (r[0] == "c") {
+                  text = "Crit!";
+                }
                 return (
-                  <CombatEntrySlot
-                    key={"slot-" + i}
-                    number={n}
-                    index={i}
-                    onEdit={() => {
-                      setSelectingIndex(i);
-                    }}
-                    selectingIndex={selectingIndex == i}
-                    numTimesRolled={numbers[n]}
-                    isDead={
-                      combatState.numberStates &&
-                      combatState.numberStates[n] &&
-                      combatState.numberStates[n].health <= 0
-                    }
-                  />
+                  <div className="enemy-text" key={"enemy-text-" + i}>
+                    {text}
+                  </div>
                 );
               })}
-
-            {/* COMBAT */}
-            {combatState &&
-              Object.keys(combatState.numberStates).length > 0 &&
-              !showReequip &&
-              combatState.team.map((n, i) => (
-                <CombatNumber
-                  key={"combat-number-" + i}
-                  number={n}
-                  index={i}
-                  onAttack={onAttack}
-                  winState={winState}
-                  combatState={combatState}
-                  setCombatState={setCombatState}
-                  onNumberDivide={onDivide}
-                  winStateRef={winStateRef}
-                  level={getLevelData(numbers[n])}
-                  numTimesRolled={numbers[n]}
-                  buttonContainerHeight={getButtonContainerHeight()}
-                />
-              ))}
+            </div>
           </div>
 
-          <div className="combat-buttons-container">
-            {showReequip && (
-              <button
-                onClick={() => {
-                  setShowReequip(false);
-                }}
-              >
-                Done
-              </button>
-            )}
+          <div className="player-numbers-section">
+            {showReequip && <div className="title your-team">YOUR TEAM</div>}
+            <div
+              className="player-numbers"
+              id="player-numbers"
+            >
+              {/* setup */}
+              {combatState &&
+                showReequip &&
+                combatState.team.map((n, i) => {
+                  return (
+                    <CombatEntrySlot
+                      key={"slot-" + i}
+                      number={n}
+                      index={i}
+                      onEdit={() => {
+                        setSelectingIndex(i);
+                      }}
+                      selectingIndex={selectingIndex == i}
+                      numTimesRolled={numbers[n]}
+                      isDead={
+                        combatState.numberStates &&
+                        combatState.numberStates[n] &&
+                        combatState.numberStates[n].health <= 0
+                      }
+                    />
+                  );
+                })}
+
+              {/* COMBAT */}
+              {combatState &&
+                Object.keys(combatState.numberStates).length > 0 &&
+                !showReequip &&
+                combatState.team.map((n, i) => (
+                  <CombatNumber
+                    key={"combat-number-" + i}
+                    number={n}
+                    index={i}
+                    onAttack={onAttack}
+                    winState={winState}
+                    combatState={combatState}
+                    setCombatState={setCombatState}
+                    onNumberDivide={onDivide}
+                    winStateRef={winStateRef}
+                    level={getLevelData(numbers[n])}
+                    numTimesRolled={numbers[n]}
+                    buttonContainerHeight={getButtonContainerHeight()}
+                  />
+                ))}
+            </div>
+
+            <div className="combat-buttons-container">
+              {showReequip && (
+                <button
+                  onClick={() => {
+                    setShowReequip(false);
+                  }}
+                >
+                  Done
+                </button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

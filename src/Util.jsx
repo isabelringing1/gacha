@@ -6,6 +6,7 @@ import charmData from "./json/charms.json";
 import betData from "./json/bets.json";
 import levelData from "./json/levels.json";
 import combatData from "./json/combat.json";
+import { PYRAMID_LEVELS } from "./constants.js";
 
 //https://www.joshwcomeau.com/snippets/react-hooks/use-interval/
 function useInterval(callback, delay) {
@@ -443,6 +444,23 @@ function linMap(value, min, max, total) {
   return clampedT * (0.25 * total);
 }
 
+function generateEnemies() {
+  var pyramid = [];
+  for (var level = 0; level < PYRAMID_LEVELS; level++) {
+    var row = [];
+    var numEnemies = PYRAMID_LEVELS - level;
+    var min = 2 * Math.pow(10, level + 2);
+    var max = 8 * Math.pow(10, level + 2);
+    for (var i = 0; i < numEnemies; i++) {
+      // generate a random number between min and max
+      var value = Math.floor(Math.random() * (max - min + 1)) + min;
+      row.push({ value: value, isDefeated: false });
+    }
+    pyramid.push(row);
+  }
+  return pyramid;
+}
+
 function getCurrencyIcon(id) {
   if (id == "hearts") {
     return "\u{2665}\u{FE0E}";
@@ -485,5 +503,6 @@ export {
   getLevel,
   rollForCombatEnemy,
   generateCombatRewards,
+  generateEnemies,
   getCurrencyIcon,
 };

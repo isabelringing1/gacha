@@ -2291,8 +2291,8 @@ input[type="number"] {
 }
 
 .combat-slot {
-  width: 5dvh;
-  height: 5dvh;
+  width: 8dvh;
+  height: 8dvh;
   background-color: rgb(240, 240, 240);
   margin: 0.4dvh;
   border-radius: 0.4dvh;
@@ -2303,6 +2303,11 @@ input[type="number"] {
   font-size: 3dvh;
   position: relative;
   pointer-events: all;
+}
+
+.combat-slot-for-entry{
+  width: 5dvh;
+  height: 5dvh
 }
 
 .combat-entry-text {
@@ -2624,6 +2629,112 @@ input[type="number"] {
   top: 2dvh;
   left: 2dvh;
   z-index: 3;
+}
+
+.combat-pyramid-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 50%;
+  height: 90%;
+  transition: opacity 0.2s linear;
+  z-index: 1;
+}
+
+.combat-pyramid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.pyramid-row {
+  display: flex;
+  justify-content: center;
+}
+
+.pyramid-enemy {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  width: 6.5dvh;
+  height: 3.5dvh;
+}
+
+.pyramid-enemy-revealed {
+  width: auto;
+  padding: 0 0.8dvh;
+}
+
+.pyramid-enemy-number {
+  position: relative;
+  z-index: 1;
+  font-family: HelveticaBold;
+  font-size: 1.8dvh;
+  white-space: nowrap;
+}
+
+.pyramid-enemy:not(.pyramid-enemy-locked):not(.pyramid-enemy-defeated):hover {
+  opacity: 0.7;
+}
+
+.pyramid-enemy-defeated {
+  pointer-events: none;
+}
+
+.pyramid-enemy-locked {
+  pointer-events: none;
+}
+
+.pyramid-door {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.pyramid-door-icon {
+  width: 2.5dvh;
+  height: 2.5dvh;
+  transform: rotate(180deg);
+  opacity: 0.7;
+  user-select: none;
+}
+
+.pyramid-door-above .pyramid-door-icon {
+  opacity: 0.35;
+}
+
+.pyramid-enemy-defeated .pyramid-door-icon {
+  opacity: 0.3;
+}
+
+.pyramid-door-check {
+  position: absolute;
+  z-index: 2;
+  color: #2a9d2a;
+  font-size: 2.2dvh;
+  font-weight: bold;
+}
+
+.pyramid-team-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2dvh;
+}
+
+.pyramid-challenge-button {
+  margin-top: 1dvh;
+  font-size: 2dvh;
+  padding: 1dvh 3dvh;
 }
 
 .combat-map-container {

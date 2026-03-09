@@ -10,6 +10,7 @@ import {
   rollEventNumber,
   rollEvent,
   rollForCombatEnemy,
+  generateEnemies,
 } from "./Util";
 import "./App.css";
 
@@ -102,6 +103,8 @@ function App() {
     enemy: rollForCombatEnemy(1),
     team: [null, null, null],
     numberStates: {},
+    pyramidEnemies: generateEnemies(),
+    selectedEnemyCoords: null,
   });
   const [combatHighScore, setCombatHighScore] = useState(null);
   const [clubs, setClubs] = useState(0);
@@ -234,6 +237,9 @@ function App() {
         setLastPackOpened(saveData.lastPackOpened);
         setRarityHighlightUnlocked(saveData.rarityHighlightUnlocked);
         setCombatState(saveData.combatState);
+        if (saveData.combatState && !saveData.combatState.pyramidEnemies) {
+          setCombatState(prev => ({ ...prev, pyramidEnemies: generateEnemies(), selectedEnemyCoords: null }));
+        }
         setCombatUnlocked(saveData.combatUnlocked);
         setCombatHighScore(saveData.combatHighScore);
         setSpades(saveData.spades);
