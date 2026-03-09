@@ -2265,8 +2265,9 @@ input[type="number"] {
   z-index: 1;
 }
 
+
 .combat-entry-info {
-  width: 50%;
+  width: 90%;
   margin: 0 1dvh;
   height: 100%;
   text-align: right;
@@ -2290,16 +2291,16 @@ input[type="number"] {
 }
 
 .combat-slot {
-  width: 8dvh;
-  height: 8dvh;
+  width: 5dvh;
+  height: 5dvh;
   background-color: rgb(240, 240, 240);
-  margin: 0.5dvh;
+  margin: 0.4dvh;
   border-radius: 0.4dvh;
   display: flex;
   justify-content: center;
   align-items: center;
   font-family: "HelveticaBold";
-  font-size: 3.8dvh;
+  font-size: 3dvh;
   position: relative;
   pointer-events: all;
 }
@@ -2372,72 +2373,45 @@ input[type="number"] {
     clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0);
   }
 }
-
 .combat-entry-big-num {
-  font-size: 5dvh;
-  display: flex;
-  justify-content: center;
-  position: absolute;
-  text-align: center;
-  width: 100%;
-}
-
-.floating-letter {
-  animation: floating-ribbon-text 3s infinite ease-in-out;
-  -webkit-animation: floating-ribbon-text 3s infinite ease-in-out;
+  font-size: 10dvh;
+  padding-left: 0.5dvh;
   font-family: "Song Myung", serif;
   color: #353535;
   -webkit-text-stroke: 0.05dvh #353535;
-  -webkit-text-stroke: 1dvh #ffffffb0;
-  paint-order: stroke fill;
-  padding-left: 0.3dvh;
-}
-
-.floating-letter-0 {
-  animation-delay: -0.1s;
-  -webkit-animation-delay: -0.1s;
-}
-
-.floating-letter-1 {
-  animation-delay: -0.4s;
-  -webkit-animation-delay: -0.4s;
-}
-
-.floating-letter-2 {
-  animation-delay: 0.2s;
-  -webkit-animation-delay: 0.2s;
-}
-
-.floating-letter-3 {
-}
-
-#floating-letter-4 {
-  animation-delay: 0.1s;
-  -webkit-animation-delay: 0.1s;
-}
-
-#floating-letter-5 {
-  animation-delay: -0.2s;
-  -webkit-animation-delay: -0.2s;
-}
-
-#floating-letter-6 {
-  animation-delay: 0.05s;
-  -webkit-animation-delay: 0.05s;
-}
-
-.round-container {
   display: flex;
   justify-content: center;
-  font-size: 6dvh;
+  -webkit-text-stroke: 1dvh #ffffffb0;
+  paint-order: stroke fill;
+  position: absolute;
+  left: 0;
 }
 
-.player-numbers-section {
-  padding: 1dvh;
+#combat-entry-big-num-0 {
+  animation: floating-ribbon-text 3s infinite ease-in-out -0.1s;
+  -webkit-animation: floating-ribbon-text 3s infinite ease-in-out -0.1s;
   display: flex;
-  flex-direction: column;
-  justify-content: start;
-  height: 40%;
+  align-items: center;
+}
+
+#combat-entry-big-num-1 {
+  animation: floating-ribbon-text 3s infinite ease-in-out -0.4s;
+  -webkit-animation: floating-ribbon-text 3s infinite ease-in-out -0.4s;
+  display: flex;
+  align-items: center;
+}
+
+#combat-entry-big-num-2 {
+  animation: floating-ribbon-text 3s infinite ease-in-out 0.2s;
+  -webkit-animation: floating-ribbon-text 3s infinite ease-in-out 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+#combat-entry-big-num-3 {
+  animation: floating-ribbon-text 3s infinite ease-in-out;
+  -webkit-animation: floating-ribbon-text 3s infinite ease-in-out;
+  display: flex;
   align-items: center;
 }
 
@@ -2446,14 +2420,29 @@ input[type="number"] {
   align-items: end;
 }
 
-.player-numbers-animate {
-  transition: transform 1.5s linear;
+.combat-setup-popup {
+  z-index: 11;
+  padding: 1dvh 2.5dvh;
+  width: 45dvh;
+  border-radius: 3dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 1.8dvh;
 }
 
-.combat-setup {
+.combat-setup-popup-inner {
+  background-color: white;
+  border-radius: 3dvh;
+  padding: 2dvh;
+  border: 0.2dvh solid black;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: HelveticaBold;
+  font-size: 3dvh;
 }
 
 .combat-setup-enemy-container {
@@ -2461,6 +2450,16 @@ input[type="number"] {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+}
+
+.combat-setup-enemy {
+  font-size: 10dvh;
+  font-family: "Song Myung", serif;
+  color: #353535;
+  -webkit-text-stroke: 1dvh #e9e9e9;
+  paint-order: stroke fill;
+  margin-top: -2dvh;
+  margin-bottom: 3dvh;
 }
 
 .combat-numbers-grid {
@@ -2484,6 +2483,7 @@ input[type="number"] {
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
 }
+
 
 .path {
   position: absolute;
@@ -2655,6 +2655,7 @@ input[type="number"] {
 .red {
   color: red;
 }
+
 
 /* Mobile */
 @media (max-width: 600px) {

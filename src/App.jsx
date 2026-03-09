@@ -129,11 +129,17 @@ function App() {
   };
 
   useEffect(() => {
-    if (rolls.length >= 3 && packShopState == "hidden") {
-      setPackShopState("locked");
-    }
-    if (rolls.length >= 10 && !combatUnlocked) {
+    if (rolls.length >= 3 && !combatUnlocked) {
       setCombatUnlocked(true);
+      setCombatState((oldCombatState) => {
+        return {
+          ...oldCombatState,
+          team: [rolls[0], rolls[1], rolls[2]],
+        };
+      });
+    }
+    if (rolls.length >= 10 && packShopState == "hidden") {
+      setPackShopState("locked");
     }
     if (
       rolls.length >= 15 &&

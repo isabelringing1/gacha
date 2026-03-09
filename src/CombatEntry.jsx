@@ -1,35 +1,57 @@
 import CombatEntrySlot from "./CombatEntrySlot";
+
 export default function CombatEntry(props) {
-  var {
-    setShowCombat,
-    combatState,
-    setCombatState,
-    selectingIndex,
-    setSelectingIndex,
-  } = props;
+  var { combatState, setCombatState, setShowCombat, setSelectingIndex, selectingIndex } =
+    props;
+
+  var digits = String(combatState.enemy)
+    .split("")
+    .map((digit) => Number(digit));
+
+  function onEdit(index) {
+    setSelectingIndex(index);
+  }
 
   return (
     <div className={"combat-entry-outer dither-bg"}>
-      <div className="title">ADVENTURE</div>
+      <div className="title">BATTLE</div>
       <div className="combat-entry-inner">
         <div className="combat-entry-inner-inner">
-          <div className="combat-slots-container">
-            {combatState &&
-              combatState.team.map((n, i) => {
+          <div className="combat-entry-big-num">
+            {digits.map((digit, i) => {
+              return (
+                <div
+                  id={"combat-entry-big-num-" + i}
+                  key={"combat-entry-big-num-" + i}
+                >
+                  {digit}
+                </div>
+              );
+            })}
+          </div>
+          <div className="combat-entry-info">
+            <div className="combat-entry-text">TEAM</div>
+
+            <div className="combat-slots-container">
+              {combatState.team.map((n, i) => {
                 return (
                   <CombatEntrySlot
                     key={"slot-" + i}
                     number={n}
                     index={i}
-                    onEdit={() => {
-                      setSelectingIndex(i);
-                    }}
+                    onEdit={onEdit}
                     selectingIndex={selectingIndex == i}
                   />
                 );
               })}
+            </div>
+            <button
+              className="combat-entry-button"
+              onClick={() => setShowCombat(true)}
+            >
+              Start
+            </button>
           </div>
-          <button onClick={() => setShowCombat(true)}>Go</button>
         </div>
       </div>
     </div>
