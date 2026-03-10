@@ -17,12 +17,12 @@ export default function CombatEntry(props) {
       <div className="title">BATTLE</div>
       <div className="combat-entry-inner">
         <div className="combat-entry-inner-inner">
-          <div className="combat-entry-big-num">
+          <div className="floating-num">
             {digits.map((digit, i) => {
               return (
                 <div
-                  id={"combat-entry-big-num-" + i}
-                  key={"combat-entry-big-num-" + i}
+                  id={"floating-num-" + i}
+                  key={"floating-num-" + i}
                 >
                   {digit}
                 </div>

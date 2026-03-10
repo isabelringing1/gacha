@@ -2378,12 +2378,28 @@ input[type="number"] {
     clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0);
   }
 }
-.combat-entry-big-num {
+
+.combat-number-cooldown-once::before {
+  animation: fillCircle var(--animation-duration) 1 linear forwards;
+}
+
+.combat-auto-label {
+  height: 3dvh;
+  padding: 0.6dvh 0.8dvh;
+  font-size: 1.4dvh;
+  margin: 0.5dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #aaa;
+  font-family: HelveticaBold;
+}
+
+.floating-num {
   font-size: 10dvh;
   padding-left: 0.5dvh;
   font-family: "Song Myung", serif;
   color: #353535;
-  -webkit-text-stroke: 0.05dvh #353535;
   display: flex;
   justify-content: center;
   -webkit-text-stroke: 1dvh #ffffffb0;
@@ -2392,28 +2408,36 @@ input[type="number"] {
   left: 0;
 }
 
-#combat-entry-big-num-0 {
+.floating-num-pyramid{
+  font-size: 3dvh;
+  position: relative;
+  left: auto;
+  padding-left: 0.1dvh;
+   -webkit-text-stroke: 0.3dvh #ffffffb0;
+}
+
+#floating-num-0 {
   animation: floating-ribbon-text 3s infinite ease-in-out -0.1s;
   -webkit-animation: floating-ribbon-text 3s infinite ease-in-out -0.1s;
   display: flex;
   align-items: center;
 }
 
-#combat-entry-big-num-1 {
+#floating-num-1 {
   animation: floating-ribbon-text 3s infinite ease-in-out -0.4s;
   -webkit-animation: floating-ribbon-text 3s infinite ease-in-out -0.4s;
   display: flex;
   align-items: center;
 }
 
-#combat-entry-big-num-2 {
+#floating-num-2 {
   animation: floating-ribbon-text 3s infinite ease-in-out 0.2s;
   -webkit-animation: floating-ribbon-text 3s infinite ease-in-out 0.2s;
   display: flex;
   align-items: center;
 }
 
-#combat-entry-big-num-3 {
+#floating-num-3 {
   animation: floating-ribbon-text 3s infinite ease-in-out;
   -webkit-animation: floating-ribbon-text 3s infinite ease-in-out;
   display: flex;
@@ -2671,12 +2695,10 @@ input[type="number"] {
   padding: 0 0.8dvh;
 }
 
-.pyramid-enemy-number {
-  position: relative;
-  z-index: 1;
-  font-family: HelveticaBold;
-  font-size: 1.8dvh;
-  white-space: nowrap;
+.pyramid-enemy-number-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pyramid-enemy:not(.pyramid-enemy-locked):not(.pyramid-enemy-defeated):hover {
@@ -2710,10 +2732,6 @@ input[type="number"] {
 
 .pyramid-door-above .pyramid-door-icon {
   opacity: 0.35;
-}
-
-.pyramid-enemy-defeated .pyramid-door-icon {
-  opacity: 0.3;
 }
 
 .pyramid-door-check {

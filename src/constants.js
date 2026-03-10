@@ -24,7 +24,9 @@ const HARD_HEARTS = 10;
 
 // Combat
 const COMBAT_START_COST = 200;
-const PYRAMID_LEVELS = 15;
+const PYRAMID_LEVELS = 10;
+const AUTO_LEVEL = 3;
+const DIVIDE_LEVEL = 5;
 
 export {
   REFRESH_TIME,
@@ -40,5 +42,7 @@ export {
   UNLOCK_SPORTSBOOK_COST,
   COMBAT_START_COST,
   PYRAMID_LEVELS,
+  AUTO_LEVEL,
+  DIVIDE_LEVEL,
   isMobile,
 };

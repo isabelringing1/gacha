@@ -45,6 +45,10 @@ export default function CombatPyramid(props) {
     setWinState("combat");
   }
 
+  function getDigits(number) {
+    return String(number).split("").map(Number);
+  }
+
   return (
     <div
       className="combat-pyramid-container"
@@ -80,8 +84,14 @@ export default function CombatPyramid(props) {
                         onClick={() => onSelectEnemy(levelIndex, enemyIndex)}
                       >
                         {showNumber ? (
-                          <span className="pyramid-enemy-number">
-                            {enemy.value.toLocaleString()}
+                          <span className="pyramid-enemy-number-container">
+                            {getDigits(enemy.value).map((digit, i) => {
+                              return (
+                                <div key={"pyramid-enemy-number-digit-" + i} className="floating-num floating-num-pyramid" id={"floating-num-" + i}>
+                                  {digit}
+                                </div>
+                              );
+                            })}
                           </span>
                         ) : (
                           <div

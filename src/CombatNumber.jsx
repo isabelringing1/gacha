@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import CombatButton from "./CombatButton";
 import NumberTooltip from "./NumberTooltip";
 import shield from "/shield.png";
+import { AUTO_LEVEL, DIVIDE_LEVEL } from "./constants.js";
 
 export default function CombatNumber(props) {
   const {
@@ -28,6 +29,11 @@ export default function CombatNumber(props) {
   var [block, setBlock] = useState(false);
   var [alive, setAlive] = useState(true);
   var [hover, setHover] = useState(false);
+  var [attackReady, setAttackReady] = useState(false);
+  var [cooldownRunning, setCooldownRunning] = useState(false);
+
+  var isAuto = level.level >= AUTO_LEVEL;
+  var canDivide = level.level >= DIVIDE_LEVEL;
 
   useEffect(() => {
     if (!combatState) {
@@ -46,9 +52,15 @@ export default function CombatNumber(props) {
   useEffect(() => {
     if (winState == "combat") {
       lastAttackTimeRef.current = Date.now();
-      console.log(winState, healthRef.current);
-      onNumberAttack(); //uncomment if you don't want numbers to attack at once
-      setAttackInterval();
+      if (isAuto) {
+        onNumberAttack();
+        setAttackInterval();
+      } else {
+        // manual mode: start first cooldown
+        setCooldownRunning(true);
+        setAttackReady(false);
+        startCooldownTimer();
+      }
     }
     if (winState != "combat" || healthRef.current == 0) {
       if (intervalRef.current) {
@@ -56,6 +68,7 @@ export default function CombatNumber(props) {
         intervalRef.current = null;
       }
       if (timeoutRef.current) {
+        console.log("clearing timeout ", number);
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
       }
@@ -66,34 +79,6 @@ export default function CombatNumber(props) {
     };
   }, [winState]);
 
-  useEffect(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-
-    /*
-    if (block) {
-      console.log("blocking");
-      if (intervalRef.current) {
-        console.log("clearing interval");
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-      timeRemainingRef.current =
-        number * 100 - (Date.now() - lastAttackTimeRef.current);
-    }
-    if (!block) {
-      // unpause
-      lastAttackTimeRef.current =
-        Date.now() - (number * 100 - timeRemainingRef.current);
-      timeoutRef.current = setTimeout(() => {
-        console.log("timeout attack");
-        onNumberAttack();
-        setAttackInterval();
-      }, timeRemainingRef.current);
-    }*/
-  }, [block]);
 
   function setAttackInterval() {
     intervalRef.current = setInterval(
@@ -102,6 +87,26 @@ export default function CombatNumber(props) {
       },
       Math.max(100, number * 100),
     );
+  }
+
+  function startCooldownTimer() {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      console.log("clearing timeout in startCooldownTimer ", number);
+    }
+    console.log("starting cooldown timer ", number);
+    timeoutRef.current = setTimeout(() => {
+      setCooldownRunning(false);
+      setAttackReady(true);
+    }, Math.max(100, number * 100));
+  }
+
+  function onManualAttack() {
+    if (!attackReady || !alive) return;
+    setAttackReady(false);
+    setCooldownRunning(true);
+    onNumberAttack();
+    startCooldownTimer();
   }
 
   function onNumberAttack() {
@@ -197,9 +202,18 @@ export default function CombatNumber(props) {
           >
             {combatState.numberStates[number].health}
           </div>
-          {winState == "combat" && (
+          {winState == "combat" && isAuto && (
             <div
               className="combat-number-cooldown"
+              style={{
+                opacity: alive && winState == "combat" ? 1 : 0,
+                "--animation-duration": number / 10 + "s",
+              }}
+            ></div>
+          )}
+          {winState == "combat" && !isAuto && cooldownRunning && (
+            <div
+              className="combat-number-cooldown combat-number-cooldown-once"
               style={{
                 opacity: alive && winState == "combat" ? 1 : 0,
                 "--animation-duration": number / 10 + "s",
@@ -237,14 +251,20 @@ export default function CombatNumber(props) {
             className="combat-number-button-container"
             style={{ height: buttonContainerHeight + "dvh" }}
           >
-            {/*<CombatButton
-            id="block"
-            text="Block"
-            cooldown={6}
-            startActive={true}
-            clickAction={onBlock}
-            isDisabled={!alive}
-          />*/}
+            {isAuto ? (
+              <div className="combat-auto-label">AUTO</div>
+            ) : (
+              <button
+                className={
+                  "combat-button attack-button" +
+                  (attackReady && alive ? " attack-button-ready" : "")
+                }
+                disabled={!attackReady || !alive}
+                onClick={onManualAttack}
+              >
+                Attack
+              </button>
+            )}
             {combatState.numberStates[number].initialShields > 0 && (
               <CombatButton
                 id="heal"
@@ -255,7 +275,7 @@ export default function CombatNumber(props) {
                 isDisabled={!canHeal()}
               />
             )}
-            {level.canDivide && (
+            {canDivide && (
               <CombatButton
                 id="divide"
                 text="Divide"

@@ -8,7 +8,7 @@ import {
   getCurrencyIcon,
   generateEnemies,
 } from "./Util";
-import { isMobile } from "./constants.js";
+import { isMobile, DIVIDE_LEVEL } from "./constants.js";
 import EnemyNumber from "./EnemyNumber";
 import CombatPyramid from "./CombatPyramid.jsx";
 import shield from "/shield.png";
@@ -58,7 +58,6 @@ export default function Combat(props) {
           block: false,
           shields: level.shields,
           initialShields: level.shields,
-          canDivide: level.canDivide,
           team: [null, null, null],
         };
       }
@@ -219,18 +218,18 @@ export default function Combat(props) {
     if (!combatState || Object.keys(combatState.numberStates).length == 0) {
       return;
     }
-    console.log(combatState);
     var canHeal = false;
-    var canDivide = false;
+    var hasDivide = false;
     for (var i = 0; i < combatState.team.length; i++) {
       if (combatState.numberStates[combatState.team[i]].initialShields > 0) {
         canHeal = true;
       }
-      if (combatState.numberStates[combatState.team[i]].canDivide) {
-        canDivide = true;
+      var teamLevel = getLevelData(numbers[combatState.team[i]]);
+      if (teamLevel.level >= DIVIDE_LEVEL) {
+        hasDivide = true;
       }
     }
-    return (canHeal ? 4 : 0) + (canDivide ? 4 : 0);
+    return 4 + (canHeal ? 4 : 0) + (hasDivide ? 4 : 0);
   }
 
   function onNext() {
@@ -261,7 +260,6 @@ export default function Combat(props) {
           block: false,
           shields: level.shields,
           initialShields: level.shields,
-          canDivide: level.canDivide,
           team: [null, null, null],
         };
       }
