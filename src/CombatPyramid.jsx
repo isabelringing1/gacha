@@ -42,7 +42,7 @@ export default function CombatPyramid(props) {
       enemy: enemy.value,
       selectedEnemyCoords: [selectedEnemy[0], selectedEnemy[1]],
     }));
-    setWinState("combat");
+    setWinState("intro");
   }
 
   function getDigits(number) {

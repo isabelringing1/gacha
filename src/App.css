@@ -1897,6 +1897,33 @@ input[type="number"] {
   transition: opacity 0.2s;
 }
 
+.combat-view-intro {
+  pointer-events: none;
+}
+
+.start-label {
+  position: absolute;
+  z-index: 3;
+  font-family: HelveticaBold;
+  font-size: 5dvh;
+  animation: start-label 0.5s forwards;
+}
+
+@keyframes start-label {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
 .combat-number-container {
   align-items: center;
   justify-content: center;
@@ -1910,6 +1937,7 @@ input[type="number"] {
 .enemy-section {
   padding: 2dvh 2dvh 5dvh 2dvh;
   height: 60%;
+  opacity: 0;
 }
 
 .enemy-number {
@@ -2540,6 +2568,8 @@ input[type="number"] {
 
 .stomp-in-short {
   animation: stomp-in-short 0.15s ease-in forwards;
+  animation-delay: 1.5s;
+  animation-fill-mode: forwards;
 }
 
 @keyframes stomp-in {
@@ -2589,9 +2619,11 @@ input[type="number"] {
 @keyframes stomp-in-short {
   0% {
     margin-top: -18dvh;
+    opacity: 1;
   }
   100% {
     margin-top: 0dvh;
+    opacity: 1;
   }
 }
 
@@ -2618,18 +2650,46 @@ input[type="number"] {
 }
 
 .walk-forward {
-  animation: walk-forward 0.3s ease-in-out;
-  -webkit-animation: walk-forward 0.3s ease-in-out;
-  animation-iteration-count: 5;
-  -webkit-animation-iteration-count: 5;
+  animation: walk-forward 1.5s forwards;
+  -webkit-animation: walk-forward 1.5s forwards;
 }
 
 .walk-forward-short {
-  animation: walk-forward 0.1s ease-in-out;
-  -webkit-animation: walk-forward 0.1s ease-in-out;
+  animation: walk-bounce 0.1s ease-in-out;
+  -webkit-animation: walk-bounce 0.1s ease-in-out;
 }
 
 @keyframes walk-forward {
+  0% {
+    transform: translateY(15dvh);
+  }
+  18% {
+    transform: translateY(10.75dvh);
+  }
+  25% {
+    transform: translateY(11.25dvh);
+  }
+  43% {
+    transform: translateY(7dvh);
+  }
+  50% {
+    transform: translateY(7.5dvh);
+  }
+  68% {
+    transform: translateY(3.25dvh);
+  }
+  75% {
+    transform: translateY(3.75dvh);
+  }
+  93% {
+    transform: translateY(-0.5dvh);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes walk-bounce {
   0% {
     transform: translateY(0);
   }

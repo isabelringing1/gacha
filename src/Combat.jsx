@@ -35,6 +35,7 @@ export default function Combat(props) {
   const [levelRewards, setLevelRewards] = useState({});
   const [score, setScore] = useState(0);
   const [isNewHighScore, setIsNewHighScore] = useState(false);
+  const [showStartLabel, setShowStartLabel] = useState(false);
 
   const enemyRef = useRef(null);
   const healthArrayRef = useRef();
@@ -74,6 +75,25 @@ export default function Combat(props) {
 
   useEffect(() => {
     winStateRef.current = winState;
+    if (winState == "intro") {
+      setTimeout(() => {
+        var combatView = document.getElementById("combat-container");
+        combatView.classList.add("damage");
+        var enemySection = document.getElementById("enemy-section");
+        enemySection.style.opacity = 1;
+        setTimeout(() => {
+          setShowStartLabel(true);
+          var startTimer = setTimeout(() => setShowStartLabel(false), 500);
+          return () => clearTimeout(startTimer);
+        }, 150);
+      }, 1650);
+
+
+      var introTimer = setTimeout(() => {
+        setWinState("combat");
+      }, 2200);
+      return () => clearTimeout(introTimer);
+    }
     if (winState == "win") {
       var rewards = generateCombatRewards(combatState.level, combatState.enemy);
       console.log("rewards: ", rewards);
@@ -290,7 +310,8 @@ export default function Combat(props) {
           setEnemyState={setEnemyState}
         />
       )}
-      {winState == "combat" && (
+      {showStartLabel && <div className="start-label">START!</div>}
+      {winState == "combat" && !showReequip && (
         <div className="score-container">Score: {score.toLocaleString()}</div>
       )}
       {winState == "win" && (
@@ -329,8 +350,8 @@ export default function Combat(props) {
         </div>
       )}
       {winState !== "pyramid" && (
-        <div className="combat-view">
-          <div className="enemy-section">
+        <div className={"combat-view" + (winState === "intro" ? " combat-view-intro" : "")}>
+          <div className={"enemy-section" + (winState === "intro" ? " stomp-in-short" : "")} id="enemy-section">
             <EnemyNumber
               enemyRef={enemyRef}
               onAttack={onEnemyAttack}
@@ -359,7 +380,7 @@ export default function Combat(props) {
           <div className="player-numbers-section">
             {showReequip && <div className="title your-team">YOUR TEAM</div>}
             <div
-              className="player-numbers"
+              className={"player-numbers" + (winState === "intro" ? " walk-forward" : "")}
               id="player-numbers"
             >
               {/* setup */}
