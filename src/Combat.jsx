@@ -262,6 +262,18 @@ export default function Combat(props) {
           isDefeated: true,
         };
       }
+      // Refresh all number states after battle
+      for (var i = 1; i <= 100; i++) {
+        var level = getLevelData(numbers[i]);
+        newCombatState.numberStates[i] = {
+          n: i,
+          health: i,
+          block: false,
+          shields: level.shields,
+          initialShields: level.shields,
+          team: [null, null, null],
+        };
+      }
       return newCombatState;
     });
     setWinState("pyramid");
@@ -291,6 +303,22 @@ export default function Combat(props) {
   }
 
   function onBack() {
+    // Refresh all number states after battle
+    setCombatState((oldCombatState) => {
+      var newCombatState = { ...oldCombatState };
+      for (var i = 1; i <= 100; i++) {
+        var level = getLevelData(numbers[i]);
+        newCombatState.numberStates[i] = {
+          n: i,
+          health: i,
+          block: false,
+          shields: level.shields,
+          initialShields: level.shields,
+          team: [null, null, null],
+        };
+      }
+      return newCombatState;
+    });
     setWinState("pyramid");
   }
 

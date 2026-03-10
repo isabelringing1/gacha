@@ -918,30 +918,6 @@ function App() {
             id="column-3"
             style={{ opacity: showCombat ? 0 : 1 }}
           >
-            {charmShopState != "hidden" && (
-              <CharmShop
-                clubs={clubs}
-                charmShopEntries={charmShopEntries}
-                buyCharm={buyCharm}
-                charmShopState={charmShopState}
-                canUnlockCharmShop={canUnlockCharmShop}
-                unlockCharmShop={unlockCharmShop}
-              />
-            )}
-
-            {sportsbookState != "hidden" && (
-              <Sportsbook
-                diamonds={diamonds}
-                sportsbookEntries={sportsbookEntries}
-                setSportsbookEntries={setSportsbookEntries}
-                setDiamonds={setDiamonds}
-                rolls={rolls}
-                generateBet={generateBet}
-                sportsbookState={sportsbookState}
-                canUnlockSportsbook={canUnlockSportsbook}
-                unlockSportsbook={unlockSportsbook}
-              />
-            )}
             {combatUnlocked && (
               <div className="combat-entry-container">
                 <CombatEntry
@@ -953,6 +929,16 @@ function App() {
                   selectingIndex={selectingIndex}
                 />
               </div>
+            )}
+            {charmShopState != "hidden" && (
+              <CharmShop
+                clubs={clubs}
+                charmShopEntries={charmShopEntries}
+                buyCharm={buyCharm}
+                charmShopState={charmShopState}
+                canUnlockCharmShop={canUnlockCharmShop}
+                unlockCharmShop={unlockCharmShop}
+              />
             )}
           </div>
         )}
