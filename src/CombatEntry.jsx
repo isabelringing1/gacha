@@ -1,15 +1,37 @@
 import CombatEntrySlot from "./CombatEntrySlot";
 
 export default function CombatEntry(props) {
-  var { combatState, setCombatState, setShowCombat, setSelectingIndex, selectingIndex } =
-    props;
+  var {
+    combatState,
+    setCombatState,
+    setShowCombat,
+    setSelectingIndex,
+    selectingIndex,
+  } = props;
 
-  var digits = String(combatState.enemy)
+  var digits = String(getCurrentEnemy())
     .split("")
     .map((digit) => Number(digit));
 
   function onEdit(index) {
     setSelectingIndex(index);
+  }
+
+  function getCurrentEnemy() {
+    if (!combatState || !combatState.pyramidEnemies) {
+      return 100;
+    }
+    // todo: Derive current enemy from combatState.selectedEnemyCoords if it exists.
+
+    for (var i = 0; i < combatState.pyramidEnemies.length; i++) {
+      var row = combatState.pyramidEnemies[i];
+      for (var j = 0; j < row.length; j++) {
+        if (!row[j].isDefeated) {
+          return row[j].value;
+        }
+      }
+    }
+    return 100;
   }
 
   return (
@@ -20,10 +42,7 @@ export default function CombatEntry(props) {
           <div className="floating-num">
             {digits.map((digit, i) => {
               return (
-                <div
-                  id={"floating-num-" + i}
-                  key={"floating-num-" + i}
-                >
+                <div id={"floating-num-" + i} key={"floating-num-" + i}>
                   {digit}
                 </div>
               );

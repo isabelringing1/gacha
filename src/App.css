@@ -2293,7 +2293,6 @@ input[type="number"] {
   z-index: 1;
 }
 
-
 .combat-entry-info {
   width: 90%;
   margin: 0 1dvh;
@@ -2333,9 +2332,9 @@ input[type="number"] {
   pointer-events: all;
 }
 
-.combat-slot-for-entry{
+.combat-slot-for-entry {
   width: 5dvh;
-  height: 5dvh
+  height: 5dvh;
 }
 
 .combat-entry-text {
@@ -2436,12 +2435,12 @@ input[type="number"] {
   left: 0;
 }
 
-.floating-num-pyramid{
+.floating-num-pyramid {
   font-size: 3dvh;
   position: relative;
   left: auto;
   padding-left: 0.1dvh;
-   -webkit-text-stroke: 0.3dvh #ffffffb0;
+  -webkit-text-stroke: 0.3dvh #ffffff;
 }
 
 #floating-num-0 {
@@ -2540,7 +2539,6 @@ input[type="number"] {
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
 }
-
 
 .path {
   position: absolute;
@@ -2783,11 +2781,27 @@ input[type="number"] {
 }
 
 .pyramid-door-icon {
-  width: 2.5dvh;
-  height: 2.5dvh;
-  transform: rotate(180deg);
+  width: 4dvh;
+  height: 4dvh;
   opacity: 0.7;
   user-select: none;
+}
+
+.pyramid-door-icon-open {
+  position: absolute;
+  width: 8dvh;
+  height: 4dvh;
+  opacity: 0.7;
+  user-select: none;
+}
+
+.pyramid-door-icon-bg {
+  position: absolute;
+  width: 6dvh;
+  height: 6dvh;
+  opacity: 0.6;
+  user-select: none;
+  animation: rotate1 30s infinite;
 }
 
 .pyramid-door-above .pyramid-door-icon {
@@ -2844,7 +2858,6 @@ input[type="number"] {
 .red {
   color: red;
 }
-
 
 /* Mobile */
 @media (max-width: 600px) {

@@ -100,7 +100,6 @@ function App() {
   const [combatUnlocked, setCombatUnlocked] = useState(false);
   const [combatState, setCombatState] = useState({
     level: 1,
-    enemy: rollForCombatEnemy(1),
     team: [null, null, null],
     numberStates: {},
     pyramidEnemies: generateEnemies(),
@@ -119,10 +118,6 @@ function App() {
     document.addEventListener("keydown", onSpacePressed);
     return () => window.removeEventListener("keydown", onSpacePressed);
   }, [showingRoll, hearts, animating, bigNumberQueue]);
-
-  function getCurrentEnemy() {
-    return combatState ? combatState.enemy : 0;
-  }
 
   const onSpacePressed = (e) => {
     if (e.key == " " && !isRollButtonDisabled()) {
@@ -238,7 +233,11 @@ function App() {
         setRarityHighlightUnlocked(saveData.rarityHighlightUnlocked);
         setCombatState(saveData.combatState);
         if (saveData.combatState && !saveData.combatState.pyramidEnemies) {
-          setCombatState(prev => ({ ...prev, pyramidEnemies: generateEnemies(), selectedEnemyCoords: null }));
+          setCombatState((prev) => ({
+            ...prev,
+            pyramidEnemies: generateEnemies(),
+            selectedEnemyCoords: null,
+          }));
         }
         setCombatUnlocked(saveData.combatUnlocked);
         setCombatHighScore(saveData.combatHighScore);
@@ -266,13 +265,6 @@ function App() {
         return null;
       }
       return saveData;
-    } else {
-      setCombatState({
-        level: 1,
-        enemy: rollForCombatEnemy(1),
-        team: [null, null, null],
-        numberStates: {},
-      });
     }
     return null;
   }
@@ -924,7 +916,6 @@ function App() {
                   combatState={combatState}
                   setCombatState={setCombatState}
                   setShowCombat={setShowCombat}
-                  enemy={getCurrentEnemy()}
                   setSelectingIndex={setSelectingIndex}
                   selectingIndex={selectingIndex}
                 />
