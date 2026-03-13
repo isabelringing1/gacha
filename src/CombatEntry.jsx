@@ -1,4 +1,7 @@
 import CombatEntrySlot from "./CombatEntrySlot";
+import cloud1 from "/cloud_1.png";
+import cloud2 from "/cloud_2.png";
+import { DitherShader } from "./dither-shader";
 
 export default function CombatEntry(props) {
   var {
@@ -21,7 +24,10 @@ export default function CombatEntry(props) {
     if (!combatState || !combatState.pyramidEnemies) {
       return 100;
     }
-    // todo: Derive current enemy from combatState.selectedEnemyCoords if it exists.
+    if (combatState.selectedEnemyCoords) {
+      var [row, col] = combatState.selectedEnemyCoords;
+      return combatState.pyramidEnemies[row][col].value;
+    }
 
     for (var i = 0; i < combatState.pyramidEnemies.length; i++) {
       var row = combatState.pyramidEnemies[i];
@@ -40,6 +46,20 @@ export default function CombatEntry(props) {
       <div className="combat-entry-inner">
         <div className="combat-entry-inner-inner">
           <div className="floating-num">
+            <DitherShader
+              src={cloud1}
+              gridSize={2}
+              ditherMode="bayer"
+              className="floating-num-cloud cloud-1"
+              objectFit="contain"
+            />
+            <DitherShader
+              src={cloud2}
+              gridSize={2}
+              ditherMode="bayer"
+              className="floating-num-cloud cloud-2"
+              objectFit="contain"
+            />
             {digits.map((digit, i) => {
               return (
                 <div id={"floating-num-" + i} key={"floating-num-" + i}>

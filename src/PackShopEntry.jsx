@@ -1,6 +1,5 @@
 import { DitherShader } from "./dither-shader";
 import cardPackOld from "/card_pack_old.png";
-import miniCardPack from "/mini_card_pack.png";
 import priceTag from "/price_tag.png";
 import Timer from "./Timer.jsx";
 
@@ -93,12 +92,12 @@ export default function PackShopEntry(props) {
     >
       <div className="pack-shop-entry-img-container">
         <DitherShader
-          src={miniCardPack}
+          src={pack.art}
           gridSize={2}
           ditherMode="bayer"
-          colorMode={"custom"}
+          colorMode={pack.color_mode}
           threshold={0}
-          customPalette={["#575757", "#cbcbcbff", "#ffffffff"]}
+          customPalette={pack.custom_palette}
           className={"pack-shop-entry-img"}
           objectFit="fill"
           style={{
