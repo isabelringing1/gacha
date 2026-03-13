@@ -1,6 +1,7 @@
 import { DitherShader } from "./dither-shader";
 import cardPackOld from "/card_pack_old.png";
 import miniCardPack from "/mini_card_pack.png";
+import priceTag from "/price_tag.png";
 import Timer from "./Timer.jsx";
 
 import { getNumbersInPack, getPackCost } from "./Util";
@@ -109,6 +110,14 @@ export default function PackShopEntry(props) {
               className="pack-shop-entry-buy-button-container"
               key="pack-shop-entry-buy-button-container"
             >
+              <DitherShader
+                src={priceTag}
+                gridSize={2}
+                ditherMode="bayer"
+                colorMode={"original"}
+                threshold={0}
+                className={"price-tag"}
+              />
               <button
                 onClick={() => onBuyPressed(shopEntry)}
                 className="pack-shop-entry-buy-button"

@@ -1367,12 +1367,20 @@ button:disabled {
   pointer-events: none;
 }
 
+.price-tag {
+  position: absolute;
+  right: 10%;
+  top: 13%;
+  width: 6dvh;
+  height: 4dvh;
+  filter: drop-shadow(0 0 0.9dvh rgba(0, 0, 0, 0.472));
+}
+
 .pack-shop-entry-buy-button {
   margin-top: 20%;
   right: 10%;
   position: absolute;
   border: none;
-  background: white;
   padding: 0.2dvh 1dvh;
   border-radius: 0;
 }
