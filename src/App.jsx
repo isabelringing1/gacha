@@ -109,6 +109,7 @@ function App() {
   const [clubs, setClubs] = useState(0);
   const [spades, setSpades] = useState(0);
   const [showReequip, setShowReequip] = useState(false);
+  const [firstCombatCompleted, setFirstCombatCompleted] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -136,7 +137,7 @@ function App() {
         };
       });
     }
-    if (rolls.length >= 10 && packShopState == "hidden") {
+    if (rolls.length >= 5 && packShopState == "hidden") {
       setPackShopState("locked");
     }
     if (
@@ -172,6 +173,7 @@ function App() {
     combatState,
     combatHighScore,
     combatUnlocked,
+    firstCombatCompleted,
   ]);
 
   function saveData() {
@@ -200,6 +202,7 @@ function App() {
       combatUnlocked: combatUnlocked,
       spades: spades,
       clubs: clubs,
+      firstCombatCompleted: firstCombatCompleted,
     };
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
@@ -243,6 +246,7 @@ function App() {
         setCombatHighScore(saveData.combatHighScore);
         setSpades(saveData.spades);
         setClubs(saveData.clubs);
+        setFirstCombatCompleted(saveData.firstCombatCompleted || false);
 
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
@@ -747,8 +751,8 @@ function App() {
       )}
       <div className="goal-container">
         {showCombat
-          ? "YOU HAVE CLEARED 10%"
-          : "YOU ARE AT " + getGoalPercent() + "%"}
+          ? "NUMBER COMBAT"
+          : "NUMBER GACHA"}
       </div>
       {!isMobile && !showCombat && <History rolls={rolls} />}
 
@@ -777,6 +781,8 @@ function App() {
           setHighScore={setCombatHighScore}
           showReequip={showReequip}
           setShowReequip={setShowReequip}
+          firstCombatCompleted={firstCombatCompleted}
+          setFirstCombatCompleted={setFirstCombatCompleted}
         />
       )}
 
@@ -918,6 +924,7 @@ function App() {
                   setShowCombat={setShowCombat}
                   setSelectingIndex={setSelectingIndex}
                   selectingIndex={selectingIndex}
+                  firstCombatCompleted={firstCombatCompleted}
                 />
               </div>
             )}

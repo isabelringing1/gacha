@@ -10,6 +10,7 @@ export default function CombatEntry(props) {
     setShowCombat,
     setSelectingIndex,
     selectingIndex,
+    firstCombatCompleted
   } = props;
 
   var digits = String(getCurrentEnemy())
@@ -21,6 +22,9 @@ export default function CombatEntry(props) {
   }
 
   function getCurrentEnemy() {
+    if (!firstCombatCompleted && combatState.team.length > 0) {
+      return combatState.team.reduce((sum, n) => sum + (n || 0), 0);
+    }
     if (!combatState || !combatState.pyramidEnemies) {
       return 100;
     }

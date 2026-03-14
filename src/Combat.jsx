@@ -28,6 +28,8 @@ export default function Combat(props) {
     setHighScore,
     showReequip,
     setShowReequip,
+    firstCombatCompleted,
+    setFirstCombatCompleted,
   } = props;
   const [enemyState, setEnemyState] = useState(null);
   const [winState, setWinState] = useState("pyramid");
@@ -36,6 +38,7 @@ export default function Combat(props) {
   const [score, setScore] = useState(0);
   const [isNewHighScore, setIsNewHighScore] = useState(false);
   const [showStartLabel, setShowStartLabel] = useState(false);
+  const [isTutorial, setIsTutorial] = useState(false);
 
   const enemyRef = useRef(null);
   const healthArrayRef = useRef();
@@ -65,6 +68,16 @@ export default function Combat(props) {
       if (!newCombatState.pyramidEnemies) {
         newCombatState.pyramidEnemies = generateEnemies();
       }
+
+      if (!firstCombatCompleted) {
+        var teamSum = newCombatState.team.reduce((sum, n) => sum + (n || 0), 0);
+        newCombatState.enemy = teamSum;
+        enemyRef.current = teamSum;
+        setEnemyState(teamSum);
+        setIsTutorial(true);
+        setWinState("intro");
+      }
+
       setCombatState(newCombatState);
     } else {
       resetCombatState();
@@ -95,13 +108,15 @@ export default function Combat(props) {
       return () => clearTimeout(introTimer);
     }
     if (winState == "win") {
-      var rewards = generateCombatRewards(combatState.level, combatState.enemy);
-      console.log("rewards: ", rewards);
-      setLevelRewards(rewards);
-      claimRewards(rewards);
-      if (scoreRef.current > highScore) {
-        setHighScore(scoreRef.current);
-        setIsNewHighScore(true);
+      if (!isTutorial) {
+        var rewards = generateCombatRewards(combatState.level, combatState.enemy);
+        console.log("rewards: ", rewards);
+        setLevelRewards(rewards);
+        claimRewards(rewards);
+        if (scoreRef.current > highScore) {
+          setHighScore(scoreRef.current);
+          setIsNewHighScore(true);
+        }
       }
     }
     if (winState == "lose") {
@@ -253,6 +268,29 @@ export default function Combat(props) {
   }
 
   function onNext() {
+    if (isTutorial) {
+      setFirstCombatCompleted(true);
+      setIsTutorial(false);
+      setCombatState((oldCombatState) => {
+        var newCombatState = { ...oldCombatState };
+        newCombatState.selectedEnemyCoords = [0, 0];
+        for (var i = 1; i <= 100; i++) {
+          var level = getLevelData(numbers[i]);
+          newCombatState.numberStates[i] = {
+            n: i,
+            health: i,
+            block: false,
+            shields: level.shields,
+            initialShields: level.shields,
+            team: [null, null, null],
+          };
+        }
+        return newCombatState;
+      });
+      setWinState("pyramid");
+      return;
+    }
+
     setCombatState((oldCombatState) => {
       var newCombatState = { ...oldCombatState };
       var coords = newCombatState.selectedEnemyCoords;
@@ -345,21 +383,29 @@ export default function Combat(props) {
       {winState == "win" && (
         <div className="combat-outcome-popup">
           <div>SUCCESS</div>
-          <div>
-            <div className="combat-outcome-popup-text">Rewards:</div>
-            {levelRewards &&
-              Object.keys(levelRewards).map((r, i) => {
-                return (
-                  <div
-                    key={"rewards-" + i}
-                    className="combat-outcome-popup-text"
-                  >
-                    {getCurrencyIcon(r)}
-                    {levelRewards[r].toLocaleString()}
-                  </div>
-                );
-              })}
-          </div>
+          {isTutorial ? (
+            <div className="combat-outcome-popup-text">
+              <div>You are ready.</div>
+              <div> Climb the pyramid. </div>
+            </div>
+            
+          ) : (
+            <div>
+              <div className="combat-outcome-popup-text">Rewards:</div>
+              {levelRewards &&
+                Object.keys(levelRewards).map((r, i) => {
+                  return (
+                    <div
+                      key={"rewards-" + i}
+                      className="combat-outcome-popup-text"
+                    >
+                      {getCurrencyIcon(r)}
+                      {levelRewards[r].toLocaleString()}
+                    </div>
+                  );
+                })}
+            </div>
+          )}
           <button onClick={onNext}>Continue</button>
         </div>
       )}
@@ -386,6 +432,7 @@ export default function Combat(props) {
               winState={winState}
               winStateRef={winStateRef}
               isSetup={showReequip}
+              isTutorial={isTutorial}
             />
             <div className="enemy-text-container">
               {records.map((r, i) => {
