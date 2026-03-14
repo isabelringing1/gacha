@@ -115,6 +115,7 @@ function App() {
   const [spades, setSpades] = useState(0);
   const [showReequip, setShowReequip] = useState(false);
   const [firstCombatCompleted, setFirstCombatCompleted] = useState(false);
+  const [isDraggingNumber, setIsDraggingNumber] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -910,6 +911,7 @@ function App() {
                   selectNumber={selectNumber}
                   combatState={combatState}
                   showCombat={showCombat}
+                  onDragStateChange={setIsDraggingNumber}
                 />
               );
             })}
@@ -984,6 +986,8 @@ function App() {
                   firstCombatCompleted={firstCombatCompleted}
                   currentEnemy={getCurrentEnemy()}
                   onCombatEntryHovered={onCombatEntryHovered}
+                  selectNumber={selectNumber}
+                  isDraggingNumber={isDraggingNumber}
                 />
               </div>
             )}

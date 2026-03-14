@@ -12,7 +12,9 @@ export default function CombatEntry(props) {
     selectingIndex,
     firstCombatCompleted,
     onCombatEntryHovered,
-    currentEnemy
+    currentEnemy,
+    selectNumber,
+    isDraggingNumber,
   } = props;
 
   var digits = String(currentEnemy)
@@ -65,6 +67,8 @@ export default function CombatEntry(props) {
                     selectingIndex={selectingIndex == i}
                     inCombatEntry={true}
                     currentEnemy={currentEnemy}
+                    onDropNumber={selectNumber}
+                    isDraggingNumber={isDraggingNumber}
                   />
                 );
               })}
