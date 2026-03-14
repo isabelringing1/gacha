@@ -113,7 +113,7 @@ export default function MenusContainer(props) {
               disabled={isRollButtonDisabled()}
               onClick={rollNumber}
             >
-              Roll (1&diams;&#xfe0e;)
+              Roll (&diams;&#xfe0e;1)
             </button>
             {diamonds <= 0 && (
               <button

@@ -16,6 +16,7 @@ export default function CharmShop(props) {
     <div className="charm-shop-container">
       <div className="charm-shop dither-bg">
         <div className="title">CHARM SHOP</div>
+        
 
         {charmShopState == "locked" && (
           <div className="charm-shop-locked">

@@ -419,6 +419,10 @@ function getLevel(numRolls) {
   console.log("ERROR: can't get for rolls " + numRolls);
 }
 
+function getMaxLevel() {
+  return levelData[levelData.length - 1].level;
+}
+
 function rollForCombatEnemy(level) {
   var levelData = combatData.find((l, i) => l.level == level);
   return Math.floor(
@@ -507,6 +511,7 @@ export {
   chance3SumGreaterThan,
   getLevelData,
   getLevel,
+  getMaxLevel,
   rollForCombatEnemy,
   generateCombatRewards,
   generateEnemies,

@@ -91,6 +91,7 @@ function App() {
   const [showOutOfDiamonds, setShowOutOfDiamonds] = useState(false);
   const [maxDiamonds, setMaxDiamonds] = useState(BASE_MAX_DIAMONDS);
   const [highlightedNumbers, setHighlightedNumbers] = useState([]);
+  const [badgedNumbers, setBadgedNumbers] = useState([]);
   const [mobileMenuIndex, setMobileMenuIndex] = useState(0);
   const [goal, setGoal] = useState(0);
   const [hoveredPack, setHoveredPack] = useState(null);
@@ -437,7 +438,7 @@ function App() {
     }
     setCharmShopState("unlocked");
     setClubs(clubs - UNLOCK_CHARM_SHOP_COST);
-    generateCharmShopEntry([0, 1], purchasedCharms);
+    generateCharmShopEntry([0, 1, 2], purchasedCharms);
   };
 
   const canUnlockSportsbook = () => {
@@ -570,7 +571,13 @@ function App() {
 
   const buyCharm = (shopEntry, index = 0) => {
     setClubs(clubs - shopEntry.cost);
-    var newPurchasedCharms = [...purchasedCharms, shopEntry.id];
+
+    if (shopEntry.consumable) {
+      var newPurchasedCharms = [...purchasedCharms, shopEntry.id];
+      generateCharmShopEntry([index], newPurchasedCharms);
+      setPurchasedCharms(newPurchasedCharms);
+    }
+    
     if (shopEntry.category == "speed-up") {
       setTimeMultiplier(shopEntry.new_time_multiplier);
     } else if (shopEntry.category == "diamond-upgrade") {
@@ -578,9 +585,10 @@ function App() {
       setDiamonds(diamonds + shopEntry.diamond_upgrade);
     } else if (shopEntry.category == "rarity-highlight") {
       setRarityHighlightUnlocked(true);
+    } else if (shopEntry.category == "hearts") {
+      setHearts(hearts + shopEntry.amount);
     }
-    generateCharmShopEntry([index], newPurchasedCharms);
-    setPurchasedCharms(newPurchasedCharms);
+    
   };
 
   const generateCharmShopEntry = (indices = [0], newPurchasedCharms) => {
@@ -673,13 +681,13 @@ function App() {
 
   function onCombatEntryHovered(hovered) {
     if (!hovered) {
-      setHighlightedNumbers([]);
+      setBadgedNumbers([]);
       return;
     }
     var currentEnemy = getCurrentEnemy();
     var factors = getFactors(currentEnemy);
     console.log(factors);
-    setHighlightedNumbers(factors);
+    setBadgedNumbers(factors);
   }
 
   function getCurrentEnemy() {
@@ -898,6 +906,7 @@ function App() {
                     highlightedNumber === n || highlightedNumbers.includes(n)
                   }
                   isRolled={rolledNumber === n}
+                  isBadged={badgedNumbers.includes(n)}
                   rarityHighlightUnlocked={rarityHighlightUnlocked}
                   selectingIndex={selectingIndex}
                   selectNumber={selectNumber}

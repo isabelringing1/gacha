@@ -23,8 +23,6 @@ export default function CombatEntry(props) {
     setSelectingIndex(index);
   }
 
-  
-
   return (
     <div className={"combat-entry-outer dither-bg"} onMouseOver={() => onCombatEntryHovered(true)} onMouseOut={() => onCombatEntryHovered(false)}>
       <div className="title">BATTLE</div>

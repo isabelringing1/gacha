@@ -1,6 +1,6 @@
 import { useState } from "react";
 import NumberTooltip from "./NumberTooltip";
-import { getRarityData } from "./Util";
+import { getRarityData, getLevel, getMaxLevel } from "./Util";
 
 import { isMobile } from "./constants.js";
 
@@ -9,6 +9,7 @@ function Number(props) {
     n,
     data,
     isHighlighted,
+    isBadged,
     isRolled,
     rarityHighlightUnlocked,
     selectingIndex,
@@ -30,7 +31,8 @@ function Number(props) {
 
   if (data) {
     numTimesRolled = data;
-    opacity = scale(numTimesRolled / total, 0, 1, 0.1, 1);
+    var level = getLevel(numTimesRolled);
+    opacity = level / getMaxLevel()
   }
   var containerClass = "number-container";
   var numberClass = "number";
@@ -93,7 +95,7 @@ function Number(props) {
         />
       )}
       {isDead && showCombat && <div className="num-dead-x">×</div>}
-
+      {isBadged && <div className="num-badge"></div>}
       <div
         className={numberClass}
         id={"number-" + n}

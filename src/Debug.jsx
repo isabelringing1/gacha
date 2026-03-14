@@ -62,6 +62,7 @@ const Debug = (props) => {
     }
     setNumbers(newNumbers);
     setRolls([...newRolls, ...rolls]);
+    setSpades(spades + numRolls.reduce((acc, curr) => acc + curr, 0));
     console.log(newNumbers);
   }
 
@@ -216,7 +217,7 @@ const Debug = (props) => {
         </button>
 
         <div>
-          <input type="number" ref={simulateRef} />
+          <input type="number" ref={simulateRef}  defaultValue={100}/>
           <button
             className="simulate-button"
             onClick={() => {

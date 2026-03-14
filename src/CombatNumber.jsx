@@ -261,13 +261,13 @@ export default function CombatNumber(props) {
                 disabled={!attackReady || !alive}
                 onClick={onManualAttack}
               >
-                Attack
+                ATTACK
               </button>
             )}
             {combatState.numberStates[number].initialShields > 0 && (
               <CombatButton
                 id="heal"
-                text={"HEAL (-1\u2665\uFE0E)"}
+                text={"HEAL \u2665\uFE0E"}
                 cooldown={3}
                 startActive={true}
                 clickAction={onHeal}
