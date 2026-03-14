@@ -81,7 +81,7 @@ export default function Event(props) {
                 onClick={rollForEvent}
                 disabled={isRollButtonDisabled()}
               >
-                Roll (1&hearts;&#xfe0e;)
+                Roll (1&diams;&#xfe0e;)
               </button>
             )}
           </div>

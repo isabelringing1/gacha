@@ -11,7 +11,7 @@ export default function PackShopEntry(props) {
     buyPack,
     shopEntry,
     pack,
-    diamonds,
+    spades,
     trashPack,
     setHighlightedNumbers,
     setHoveredPack,
@@ -19,7 +19,7 @@ export default function PackShopEntry(props) {
   } = props;
 
   function canBuy() {
-    return diamonds - getPackCost(pack) >= 0;
+    return spades - getPackCost(pack) >= 0;
   }
 
   function onMouseOver(e) {
@@ -122,7 +122,7 @@ export default function PackShopEntry(props) {
                 className="pack-shop-entry-buy-button"
                 disabled={!canBuy()}
               >
-                ♦ {getPackCost(pack)}
+                &#x2660;&#xfe0e; {getPackCost(pack)}
               </button>
               {isMobile && (
                 <div className="pack-shop-entry-expiry">

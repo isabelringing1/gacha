@@ -91,7 +91,7 @@ export default function Sportsbook(props) {
               disabled={!canUnlockSportsbook()}
               onClick={unlockSportsbook}
             >
-              &diams;&#xfe0e; {UNLOCK_SPORTSBOOK_COST}
+              &#x2660;&#xfe0e; {UNLOCK_SPORTSBOOK_COST}
             </button>
             <div className="text">Wait, this game has betting?</div>
           </div>

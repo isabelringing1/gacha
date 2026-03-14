@@ -13,8 +13,8 @@ export default function SplashDisplayBack(props) {
     setBigNumberQueue,
     animating,
     setAnimating,
-    diamonds,
-    setDiamonds,
+    spades,
+    setSpades,
     rolls,
     setRolls,
     checkForEvent,
@@ -36,8 +36,8 @@ export default function SplashDisplayBack(props) {
     var number = document.getElementById("number-container-" + n);
     number.classList.remove("pulse-delay");
     number.classList.add("pulse-delay");
-    var diamondsContainer = document.getElementById("diamonds-container");
-    diamondsContainer.classList.add("pulse-delay");
+    var spadesContainer = document.getElementById("spades-container");
+    spadesContainer.classList.add("pulse-delay");
 
     setTimeout(() => {
       setBigNumberQueue(bigNumberQueue.slice(1));
@@ -47,9 +47,9 @@ export default function SplashDisplayBack(props) {
       var newNumbers = { ...numbers };
       newNumbers[n] = newNumbers[n] ? newNumbers[n] + 1 : 1;
       setNumbers(newNumbers);
-      setDiamonds(diamonds + n);
+      setSpades(spades + n);
       setRolls([n, ...rolls]);
-      diamondsContainer.classList.remove("pulse-delay");
+      spadesContainer.classList.remove("pulse-delay");
       checkForEvent();
     }, 700);
   }

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 
 import CombatButton from "./CombatButton";
 import NumberTooltip from "./NumberTooltip";
-import shield from "/shield.png";
 import { AUTO_LEVEL, DIVIDE_LEVEL } from "./constants.js";
 
 export default function CombatNumber(props) {
@@ -237,7 +236,7 @@ export default function CombatNumber(props) {
                             : 0.2,
                       }}
                     >
-                      <img src={shield} className="shield-img" />
+                      <span className="shield-img">&hearts;&#xfe0e;</span>
                     </div>
                   );
                 })}
@@ -268,7 +267,7 @@ export default function CombatNumber(props) {
             {combatState.numberStates[number].initialShields > 0 && (
               <CombatButton
                 id="heal"
-                text="Heal"
+                text={"HEAL (-1\u2665\uFE0E)"}
                 cooldown={3}
                 startActive={true}
                 clickAction={onHeal}

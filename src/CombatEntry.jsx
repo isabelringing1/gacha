@@ -10,10 +10,12 @@ export default function CombatEntry(props) {
     setShowCombat,
     setSelectingIndex,
     selectingIndex,
-    firstCombatCompleted
+    firstCombatCompleted,
+    onCombatEntryHovered,
+    currentEnemy
   } = props;
 
-  var digits = String(getCurrentEnemy())
+  var digits = String(currentEnemy)
     .split("")
     .map((digit) => Number(digit));
 
@@ -21,31 +23,10 @@ export default function CombatEntry(props) {
     setSelectingIndex(index);
   }
 
-  function getCurrentEnemy() {
-    if (!firstCombatCompleted && combatState.team.length > 0) {
-      return combatState.team.reduce((sum, n) => sum + (n || 0), 0);
-    }
-    if (!combatState || !combatState.pyramidEnemies) {
-      return 100;
-    }
-    if (combatState.selectedEnemyCoords) {
-      var [row, col] = combatState.selectedEnemyCoords;
-      return combatState.pyramidEnemies[row][col].value;
-    }
-
-    for (var i = 0; i < combatState.pyramidEnemies.length; i++) {
-      var row = combatState.pyramidEnemies[i];
-      for (var j = 0; j < row.length; j++) {
-        if (!row[j].isDefeated) {
-          return row[j].value;
-        }
-      }
-    }
-    return 100;
-  }
+  
 
   return (
-    <div className={"combat-entry-outer dither-bg"}>
+    <div className={"combat-entry-outer dither-bg"} onMouseOver={() => onCombatEntryHovered(true)} onMouseOut={() => onCombatEntryHovered(false)}>
       <div className="title">BATTLE</div>
       <div className="combat-entry-inner">
         <div className="combat-entry-inner-inner">

@@ -60,44 +60,44 @@
 
     [
       {
-        "id": "heart-upgrade-1",
-        "category": "heart-upgrade",
+        "id": "diamond-upgrade-1",
+        "category": "diamond-upgrade",
         "name": "Four Leaf Clover",
-        "desc": "+5 Max \u2665\uFE0E",
+        "desc": "+5 Max \u2666\uFE0E",
         "cost": 300,
-        "heart_upgrade": 5
+        "diamond_upgrade": 5
       },
       {
-        "id": "heart-upgrade-2",
-        "category": "heart-upgrade",
+        "id": "diamond-upgrade-2",
+        "category": "diamond-upgrade",
         "name": "Cat",
-        "desc": "+5 Max \u2665\uFE0E",
+        "desc": "+5 Max \u2666\uFE0E",
         "cost": 600,
-        "heart_upgrade": 5
+        "diamond_upgrade": 5
       },
       {
-        "id": "heart-upgrade-3",
-        "category": "heart-upgrade",
+        "id": "diamond-upgrade-3",
+        "category": "diamond-upgrade",
         "name": "Penny",
-        "desc": "+5 Max \u2665\uFE0E",
+        "desc": "+5 Max \u2666\uFE0E",
         "cost": 900,
-        "heart_upgrade": 5
+        "diamond_upgrade": 5
       },
       {
-        "id": "heart-upgrade-4",
-        "category": "heart-upgrade",
-        "desc": "+5 Max \u2665\uFE0E",
+        "id": "diamond-upgrade-4",
+        "category": "diamond-upgrade",
+        "desc": "+5 Max \u2666\uFE0E",
         "name": "Ladybug",
         "cost": 1200,
-        "heart_upgrade": 5
+        "diamond_upgrade": 5
       },
       {
-        "id": "heart-upgrade-5",
-        "category": "heart-upgrade",
+        "id": "diamond-upgrade-5",
+        "category": "diamond-upgrade",
         "name": "Shooting Star",
-        "desc": "+5 Max \u2665\uFE0E",
+        "desc": "+5 Max \u2666\uFE0E",
         "cost": 1500,
-        "heart_upgrade": 5
+        "diamond_upgrade": 5
       }
     ]
   ]

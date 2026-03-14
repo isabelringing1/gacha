@@ -471,10 +471,16 @@ function getCurrencyIcon(id) {
   if (id == "clubs") {
     return "\u{2660}\u{FE0E}";
   }
+}
 
-  if (id == "spades") {
-    return "\u{2663}\u{FE0E}";
+function getFactors(number) {
+ var factors = [];
+ for (var i = 1; i <= 100; i++) {
+  if (number % i == 0) {
+    factors.push(i);
   }
+ }
+ return factors;
 }
 
 export {
@@ -505,4 +511,5 @@ export {
   generateCombatRewards,
   generateEnemies,
   getCurrencyIcon,
+  getFactors
 };

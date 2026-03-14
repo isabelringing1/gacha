@@ -21,7 +21,7 @@ export default function CharmShop(props) {
           <div className="charm-shop-locked">
             <div className="title">UNLOCK</div>
             <button disabled={!canUnlockCharmShop()} onClick={unlockCharmShop}>
-              &diams;&#xfe0e; {UNLOCK_CHARM_SHOP_COST}
+              &#x2660;&#xfe0e; {UNLOCK_CHARM_SHOP_COST}
             </button>
           </div>
         )}

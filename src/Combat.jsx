@@ -11,7 +11,6 @@ import {
 import { isMobile, DIVIDE_LEVEL } from "./constants.js";
 import EnemyNumber from "./EnemyNumber";
 import CombatPyramid from "./CombatPyramid.jsx";
-import shield from "/shield.png";
 
 export default function Combat(props) {
   const {
@@ -22,8 +21,8 @@ export default function Combat(props) {
     selectingIndex,
     setSelectingIndex,
     claimRewards,
-    diamonds,
-    setDiamonds,
+    spades,
+    setSpades,
     highScore,
     setHighScore,
     showReequip,
@@ -374,6 +373,8 @@ export default function Combat(props) {
           setShowReequip={setShowReequip}
           enemyRef={enemyRef}
           setEnemyState={setEnemyState}
+          spades={spades}
+          setSpades={setSpades}
         />
       )}
       {showStartLabel && <div className="start-label">START!</div>}

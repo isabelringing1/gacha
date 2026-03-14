@@ -175,7 +175,7 @@ const Bet = (props) => {
       {betButtonPressed != -1 && confirmedBet == -1 && (
         <div className="bet-left-column">
           <div className={"set-bet-container " + betInputClassName}>
-            &diams;&#xfe0e;
+            &#x2660;&#xfe0e;
             <input
               type="number"
               onInput={onInput}
@@ -191,7 +191,7 @@ const Bet = (props) => {
             payout > 0 &&
             betResult != "YOU LOST!" && (
               <div className="bet-payout-container">
-                Payout: &diams;&#xfe0e;{payout.toLocaleString()}
+                Payout: &#x2660;&#xfe0e;{payout.toLocaleString()}
               </div>
             )}
         </div>
@@ -251,7 +251,7 @@ const Bet = (props) => {
             </div>
           )}
           <div className="confirmed-payout-container">
-            Pays out &diams;&#xfe0e;{payout.toLocaleString()}{" "}
+            Pays out &#x2660;&#xfe0e;{payout.toLocaleString()}{" "}
           </div>
         </div>
       )}

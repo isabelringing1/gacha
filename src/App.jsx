@@ -11,6 +11,7 @@ import {
   rollEvent,
   rollForCombatEnemy,
   generateEnemies,
+  getFactors
 } from "./Util";
 import "./App.css";
 
@@ -34,15 +35,15 @@ import CombatEntry from "./CombatEntry.jsx";
 import packData from "./json/packs.json";
 
 import arrow from "/arrow.png";
-var hearts = "&hearts;&#xfe0e;";
-var diamonds = "&diams;&#xfe0e;";
+var hearts = "&diams;&#xfe0e;";
+var diamonds = "&#x2660;&#xfe0e;";
 var club = "&#x2663;&#xfe0e;";
 var spade = "&#x2660;&#xfe0e;";
 
 import {
   REFRESH_TIME,
   REFRESH_ENTRY_BASE_COST,
-  BASE_MAX_HEARTS,
+  BASE_MAX_DIAMONDS,
   PACK_LIFETIME,
   NUM_TABS,
   UNLOCK_PACK_SHOP_COST,
@@ -50,14 +51,16 @@ import {
   UNLOCK_SPORTSBOOK_COST,
   isMobile,
 } from "./constants.js";
+import { s } from "motion/react-client";
 
 function App() {
   const [numbers, setNumbers] = useState({});
   const [rolls, setRolls] = useState([]);
   const [highlightedNumber, setHighlightedNumber] = useState(-1);
   const [rolledNumber, setRolledNumber] = useState(-1);
-  const [hearts, setHearts] = useState(BASE_MAX_HEARTS);
-  const [nextHeartRefreshTime, setNextHeartRefreshTime] = useState(null);
+  const [diamonds, setDiamonds] = useState(BASE_MAX_DIAMONDS);
+  const [hearts, setHearts] = useState(0);
+  const [nextDiamondRefreshTime, setNextDiamondRefreshTime] = useState(null);
   const [showingRoll, setShowingRoll] = useState(-1);
   const [bigNumberQueue, setBigNumberQueue] = useState([]);
   const [currentPack, setCurrentPack] = useState(null);
@@ -83,10 +86,10 @@ function App() {
   const [charmShopEntries, setCharmShopEntries] = useState([0, 0]);
   const [purchasedCharms, setPurchasedCharms] = useState([]);
   const [animating, setAnimating] = useState(false);
-  const [diamonds, setDiamonds] = useState(0);
+  
   const [timeMultiplier, setTimeMultiplier] = useState(1);
-  const [showOutOfHearts, setShowOutOfHearts] = useState(false);
-  const [maxHearts, setMaxHearts] = useState(BASE_MAX_HEARTS);
+  const [showOutOfDiamonds, setShowOutOfDiamonds] = useState(false);
+  const [maxDiamonds, setMaxDiamonds] = useState(BASE_MAX_DIAMONDS);
   const [highlightedNumbers, setHighlightedNumbers] = useState([]);
   const [mobileMenuIndex, setMobileMenuIndex] = useState(0);
   const [goal, setGoal] = useState(0);
@@ -166,7 +169,7 @@ function App() {
     hearts,
     spades,
     clubs,
-    maxHearts,
+    maxDiamonds,
     mobileMenuIndex,
     currentEvent,
     rarityHighlightUnlocked,
@@ -181,7 +184,7 @@ function App() {
       numbers: numbers,
       rolls: rolls,
       hearts: hearts,
-      nextHeartRefreshTime: nextHeartRefreshTime,
+      nextHeartRefreshTime: nextDiamondRefreshTime,
       sportsbookState: sportsbookState,
       sportsbookEntries: sportsbookEntries,
       packShopState: packShopState,
@@ -189,7 +192,7 @@ function App() {
       cardShopEntries: cardShopEntries,
       diamonds: diamonds,
       timeMultiplier: timeMultiplier,
-      maxHearts: maxHearts,
+      maxHearts: maxDiamonds,
       charmShopState: charmShopState,
       charmShopEntries: charmShopEntries,
       purchasedCharms: purchasedCharms,
@@ -223,7 +226,7 @@ function App() {
         setDiamonds(saveData.diamonds);
         setHearts(saveData.hearts);
         setTimeMultiplier(saveData.timeMultiplier);
-        setMaxHearts(saveData.maxHearts);
+        setMaxDiamonds(saveData.maxHearts);
         setCharmShopState(saveData.charmShopState);
         setCharmShopEntries(saveData.charmShopEntries);
         setPurchasedCharms(saveData.purchasedCharms);
@@ -250,20 +253,20 @@ function App() {
 
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
-          var numHeartsGained = 0;
-          while (t <= 0 && hearts + numHeartsGained < maxHearts) {
-            numHeartsGained++;
+          var numDiamondsGained = 0;
+          while (t <= 0 && diamonds + numDiamondsGained < maxDiamonds) {
+            numDiamondsGained++;
             t += REFRESH_TIME;
           }
-          var newHearts = hearts + numHeartsGained;
-          setHearts(newHearts);
-          if (newHearts < maxHearts) {
-            setNextHeartRefreshTime(Date.now() + t);
+          var newDiamonds = diamonds + numDiamondsGained;
+          setDiamonds(newDiamonds);
+          if (newDiamonds < maxDiamonds) {
+            setNextDiamondRefreshTime(Date.now() + t);
           } else {
-            setNextHeartRefreshTime(null);
+            setNextDiamondRefreshTime(null);
           }
         } else {
-          setNextHeartRefreshTime(saveData.nextHeartRefreshTime);
+          setNextDiamondRefreshTime(saveData.nextHeartRefreshTime);
         }
       } catch (e) {
         return null;
@@ -273,12 +276,12 @@ function App() {
     return null;
   }
 
-  const refreshHearts = () => {
-    setHearts(Math.min(maxHearts, hearts + 1));
-    if (hearts >= maxHearts) {
-      setNextHeartRefreshTime(null);
+  const refreshDiamonds = () => {
+    setDiamonds(Math.min(maxDiamonds, diamonds + 1));
+    if (diamonds >= maxDiamonds) {
+      setNextDiamondRefreshTime(null);
     } else {
-      setNextHeartRefreshTime(nextHeartRefreshTime + REFRESH_TIME);
+      setNextDiamondRefreshTime(nextDiamondRefreshTime + REFRESH_TIME);
     }
   };
 
@@ -287,16 +290,16 @@ function App() {
   }, [combatState]);
 
   const rollNumber = (e, cheatNumber = -1) => {
-    if (hearts <= 0 && cheatNumber == -1) {
+    if (diamonds <= 0 && cheatNumber == -1) {
       return;
     }
     var rolledNumber = cheatNumber;
     setSelectingIndex(-1);
 
     if (cheatNumber == -1) {
-      setHearts(hearts - 1);
-      if (!nextHeartRefreshTime) {
-        setNextHeartRefreshTime(Date.now() + REFRESH_TIME);
+      setDiamonds(diamonds - 1);
+      if (!nextDiamondRefreshTime) {
+        setNextDiamondRefreshTime(Date.now() + REFRESH_TIME);
       }
       rolledNumber = roll();
     }
@@ -412,7 +415,7 @@ function App() {
   };
 
   const canUnlockPackShop = () => {
-    return packShopState == "locked" && diamonds >= UNLOCK_PACK_SHOP_COST;
+    return packShopState == "locked" && spades >= UNLOCK_PACK_SHOP_COST;
   };
 
   const unlockPackShop = (cheat = false) => {
@@ -420,12 +423,12 @@ function App() {
       return;
     }
     setPackShopState("unlocked");
-    setDiamonds(diamonds - UNLOCK_PACK_SHOP_COST);
+    setSpades(spades - UNLOCK_PACK_SHOP_COST);
     generatePackShopEntry(2);
   };
 
   const canUnlockCharmShop = () => {
-    return charmShopState == "locked" && diamonds >= UNLOCK_CHARM_SHOP_COST;
+    return charmShopState == "locked" && spades >= UNLOCK_CHARM_SHOP_COST;
   };
 
   const unlockCharmShop = (cheat = false) => {
@@ -433,12 +436,12 @@ function App() {
       return;
     }
     setCharmShopState("unlocked");
-    setDiamonds(diamonds - UNLOCK_CHARM_SHOP_COST);
+    setClubs(clubs - UNLOCK_CHARM_SHOP_COST);
     generateCharmShopEntry([0, 1], purchasedCharms);
   };
 
   const canUnlockSportsbook = () => {
-    return sportsbookState == "locked" && diamonds >= UNLOCK_SPORTSBOOK_COST;
+    return sportsbookState == "locked" && spades >= UNLOCK_SPORTSBOOK_COST;
   };
 
   const unlockSportsbook = (cheat = false) => {
@@ -446,13 +449,13 @@ function App() {
       return;
     }
     setSportsbookState("unlocked");
-    setDiamonds(diamonds - UNLOCK_SPORTSBOOK_COST);
+    setSpades(spades - UNLOCK_SPORTSBOOK_COST);
     generateBet([0, 1]);
   };
 
   const buyPack = (shopEntry) => {
     var pack = packData.packs[shopEntry.id];
-    setDiamonds(diamonds - getPackCost(pack));
+    setSpades(spades - getPackCost(pack));
     setCurrentPack(packData.packs[shopEntry.id]);
     setHighlightedNumbers([]);
     var newShopEntries = [...cardShopEntries];
@@ -505,7 +508,7 @@ function App() {
   const refreshPackShopEntry = (index) => {
     console.log("here", index);
     generatePackShopEntry(1, [index]);
-    setDiamonds(diamonds - getRefreshEntryCost());
+    setSpades(spades - getRefreshEntryCost());
   };
 
   const getRefreshEntryCost = (entry) => {
@@ -524,10 +527,14 @@ function App() {
   };
 
   const unlockShopEntry = (i) => {
+    if (!canUnlockShopEntry(i)) {
+      return;
+    }
     var newPackShopEntriesUnlocked = [...packShopEntriesUnlocked];
     newPackShopEntriesUnlocked[i] = true;
     setPackShopEntriesUnlocked(newPackShopEntriesUnlocked);
     generatePackShopEntry();
+    setSpades(spades - UNLOCK_ENTRY_COST);
   };
 
   const openPack = (pack) => {
@@ -544,8 +551,8 @@ function App() {
       pack.pool,
     );
 
-    if (!nextHeartRefreshTime) {
-      setNextHeartRefreshTime(Date.now() + REFRESH_TIME);
+    if (!nextDiamondRefreshTime) {
+      setNextDiamondRefreshTime(Date.now() + REFRESH_TIME);
     }
     var newBigNumbers = [];
     for (var i = 0; i < rolledNumbers.length; i++) {
@@ -566,9 +573,9 @@ function App() {
     var newPurchasedCharms = [...purchasedCharms, shopEntry.id];
     if (shopEntry.category == "speed-up") {
       setTimeMultiplier(shopEntry.new_time_multiplier);
-    } else if (shopEntry.category == "heart-upgrade") {
-      setMaxHearts(maxHearts + shopEntry.heart_upgrade);
-      setHearts(hearts + shopEntry.heart_upgrade);
+    } else if (shopEntry.category == "diamond-upgrade") {
+      setMaxDiamonds(maxDiamonds + shopEntry.diamond_upgrade);
+      setDiamonds(diamonds + shopEntry.diamond_upgrade);
     } else if (shopEntry.category == "rarity-highlight") {
       setRarityHighlightUnlocked(true);
     }
@@ -610,13 +617,13 @@ function App() {
   };
 
   const rollForEvent = () => {
-    if (hearts <= 0) {
+    if (diamonds <= 0) {
       return;
     }
 
-    setHearts(hearts - 1);
-    if (!nextHeartRefreshTime) {
-      setNextHeartRefreshTime(Date.now() + REFRESH_TIME);
+    setDiamonds(diamonds - 1);
+    if (!nextDiamondRefreshTime) {
+      setNextDiamondRefreshTime(Date.now() + REFRESH_TIME);
     }
     var rolledNumber = rollEvent(currentEvent);
     showRolledNumber(rolledNumber, false);
@@ -634,7 +641,7 @@ function App() {
 
   const isRollButtonDisabled = () => {
     return (
-      showingRoll != -1 || hearts <= 0 || animating || bigNumberQueue.length > 0
+      showingRoll != -1 || diamonds <= 0 || animating || bigNumberQueue.length > 0
     );
   };
 
@@ -664,6 +671,37 @@ function App() {
     }
   }
 
+  function onCombatEntryHovered(hovered) {
+    var currentEnemy = getCurrentEnemy();
+    var factors = getFactors(currentEnemy);
+    console.log(factors);
+  }
+
+  function getCurrentEnemy() {
+    if (!combatState || !combatState.pyramidEnemies) {
+      return 0;
+    }
+
+    if (!firstCombatCompleted && combatState.team.length > 0) {
+      return combatState.team.reduce((sum, n) => sum + (n || 0), 0);
+    }
+    
+    if (combatState.selectedEnemyCoords) {
+      var [row, col] = combatState.selectedEnemyCoords;
+      return combatState.pyramidEnemies[row][col].value;
+    }
+
+    for (var i = 0; i < combatState.pyramidEnemies.length; i++) {
+      var row = combatState.pyramidEnemies[i];
+      for (var j = 0; j < row.length; j++) {
+        if (!row[j].isDefeated) {
+          return row[j].value;
+        }
+      }
+    }
+    return 100;
+  }
+
   return (
     <div
       id="content"
@@ -682,6 +720,8 @@ function App() {
         setRolls={setRolls}
         numbers={numbers}
         setNumbers={setNumbers}
+        setSpades={setSpades}
+        setClubs={setClubs}
         setHearts={setHearts}
         setDiamonds={setDiamonds}
         rollNumber={rollNumber}
@@ -700,12 +740,12 @@ function App() {
         unlockSportsbook={unlockSportsbook}
         setCombatUnlocked={setCombatUnlocked}
       />
-      {showOutOfHearts && (
+      {showOutOfDiamonds && (
         <OutOfHeartsContainer
-          setShowOutOfHearts={setShowOutOfHearts}
-          nextHeartRefreshTime={nextHeartRefreshTime}
-          setHearts={setHearts}
-          hearts={hearts}
+          setShowOutOfDiamonds={setShowOutOfDiamonds}
+          nextDiamondRefreshTime={nextDiamondRefreshTime}
+          setDiamonds={setDiamonds}
+          diamonds={diamonds}
         />
       )}
       {bigNumberQueue.length > 0 && (
@@ -724,8 +764,8 @@ function App() {
           setBigNumberQueue={setBigNumberQueue}
           setAnimating={setAnimating}
           animating={animating}
-          diamonds={diamonds}
-          setDiamonds={setDiamonds}
+          spades={spades}
+          setSpades={setSpades}
           rolls={rolls}
           setRolls={setRolls}
           checkForEvent={checkForEvent}
@@ -775,8 +815,8 @@ function App() {
           setSelectingIndex={setSelectingIndex}
           selectingIndex={selectingIndex}
           claimRewards={claimRewards}
-          setDiamonds={setDiamonds}
-          diamonds={diamonds}
+          setSpades={setSpades}
+          spades={spades}
           highScore={combatHighScore}
           setHighScore={setCombatHighScore}
           showReequip={showReequip}
@@ -803,7 +843,7 @@ function App() {
                 openPack={openPack}
                 bigNumberQueue={bigNumberQueue}
                 cardShopEntries={cardShopEntries}
-                diamonds={diamonds}
+                spades={spades}
                 unlockShopEntry={unlockShopEntry}
                 generatePackShopEntry={generatePackShopEntry}
                 setHighlightedNumbers={setHighlightedNumbers}
@@ -881,31 +921,31 @@ function App() {
             style={{ opacity: showCombat ? 0 : 1 }}
           >
             <div>
-              <div className="hearts-container">
+              <div className="diamonds-container" id="diamonds-container">
                 <div>
-                  &hearts;&#xfe0e; {hearts}/{maxHearts}{" "}
-                  {!isMobile && nextHeartRefreshTime && (
+                  &diams;&#xfe0e; {diamonds}/{maxDiamonds}{" "}
+                  {!isMobile && nextDiamondRefreshTime && (
                     <span className="next-heart-container">
-                      next &hearts;&#xfe0e; in{" "}
+                      next &diams;&#xfe0e; in{" "}
                       <Timer
-                        endTime={nextHeartRefreshTime}
-                        onTimerEnd={refreshHearts}
+                        endTime={nextDiamondRefreshTime}
+                        onTimerEnd={refreshDiamonds}
                       />
                     </span>
                   )}
                 </div>
               </div>
 
-              <div id="diamonds-container">
-                &diams;&#xfe0e; {diamonds.toLocaleString()}
+              <div id="spades-container">
+                &#x2660;&#xfe0e; {spades.toLocaleString()}
               </div>
             </div>
             <div>
               <div id="clubs-container">
                 &#x2663;&#xfe0e; {clubs.toLocaleString()}
               </div>
-              <div id="spades-container">
-                &#x2660;&#xfe0e; {spades.toLocaleString()}
+              <div id="hearts-container">
+                &hearts;&#xfe0e; {hearts.toLocaleString()}
               </div>
             </div>
           </div>
@@ -925,6 +965,8 @@ function App() {
                   setSelectingIndex={setSelectingIndex}
                   selectingIndex={selectingIndex}
                   firstCombatCompleted={firstCombatCompleted}
+                  currentEnemy={getCurrentEnemy()}
+                  onCombatEntryHovered={onCombatEntryHovered}
                 />
               </div>
             )}
@@ -953,7 +995,7 @@ function App() {
         setSportsbookState={setSportsbookState}
         canUnlockSportsbook={canUnlockSportsbook}
         unlockSportsbook={unlockSportsbook}
-        nextHeartRefreshTime={nextHeartRefreshTime}
+        nextDiamondRefreshTime={nextDiamondRefreshTime}
         diamonds={diamonds}
         setDiamonds={setDiamonds}
         hearts={hearts}
@@ -965,12 +1007,9 @@ function App() {
         setPackShopEntriesUnlocked={setPackShopEntriesUnlocked}
         generatePackShopEntry={generatePackShopEntry}
         rollNumber={rollNumber}
-        refreshHearts={refreshHearts}
+        refreshDiamonds={refreshDiamonds}
         trySwipe={trySwipe}
-        setShowOutOfHearts={setShowOutOfHearts}
-        generateBet={generateBet}
-        sportsbookEntries={sportsbookEntries}
-        setSportsbookEntries={setSportsbookEntries}
+        setShowOutOfDiamonds={setShowOutOfDiamonds}
         rolls={rolls}
         currentPack={currentPack}
         buyPack={buyPack}
@@ -985,6 +1024,10 @@ function App() {
         isRollButtonDisabled={isRollButtonDisabled}
         lastPackOpened={lastPackOpened}
         showCombat={showCombat}
+        clubs={clubs}
+        setClubs={setClubs}
+        spades={spades}
+        setSpades={setSpades}
       />
     </div>
   );

@@ -9,6 +9,8 @@ const Debug = (props) => {
     setRolls,
     setNumbers,
     setHearts,
+    setSpades,
+    setClubs,
     rollNumber,
     generatePackShopEntry,
     setTimeMultiplier,
@@ -29,10 +31,12 @@ const Debug = (props) => {
   const [showDebug, setShowDebug] = useState(false);
   const heartsInputRef = useRef(null);
   const diamondsInputRef = useRef(null);
+  const spadesInputRef = useRef(null);
   const numberInputRef = useRef(null);
   const timeMultiplierRef = useRef(null);
   const chances3Ref = useRef(null);
   const simulateRef = useRef(null);
+
 
   var isLocalHost =
     location.hostname === "localhost" || location.hostname === "127.0.0.1";
@@ -148,6 +152,19 @@ const Debug = (props) => {
             Set &hearts;&#xfe0e;
           </button>
         </div>
+
+        <div>
+          <input type="number" ref={spadesInputRef} />
+          <button
+            className="debug-button"
+            onClick={() => {
+              setSpades(parseInt(spadesInputRef.current.value));
+            }}
+          >
+            Set &#x2660;&#xfe0e;
+          </button>
+        </div>
+
 
         <div>
           <input type="number" ref={diamondsInputRef} />

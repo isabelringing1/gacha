@@ -16,10 +16,6 @@ export default function MenusContainer(props) {
     charmShopState,
     canUnlockCharmShop,
     unlockCharmShop,
-    sportsbookState,
-    setSportsbookState,
-    canUnlockSportsbook,
-    unlockSportsbook,
     nextHeartRefreshTime,
     diamonds,
     setDiamonds,
@@ -36,14 +32,9 @@ export default function MenusContainer(props) {
     packShopState,
     setPackShopState,
     rollNumber,
-    sportsbookState,
-    setSportsbookState,
-    refreshHearts,
+    refreshDiamonds,
     trySwipe,
-    setShowOutOfHearts,
-    generateBet,
-    sportsbookEntries,
-    setSportsbookEntries,
+    setShowOutOfDiamonds,
     rolls,
     currentPack,
     buyPack,
@@ -58,6 +49,10 @@ export default function MenusContainer(props) {
     isRollButtonDisabled,
     lastPackOpened,
     showCombat,
+    clubs,
+    setClubs,
+    spades,
+    setSpades,
   } = props;
 
   const [touchStart, setTouchStart] = useState(null);
@@ -118,23 +113,23 @@ export default function MenusContainer(props) {
               disabled={isRollButtonDisabled()}
               onClick={rollNumber}
             >
-              Roll (1&hearts;&#xfe0e;)
+              Roll (1&diams;&#xfe0e;)
             </button>
-            {hearts <= 0 && (
+            {diamonds <= 0 && (
               <button
                 id="out-of-hearts-button"
-                onClick={() => setShowOutOfHearts(true)}
+                onClick={() => setShowOutOfDiamonds(true)}
               >
-                Get More &hearts;&#xfe0e;
+                Get More &diams;&#xfe0e;
               </button>
             )}
           </span>
           {isMobile && nextHeartRefreshTime && (
             <div className="next-heart-container">
-              Next &hearts;&#xfe0e; in{" "}
+              Next &diams;&#xfe0e; in{" "}
               <Timer
                 endTime={nextHeartRefreshTime}
-                onTimerEnd={refreshHearts}
+                onTimerEnd={refreshDiamonds}
               />
             </div>
           )}
@@ -151,7 +146,7 @@ export default function MenusContainer(props) {
             openPack={openPack}
             bigNumberQueue={bigNumberQueue}
             cardShopEntries={cardShopEntries}
-            diamonds={diamonds}
+            spades={spades}
             unlockShopEntry={unlockShopEntry}
             generatePackShopEntry={generatePackShopEntry}
             setHighlightedNumbers={setHighlightedNumbers}
@@ -167,7 +162,7 @@ export default function MenusContainer(props) {
         )}
         {charmShopState != "hidden" && isMobile && (
           <CharmShop
-            diamonds={diamonds}
+            clubs={clubs}
             charmShopEntries={charmShopEntries}
             buyCharm={buyCharm}
             charmShopState={charmShopState}
@@ -176,7 +171,7 @@ export default function MenusContainer(props) {
           />
         )}
 
-        {sportsbookState != "hidden" && isMobile && (
+        {/*{sportsbookState != "hidden" && isMobile && (
           <Sportsbook
             diamonds={diamonds}
             sportsbookEntries={sportsbookEntries}
@@ -185,7 +180,7 @@ export default function MenusContainer(props) {
             rolls={rolls}
             generateBet={generateBet}
           />
-        )}
+        )}*/}
 
         {isMobile && (
           <div className="history-container">

@@ -3,10 +3,10 @@ import Timer from "./Timer";
 import ruled_paper from "/ruled_paper.png";
 import { DitherShader } from "./dither-shader";
 import MathProblem from "./MathProblem";
-import { EASY_HEARTS, HARD_HEARTS } from "./constants.js";
+import { EASY_DIAMONDS, HARD_DIAMONDS } from "./constants.js";
 
 export default function OutOfHeartsContainer(props) {
-  const { setShowOutOfHearts, nextHeartRefreshTime, setHearts, hearts } = props;
+  const { setShowOutOfDiamonds, nextDiamondRefreshTime, setDiamonds, diamonds } = props;
   const [showMath, setShowMath] = useState(0); //0, 1, 2
   const [mathProblems, setMathProblems] = useState([]);
 
@@ -62,11 +62,11 @@ export default function OutOfHeartsContainer(props) {
     problem.isComplete = true;
     setMathProblems(newProblems);
     if (newProblems.every((p) => p.isComplete)) {
-      setHearts(hearts + (showMath == 2 ? HARD_HEARTS : EASY_HEARTS));
+      setDiamonds(diamonds + (showMath == 2 ? HARD_DIAMONDS : EASY_DIAMONDS));
       var container = document.getElementsByClassName("out-of-hearts-outer")[0];
       container.classList.add("flicker-out");
       setTimeout(() => {
-        setShowOutOfHearts(false);
+        setShowOutOfDiamonds(false);
       }, 600);
     }
   }
@@ -79,23 +79,23 @@ export default function OutOfHeartsContainer(props) {
           !e.target.closest(".out-of-hearts-popup") &&
           !e.target.closest(".math-problems")
         )
-          setShowOutOfHearts(false);
+          setShowOutOfDiamonds(false);
       }}
     >
       <div className={"out-of-hearts-outer" + (showMath != 0 ? " flip" : "")}>
         <div className={"out-of-hearts-inner" + (showMath != 0 ? " flip" : "")}>
           <div className={"out-of-hearts-popup dither-bg"}>
             <div className="out-of-hearts-title title">
-              OUT OF &hearts;&#xfe0e;!
+              OUT OF &diams;&#xfe0e;!
             </div>
             <div className="out-of-hearts-popup-inner">
-              {nextHeartRefreshTime && (
+              {nextDiamondRefreshTime && (
                 <div>
-                  Next &hearts;&#xfe0e; in{" "}
+                  Next &diams;&#xfe0e; in{" "}
                   <Timer
-                    endTime={nextHeartRefreshTime}
+                    endTime={nextDiamondRefreshTime}
                     onTimerEnd={() => {
-                      setShowOutOfHearts(false);
+                      setShowOutOfDiamonds(false);
                     }}
                   />
                 </div>
@@ -108,7 +108,7 @@ export default function OutOfHeartsContainer(props) {
                 }}
               >
                 Do Easy Math Problems{" "}
-                <div>(+{EASY_HEARTS} &hearts;&#xfe0e;)</div>
+                <div>(+{EASY_DIAMONDS} &diams;&#xfe0e;)</div>
               </button>
 
               <button
@@ -119,7 +119,7 @@ export default function OutOfHeartsContainer(props) {
                 }}
               >
                 Do Hard Math Problems{" "}
-                <div>(+{HARD_HEARTS} &hearts;&#xfe0e;)</div>
+                <div>(+{HARD_DIAMONDS} &diams;&#xfe0e;)</div>
               </button>
             </div>
           </div>

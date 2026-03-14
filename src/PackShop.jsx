@@ -14,7 +14,7 @@ export default function PackShop(props) {
     openPack,
     bigNumberQueue,
     cardShopEntries,
-    diamonds,
+    spades,
     unlockShopEntry,
     generatePackShopEntry,
     setHighlightedNumbers,
@@ -29,11 +29,11 @@ export default function PackShop(props) {
   } = props;
 
   const canUnlockShopEntry = () => {
-    return diamonds >= UNLOCK_ENTRY_COST;
+    return spades >= UNLOCK_ENTRY_COST;
   };
 
   const canBuyRefreshEntry = (entry) => {
-    return diamonds > getRefreshEntryCost(entry);
+    return spades > getRefreshEntryCost(entry);
   };
 
   return (
@@ -44,7 +44,7 @@ export default function PackShop(props) {
           <div className="pack-shop-locked">
             <div className="title">UNLOCK</div>
             <button disabled={!canUnlockPackShop()} onClick={unlockPackShop}>
-              &diams;&#xfe0e; {UNLOCK_PACK_SHOP_COST}
+              &#x2660;&#xfe0e; {UNLOCK_PACK_SHOP_COST}
             </button>
           </div>
         )}
@@ -76,7 +76,7 @@ export default function PackShop(props) {
                         className="pack-shop-entry-unlock-button"
                         disabled={!canBuyRefreshEntry(shopEntry)}
                       >
-                        ♦ {getRefreshEntryCost()}
+                        &#x2660;&#xfe0e; {getRefreshEntryCost()}
                       </button>
                     </div>
                   </div>
@@ -86,7 +86,7 @@ export default function PackShop(props) {
                     shopEntry={shopEntry}
                     pack={packData.packs[shopEntry.id]}
                     key={"pack-shop-pack-" + i}
-                    diamonds={diamonds}
+                    spades={spades}
                     trashPack={trashPack}
                     setHighlightedNumbers={setHighlightedNumbers}
                     setHoveredPack={setHoveredPack}
@@ -105,7 +105,7 @@ export default function PackShop(props) {
                       className="pack-shop-entry-unlock-button"
                       disabled={!canUnlockShopEntry(i)}
                     >
-                      &diams;&#xfe0e; {UNLOCK_ENTRY_COST}
+                      &#x2660;&#xfe0e; {UNLOCK_ENTRY_COST}
                     </button>
                   </div>
                 </div>

@@ -5,6 +5,8 @@ import door_open from "/door_open.png";
 import number_bg from "/number_bg2.png";
 import { DitherShader } from "./dither-shader";
 
+import { CHALLENGE_COST } from "./constants.js";
+
 export default function CombatPyramid(props) {
   var {
     combatState,
@@ -17,6 +19,8 @@ export default function CombatPyramid(props) {
     setShowReequip,
     enemyRef,
     setEnemyState,
+    spades,
+    setSpades,
   } = props;
 
   var [selectedEnemy, setSelectedEnemy] = useState([0, 0]);
@@ -49,6 +53,8 @@ export default function CombatPyramid(props) {
   function onChallenge() {
     var enemy = combatState.pyramidEnemies[selectedEnemy[0]][selectedEnemy[1]];
     if (enemy.isDefeated) return;
+    if (spades < CHALLENGE_COST) return;
+    setSpades(spades - CHALLENGE_COST);
     enemyRef.current = enemy.value;
     setEnemyState(enemy.value);
     setCombatState((prev) => ({
@@ -173,8 +179,8 @@ export default function CombatPyramid(props) {
               />
             ))}
         </div>
-        <button className="pyramid-challenge-button" onClick={onChallenge}>
-          CHALLENGE
+        <button className="pyramid-challenge-button" onClick={onChallenge} disabled={spades < CHALLENGE_COST}>
+          CHALLENGE ({CHALLENGE_COST}&#x2660;&#xfe0e;)
         </button>
       </div>
     </div>

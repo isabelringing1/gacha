@@ -158,7 +158,7 @@ export default function CombatMap(props) {
             <span>
               1 <img src={shield} className="shield-img-inline" />
             </span>
-            <button>&diams;&#xfe0e; 200</button>
+            <button>&#x2660;&#xfe0e; 200</button>
           </div>
 
           <button onClick={closeShop}>Leave</button>
