@@ -11,7 +11,8 @@ import {
   rollEvent,
   rollForCombatEnemy,
   generateEnemies,
-  getFactors
+  getFactors,
+  rollFudged
 } from "./Util";
 import "./App.css";
 
@@ -302,7 +303,7 @@ function App() {
       if (!nextDiamondRefreshTime) {
         setNextDiamondRefreshTime(Date.now() + REFRESH_TIME);
       }
-      rolledNumber = roll();
+      rolledNumber = rolls.length < 3 ? rollFudged(rolls.length) : roll();
     }
     showRolledNumber(rolledNumber, false);
   };
@@ -528,9 +529,6 @@ function App() {
   };
 
   const unlockShopEntry = (i) => {
-    if (!canUnlockShopEntry(i)) {
-      return;
-    }
     var newPackShopEntriesUnlocked = [...packShopEntriesUnlocked];
     newPackShopEntriesUnlocked[i] = true;
     setPackShopEntriesUnlocked(newPackShopEntriesUnlocked);

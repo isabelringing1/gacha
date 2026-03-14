@@ -477,6 +477,39 @@ function getCurrencyIcon(id) {
   }
 }
 
+
+function rollFudged(rollIndex) {
+  var commonNumbers = [];
+  var commonUnder15 = [];
+  var nonCommonNumbers = [];
+
+  for (var n in data.drop_rates) {
+    n = parseInt(n);
+    var rarity = data.drop_rates[n];
+    if (rarity === 0) {
+      commonNumbers.push(n);
+      if (n < 15) {
+        commonUnder15.push(n);
+      }
+    } else {
+      nonCommonNumbers.push(n);
+    }
+  }
+
+  var pick = function (arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  };
+
+  if (rollIndex === 0) {
+    return pick(commonNumbers); 
+    
+  } else if (rollIndex === 1) {
+    return pick(commonUnder15);
+  } else {
+    return pick(nonCommonNumbers);
+  }
+}
+
 function getFactors(number) {
  var factors = [];
  for (var i = 1; i <= 100; i++) {
@@ -516,5 +549,6 @@ export {
   generateCombatRewards,
   generateEnemies,
   getCurrencyIcon,
-  getFactors
+  getFactors,
+  rollFudged
 };

@@ -64,6 +64,7 @@ export default function CombatEntry(props) {
                     onEdit={onEdit}
                     selectingIndex={selectingIndex == i}
                     inCombatEntry={true}
+                    currentEnemy={currentEnemy}
                   />
                 );
               })}

@@ -478,6 +478,7 @@ export default function Combat(props) {
                         combatState.numberStates[n] &&
                         combatState.numberStates[n].health <= 0
                       }
+                      currentEnemy={enemyRef.current}
                     />
                   );
                 })}

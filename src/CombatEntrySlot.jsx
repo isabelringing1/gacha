@@ -2,12 +2,14 @@ import { useState } from "react";
 import NumberTooltip from "./NumberTooltip";
 
 export default function CombatEntrySlot(props) {
-  var { index, number, onEdit, selectingIndex, numTimesRolled, isDead, inCombatEntry } = props;
+  var { currentEnemy, index, number, onEdit, selectingIndex, numTimesRolled, isDead, inCombatEntry } = props;
 
   var [hover, setHover] = useState(false);
+  var isFactor = currentEnemy % number == 0;
+  console.log(currentEnemy, number, isFactor);
   return (
     <div
-      className={"combat-slot" + (inCombatEntry ? " combat-slot-for-entry" : "")}
+      className={"combat-slot" + (inCombatEntry ? " combat-slot-for-entry" : "") + (isFactor ? " factor-bg" : "")}
       onMouseOver={() => setHover(true)}
       onMouseOut={() => setHover(false)}
       onClick={() => {

@@ -2372,6 +2372,10 @@ input[type="number"] {
   pointer-events: all;
 }
 
+.factor-bg {
+  background-color: #ffa289;
+}
+
 .combat-slot-for-entry {
   width: 5dvh;
   height: 5dvh;
