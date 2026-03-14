@@ -672,9 +672,14 @@ function App() {
   }
 
   function onCombatEntryHovered(hovered) {
+    if (!hovered) {
+      setHighlightedNumbers([]);
+      return;
+    }
     var currentEnemy = getCurrentEnemy();
     var factors = getFactors(currentEnemy);
     console.log(factors);
+    setHighlightedNumbers(factors);
   }
 
   function getCurrentEnemy() {
@@ -790,9 +795,14 @@ function App() {
         <EventBanner event={currentEvent} setCurrentEvent={setCurrentEvent} />
       )}
       <div className="goal-container">
-        {showCombat
-          ? "NUMBER COMBAT"
-          : "NUMBER GACHA"}
+        <div className="marquee-track">
+          <span className="marquee-text">
+            {"NUMBER GACHA \u00A0 ".repeat(20)}
+          </span>
+          <span className="marquee-text">
+            {"NUMBER GACHA \u00A0 ".repeat(20)}
+          </span>
+        </div>
       </div>
       {!isMobile && !showCombat && <History rolls={rolls} />}
 

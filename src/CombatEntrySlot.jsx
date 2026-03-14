@@ -22,7 +22,7 @@ export default function CombatEntrySlot(props) {
       {hover && !selectingIndex && (
         <div className="combat-slot-hover-view">EDIT</div>
       )}
-      {hover && number && (
+      {hover && number && !inCombatEntry && (
         <NumberTooltip
           n={number}
           isCombat={true}
