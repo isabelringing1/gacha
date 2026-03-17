@@ -1,7 +1,8 @@
 import { factors, getRarity } from "./Util";
 import Markdown from "react-markdown";
 import tail from "/tail.png";
-import { getRarityData, getLevel } from "./Util";
+import { getRarityData, getLevel, getNumToUpgrade } from "./Util";
+import { CRIT_FACTOR } from "./constants.js";
 
 export default function NumberTooltip(props) {
   const { n, numTimesRolled, isMobile, isCombat, attackNumber, isFactor } = props;
@@ -43,6 +44,10 @@ export default function NumberTooltip(props) {
   function getCritChance() {
     var data = getRarityData(n);
     var chance = data.combat_crit_chance;
+    if (isFactor) {
+      chance *= CRIT_FACTOR;
+      chance = Math.floor(chance);
+    }
     return chance + "%";
   }
 
@@ -67,15 +72,15 @@ export default function NumberTooltip(props) {
           <div className="number-tooltip-text">DEAD</div>
         )}
 
-        {isCombat && (
-          <div className="number-tooltip-text">
-            Crit chance <b>{getCritChance()}</b>
+        {isFactor && (
+          <div className="number-tooltip-text" style={{ color: "#89d0f0" }}>
+            FACTOR
           </div>
         )}
 
-        {isFactor && (
-          <div className="number-tooltip-text" style={{ color: "#89d0f0", fontWeight: "bold" }}>
-            FACTOR
+        {isCombat && (
+          <div className="number-tooltip-text">
+            Crit chance <b style={{ color: isFactor ? "#89d0f0" : "inherit" }}>{getCritChance()}</b>
           </div>
         )}
 
@@ -101,7 +106,7 @@ export default function NumberTooltip(props) {
             <b>Lvl {getLevel(numTimesRolled)} </b>
           </div>
         )}
-        {!isCombat && <div className="number-tooltip-text">3 to upgrade</div>}
+        {!isCombat && <div className="number-tooltip-text">{getNumToUpgrade(numTimesRolled)} to upgrade</div>}
       </div>
     </div>
   );

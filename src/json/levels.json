@@ -4,76 +4,76 @@
     "rolls": 0,
     "shields": 0,
     "critBoost": 0,
-    "attackFirst": false
+    "canBlock": false
   },
   {
     "level": 1,
     "rolls": 1,
     "shields": 0,
     "critBoost": 0,
-    "attackFirst": true
+    "canBlock": true
   },
   {
     "level": 2,
     "rolls": 2,
-    "shields": 1,
+    "shields": 0,
     "critBoost": 5,
-    "attackFirst": true
+    "canBlock": true
   },
   {
     "level": 3,
     "rolls": 5,
     "shields": 1,
     "critBoost": 10,
-    "attackFirst": true
+    "canBlock": true
   },
   {
     "level": 4,
     "rolls": 10,
     "shields": 2,
     "critBoost": 15,
-    "attackFirst": true
+    "canBlock": true
   },
   {
     "level": 5,
     "rolls": 15,
     "shields": 2,
     "critBoost": 20,
-    "attackFirst": true
+    "canBlock": true
   },
   {
     "level": 6,
     "rolls": 21,
     "shields": 3,
     "critBoost": 25,
-    "attackFirst": true
+    "canBlock": true
   },
   {
     "level": 7,
     "rolls": 28,
     "shields": 3,
     "critBoost": 30,
-    "attackFirst": true
+    "canBlock": true
   },
   {
     "level": 8,
     "rolls": 36,
     "shields": 4,
     "critBoost": 35,
-    "attackFirst": true
+    "canBlock": true
   },
   {
     "level": 9,
     "rolls": 45,
     "shields": 4,
     "critBoost": 40,
-    "attackFirst": true
+    "canBlock": true
   },
   {
     "level": 10,
     "rolls": 55,
     "shields": 5,
     "critBoost": 45,
-    "attackFirst": true
+    "canBlock": true
   }
 ]

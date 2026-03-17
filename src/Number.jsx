@@ -60,6 +60,10 @@ function Number(props) {
     containerClass += " rolled";
     numberClass += " rolled";
   }
+  if (isBadged && numTimesRolled > 0) {
+    containerClass += " factor";
+    numberClass += " factor";
+  }
 
   /*if (numTimesRolled >= n) {
     containerClass += " completed";
@@ -98,7 +102,6 @@ function Number(props) {
         />
       )}
       {isDead && showCombat && <div className="num-dead-x">×</div>}
-      {isBadged && numTimesRolled > 0 && <div className="num-badge">&#9733;</div>}
       <div
         className={numberClass}
         id={"number-" + n}

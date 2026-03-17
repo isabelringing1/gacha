@@ -45,7 +45,6 @@ export default function CombatNumber(props) {
     healthRef.current = s.health;
     setBlock(combatState.numberStates[number].block);
     if (combatState.numberStates[number].health <= 0) {
-      console.log("setting alive false ", number, combatState);
       setAlive(false);
     }
   }, [combatState]);
@@ -170,7 +169,7 @@ export default function CombatNumber(props) {
         newCombatState.numberStates[number].block = false;
         return newCombatState;
       });
-    }, 3000);
+    }, 500);
   }
 
   function canHeal() {
@@ -274,6 +273,16 @@ export default function CombatNumber(props) {
               >
                 ATTACK
               </button>
+            )}
+            {level.canBlock && (
+              <CombatButton
+                id="block"
+                text={"BLOCK"}
+                cooldown={3}
+                startActive={true}
+                clickAction={onBlock}
+                isDisabled={!alive}
+              />
             )}
             {combatState.numberStates[number].initialShields > 0 && (
               <CombatButton

@@ -16,6 +16,7 @@ export default function CombatEntry(props) {
     currentEnemy,
     selectNumber,
     isDraggingNumber,
+    numbers,
   } = props;
 
   var digits = String(currentEnemy)
@@ -84,6 +85,7 @@ export default function CombatEntry(props) {
                     onDropNumber={selectNumber}
                     isDraggingNumber={isDraggingNumber}
                     duplicateBlocked={draggingIsDuplicate && i !== duplicateSlotIndex}
+                    numTimesRolled={numbers[n]}
                   />
                 );
               })}

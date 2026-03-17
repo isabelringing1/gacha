@@ -8,7 +8,7 @@ import {
   getCurrencyIcon,
   generateEnemies,
 } from "./Util";
-import { isMobile, DIVIDE_LEVEL } from "./constants.js";
+import { isMobile, DIVIDE_LEVEL, CRIT_FACTOR } from "./constants.js";
 import EnemyNumber from "./EnemyNumber";
 import CombatPyramid from "./CombatPyramid.jsx";
 
@@ -44,6 +44,7 @@ export default function Combat(props) {
   const healthArrayRef = useRef();
   const winStateRef = useRef(winState);
   const scoreRef = useRef(0);
+  
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -192,40 +193,58 @@ export default function Combat(props) {
     var rollIndex =
       possibleIndices[Math.floor(Math.random() * possibleIndices.length)];
 
+    var windupDuration = 600;
+    var attackDuration = 200;
+    var totalDuration = windupDuration + attackDuration;
+    // Strike lands at ~87.5% of total animation
+    var strikeTiming = Math.round(totalDuration * 0.875);
+
     var enemyDiv = document.getElementById("enemy-number");
+    enemyDiv.classList.remove("enemy-attack-0", "enemy-attack-1", "enemy-attack-2");
     void enemyDiv.offsetWidth;
     enemyDiv.classList.add("enemy-attack-" + rollIndex);
 
-    var numberDiv = document.getElementById("combat-number-" + rollIndex);
-    numberDiv.classList.remove("damage");
-    void numberDiv.offsetWidth;
-    numberDiv.classList.add("damage");
+    // Delay damage and hit flash to the strike moment
+    setTimeout(() => {
+      var numberDiv = document.getElementById("combat-number-" + rollIndex);
+      numberDiv.classList.remove("damage");
+      void numberDiv.offsetWidth;
+      numberDiv.classList.add("damage");
 
+      setTimeout(() => {
+        numberDiv.classList.remove("damage");
+      }, 200);
+
+      setCombatState((oldCombatState) => {
+        var newCombatState = { ...oldCombatState };
+        var number = newCombatState.team[rollIndex];
+        if (!newCombatState.numberStates[number].block) {
+          if (newCombatState.numberStates[number].shields > 0) {
+            newCombatState.numberStates[number].shields -= 1;
+          } else {
+            newCombatState.numberStates[number].health = Math.max(
+              0,
+              newCombatState.numberStates[number].health - enemyRef.current,
+            );
+          }
+        }
+        return newCombatState;
+      });
+    }, strikeTiming);
+
+    // Clean up enemy animation after full duration
     setTimeout(() => {
       enemyDiv.classList.remove("enemy-attack-" + rollIndex);
-      numberDiv.classList.remove("damage");
-    }, 200);
-
-    setCombatState((oldCombatState) => {
-      var newCombatState = { ...oldCombatState };
-      var number = newCombatState.team[rollIndex];
-      if (!newCombatState.numberStates[number].block) {
-        if (newCombatState.numberStates[number].shields > 0) {
-          newCombatState.numberStates[number].shields -= 1;
-        } else {
-          newCombatState.numberStates[number].health = Math.max(
-            0,
-            newCombatState.numberStates[number].health - enemyRef.current,
-          );
-        }
-      }
-      return newCombatState;
-    });
+    }, totalDuration);
   }
 
   function rollForCrit(n) {
     var data = getRarityData(n);
     var chance = data.combat_crit_chance;
+    if (currentEnemy % n == 0) {
+      chance *= CRIT_FACTOR;
+      chance = Math.floor(chance);
+    }
     return Math.random() * 100 <= chance;
   }
 
@@ -282,7 +301,7 @@ export default function Combat(props) {
             block: false,
             shields: level.shields,
             initialShields: level.shields,
-            team: [null, null, null],
+            team: [null, null, null]
           };
         }
         return newCombatState;
@@ -503,7 +522,7 @@ export default function Combat(props) {
                     numTimesRolled={numbers[n]}
                     buttonContainerHeight={getButtonContainerHeight()}
                     isFactor={currentEnemy % n == 0}
-                    attackFirst={getLevelData(numbers[n]).attackFirst}
+                    attackFirst={true}
                   />
                 ))}
             </div>

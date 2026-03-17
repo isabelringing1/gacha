@@ -26,8 +26,9 @@ const HARD_DIAMONDS = 10;
 const COMBAT_START_COST = 200;
 const CHALLENGE_COST = 100;
 const PYRAMID_LEVELS = 10;
-const AUTO_LEVEL = 3;
+const AUTO_LEVEL = 2;
 const DIVIDE_LEVEL = 5;
+const CRIT_FACTOR = 1.5;
 
 export {
   REFRESH_TIME,
@@ -46,5 +47,6 @@ export {
   PYRAMID_LEVELS,
   AUTO_LEVEL,
   DIVIDE_LEVEL,
+  CRIT_FACTOR,
   isMobile,
 };

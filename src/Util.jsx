@@ -579,6 +579,15 @@ function getFactors(number) {
  return factors;
 }
 
+function getNumToUpgrade(numTimesRolled) {
+  var level = getLevel(numTimesRolled);
+  if (level == getMaxLevel()) {
+    return 0;
+  }
+  var nextLevel = levelData[level + 1];
+  return nextLevel.rolls - numTimesRolled;
+}
+
 export {
   useInterval,
   msToTime,
@@ -609,5 +618,6 @@ export {
   generateEnemies,
   getCurrencyIcon,
   getFactors,
-  rollFudged
+  rollFudged,
+  getNumToUpgrade,
 };

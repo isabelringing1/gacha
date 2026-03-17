@@ -11,6 +11,7 @@ const Debug = (props) => {
     setHearts,
     setSpades,
     setClubs,
+    spades,
     rollNumber,
     generatePackShopEntry,
     setTimeMultiplier,

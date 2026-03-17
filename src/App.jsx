@@ -729,6 +729,7 @@ function App() {
     >
       <Debug
         rolls={rolls}
+        spades={spades}
         setRolls={setRolls}
         numbers={numbers}
         setNumbers={setNumbers}
@@ -989,6 +990,7 @@ function App() {
                   onCombatEntryHovered={onCombatEntryHovered}
                   selectNumber={selectNumber}
                   isDraggingNumber={isDraggingNumber}
+                  numbers={numbers}
                 />
               </div>
             )}
