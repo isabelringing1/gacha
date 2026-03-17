@@ -29,6 +29,7 @@ export default function Combat(props) {
     setShowReequip,
     firstCombatCompleted,
     setFirstCombatCompleted,
+    currentEnemy,
   } = props;
   const [enemyState, setEnemyState] = useState(null);
   const [winState, setWinState] = useState("pyramid");
@@ -478,7 +479,7 @@ export default function Combat(props) {
                         combatState.numberStates[n] &&
                         combatState.numberStates[n].health <= 0
                       }
-                      currentEnemy={enemyRef.current}
+                      currentEnemy={currentEnemy}
                     />
                   );
                 })}
@@ -501,6 +502,7 @@ export default function Combat(props) {
                     level={getLevelData(numbers[n])}
                     numTimesRolled={numbers[n]}
                     buttonContainerHeight={getButtonContainerHeight()}
+                    isFactor={currentEnemy % n == 0}
                   />
                 ))}
             </div>

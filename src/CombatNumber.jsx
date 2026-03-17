@@ -17,6 +17,7 @@ export default function CombatNumber(props) {
     onNumberDivide,
     level,
     buttonContainerHeight,
+    isFactor,
   } = props;
   var intervalRef = useRef(null);
   var lastAttackTimeRef = useRef(null);
@@ -180,6 +181,7 @@ export default function CombatNumber(props) {
             isCombat={true}
             numTimesRolled={numTimesRolled}
             attackNumber={healthRef.current}
+            isFactor={isFactor}
           />
         )}
 

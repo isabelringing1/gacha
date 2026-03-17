@@ -1470,7 +1470,7 @@ button:disabled {
 
   padding: 0.5dvh;
   margin-bottom: 1dvh;
-  background-color: #dcdcdc;
+  background-color: #e4e4e4;
   height: 10dvh;
   border-radius: 2dvh;
 }
@@ -1501,14 +1501,14 @@ button:disabled {
 .charm-shop-entry-name {
   width: 300%;
   font-size: 2.1dvh;
-  padding: 0dvh 1dvh 0.2dvh 0dvh;
+  padding: 0dvh 1dvh 0dvh 0dvh;
   font-weight: bold;
 }
 
 .charm-shop-entry-desc {
   width: 100%;
   font-size: 1.3dvh;
-  padding: 0.2dvh 1dvh 0.5dvh 0dvh;
+  padding: 0dvh 1dvh 0.5dvh 0dvh;
 }
 
 .charm-shop-entry-buy-button {
@@ -2317,11 +2317,20 @@ input[type="number"] {
   border-radius: 2dvh;
   overflow: hidden;
   pointer-events: none;
-  background-color: #d4d4d4;
+  background-color: #c9c8d2;
   display: flex;
   flex-direction: column;
   justify-content: end;
   position: relative;
+}
+
+.cloud-bg{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+  user-select: none;
+  z-index: 0
 }
 
 .combat-entry-button {
@@ -2387,6 +2396,11 @@ input[type="number"] {
   outline-offset: -2px;
 }
 
+.combat-slot.duplicate-blocked {
+  background-color: #e85454;
+  animation: none;
+}
+
 .combat-slot.drag-pulse {
   animation: drag-slot-pulse 1.8s ease-in-out infinite;
 }
@@ -2416,13 +2430,20 @@ input[type="number"] {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.353);
-  font-size: 2dvh;
+  font-size: 1.3dvh;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 0.4dvh;
   color: white;
   -webkit-text-stroke: 0px;
+  word-break: break-word;
+  text-align: center;
+}
+
+.combat-slot-tooltip-portal .number-tooltip {
+  position: relative;
+  margin-bottom: 0;
 }
 
 .combat-number {
@@ -2653,12 +2674,12 @@ input[type="number"] {
   width: 27dvh;
   height: 16dvh;
   bottom: -3dvh;
-  right: -100%;
+  right: -110%;
 }
 
 .cloud-2{
   width: 20dvh;
-  height: 11dvh;
+  height: 9dvh;
   bottom: -2dvh;
   left: -70%
 }
@@ -2666,7 +2687,7 @@ input[type="number"] {
 
 @keyframes cloud-1 {
   0% {
-    right: -100%;
+    right: -110%;
   }
   50% {
     right: -140%;
@@ -2964,12 +2985,12 @@ input[type="number"] {
 
 .num-badge {
   position: absolute;
-  top: 15%;
-  left: 10%;
-  width: 1dvh;
-  height: 1dvh;
-  background-color: red;
-  border-radius: 50%;
+  top: 5%;
+  left: 5%;
+  font-size: 1.2dvh;
+  line-height: 1;
+  color: #89d0f0;
+  pointer-events: none;
 }
 
 /* Mobile */

@@ -840,6 +840,7 @@ function App() {
           setShowReequip={setShowReequip}
           firstCombatCompleted={firstCombatCompleted}
           setFirstCombatCompleted={setFirstCombatCompleted}
+          currentEnemy={getCurrentEnemy()}
         />
       )}
 

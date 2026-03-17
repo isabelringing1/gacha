@@ -4,7 +4,7 @@ import tail from "/tail.png";
 import { getRarityData, getLevel } from "./Util";
 
 export default function NumberTooltip(props) {
-  const { n, numTimesRolled, isMobile, isCombat, attackNumber } = props;
+  const { n, numTimesRolled, isMobile, isCombat, attackNumber, isFactor } = props;
   var cn = "number-tooltip dither-bg";
   var cnTail = "tooltip-tail number-tail";
 
@@ -70,6 +70,12 @@ export default function NumberTooltip(props) {
         {isCombat && (
           <div className="number-tooltip-text">
             Crit chance <b>{getCritChance()}</b>
+          </div>
+        )}
+
+        {isFactor && (
+          <div className="number-tooltip-text" style={{ color: "#89d0f0", fontWeight: "bold" }}>
+            FACTOR
           </div>
         )}
 

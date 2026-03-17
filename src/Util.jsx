@@ -448,18 +448,65 @@ function linMap(value, min, max, total) {
   return clampedT * (0.25 * total);
 }
 
+function countFactorsInRange(n) {
+  var count = 0;
+  for (var f = 1; f <= 100; f++) {
+    if (n % f === 0) count++;
+  }
+  return count;
+}
+
+function generateEnemyValue(min, max) {
+  // Build enemies from random prime combos so factors span all of 1-100,
+  // not just even numbers. Picks 2-3 distinct primes, multiplies them
+  // into a base, then finds a random multiple in [min, max].
+  var primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47];
+  for (var attempt = 0; attempt < 300; attempt++) {
+    // Shuffle and pick 2-3 distinct primes
+    var shuffled = primes.slice().sort(function () {
+      return Math.random() - 0.5;
+    });
+    var numPicks = 2 + Math.floor(Math.random() * 2);
+    var base = 1;
+    for (var p = 0; p < numPicks; p++) {
+      if (base * shuffled[p] > max) break;
+      base *= shuffled[p];
+    }
+    if (base < 2) continue;
+
+    var minMult = Math.ceil(min / base);
+    var maxMult = Math.floor(max / base);
+    if (minMult > maxMult) continue;
+
+    var mult = Math.floor(Math.random() * (maxMult - minMult + 1)) + minMult;
+    var value = mult * base;
+    if (value >= min && value <= max && countFactorsInRange(value) >= 4) {
+      return value;
+    }
+  }
+  // Fallback: nearest multiple of 15 (odd) or 60 in range
+  var odd = Math.ceil(min / 15) * 15;
+  if (odd >= min && odd <= max && countFactorsInRange(odd) >= 4) return odd;
+  return Math.ceil(min / 60) * 60;
+}
+
 function generateEnemies() {
   var pyramid = [];
   for (var level = 0; level < PYRAMID_LEVELS; level++) {
     var row = [];
     var numEnemies = PYRAMID_LEVELS - level;
-    var min = 2 * Math.pow(10, level + 2);
-    var max = 8 * Math.pow(10, level + 2);
-    for (var i = 0; i < numEnemies; i++) {
-      // generate a random number between min and max
-      var value = Math.floor(Math.random() * (max - min + 1)) + min;
-      row.push({ value: value, isDefeated: false });
+    var levelConfig = combatData[level];
+    var min = levelConfig.min;
+    var max = levelConfig.max;
+    var uniqueValues = new Set();
+    while (row.length < numEnemies) {
+      var value = generateEnemyValue(min, max);
+      if (!uniqueValues.has(value)) {
+        uniqueValues.add(value);
+        row.push({ value: value, isDefeated: false });
+      }
     }
+    row.sort((a, b) => a.value - b.value);
     pyramid.push(row);
   }
   return pyramid;

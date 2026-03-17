@@ -1,6 +1,7 @@
 import CombatEntrySlot from "./CombatEntrySlot";
 import cloud1 from "/cloud_1.png";
 import cloud2 from "/cloud_2.png";
+import cloud_bg from "/cloud_bg2.png";
 import { DitherShader } from "./dither-shader";
 
 export default function CombatEntry(props) {
@@ -21,6 +22,9 @@ export default function CombatEntry(props) {
     .split("")
     .map((digit) => Number(digit));
 
+  var draggingIsDuplicate = isDraggingNumber && combatState.team.includes(isDraggingNumber);
+  var duplicateSlotIndex = draggingIsDuplicate ? combatState.team.indexOf(isDraggingNumber) : -1;
+
   function onEdit(index) {
     setSelectingIndex(index);
   }
@@ -30,6 +34,16 @@ export default function CombatEntry(props) {
       <div className="title">BATTLE</div>
       <div className="combat-entry-inner">
         <div className="combat-entry-inner-inner">
+        <DitherShader
+              src={cloud_bg}
+              gridSize={2}
+              ditherMode="bayer"
+              className="cloud-bg"
+              objectFit="contain"
+              threshold={0}
+              contrast={1.1}
+            />
+
           <div className="floating-num">
             <DitherShader
               src={cloud1}
@@ -69,6 +83,7 @@ export default function CombatEntry(props) {
                     currentEnemy={currentEnemy}
                     onDropNumber={selectNumber}
                     isDraggingNumber={isDraggingNumber}
+                    duplicateBlocked={draggingIsDuplicate && i !== duplicateSlotIndex}
                   />
                 );
               })}

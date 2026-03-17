@@ -17,6 +17,7 @@ function Number(props) {
     combatState,
     showCombat,
     onDragStateChange,
+    isFactor,
   } = props;
   const [hover, setHover] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -97,7 +98,7 @@ function Number(props) {
         />
       )}
       {isDead && showCombat && <div className="num-dead-x">×</div>}
-      {isBadged && <div className="num-badge"></div>}
+      {isBadged && numTimesRolled > 0 && <div className="num-badge">&#9733;</div>}
       <div
         className={numberClass}
         id={"number-" + n}
@@ -118,11 +119,11 @@ function Number(props) {
           e.dataTransfer.setData("text/plain", n.toString());
           e.dataTransfer.effectAllowed = "move";
           setDragging(true);
-          if (onDragStateChange) onDragStateChange(true);
+          if (onDragStateChange) onDragStateChange(n);
         }}
         onDragEnd={() => {
           setDragging(false);
-          if (onDragStateChange) onDragStateChange(false);
+          if (onDragStateChange) onDragStateChange(0);
         }}
         onMouseOver={() => {
           if (isMobile) {

@@ -25,6 +25,10 @@ export default function CombatPyramid(props) {
 
   var [selectedEnemy, setSelectedEnemy] = useState([0, 0]);
 
+  var currentEnemy = combatState && combatState.pyramidEnemies
+    ? combatState.pyramidEnemies[selectedEnemy[0]][selectedEnemy[1]].value
+    : 0;
+
   useEffect(() => {
     if (combatState && combatState.selectedEnemyCoords) {
       setSelectedEnemy(combatState.selectedEnemyCoords);
@@ -176,6 +180,7 @@ export default function CombatPyramid(props) {
                   combatState.numberStates[n] &&
                   combatState.numberStates[n].health <= 0
                 }
+                currentEnemy={currentEnemy}
               />
             ))}
         </div>
