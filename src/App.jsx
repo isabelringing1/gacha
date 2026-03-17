@@ -946,7 +946,7 @@ function App() {
                   &diams;&#xfe0e; {diamonds}/{maxDiamonds}{" "}
                   {!isMobile && nextDiamondRefreshTime && (
                     <span className="next-heart-container">
-                      next &diams;&#xfe0e; in{" "}
+                      next in{" "}
                       <Timer
                         endTime={nextDiamondRefreshTime}
                         onTimerEnd={refreshDiamonds}

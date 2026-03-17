@@ -503,6 +503,7 @@ export default function Combat(props) {
                     numTimesRolled={numbers[n]}
                     buttonContainerHeight={getButtonContainerHeight()}
                     isFactor={currentEnemy % n == 0}
+                    attackFirst={getLevelData(numbers[n]).attackFirst}
                   />
                 ))}
             </div>

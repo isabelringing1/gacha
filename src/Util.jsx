@@ -456,7 +456,7 @@ function countFactorsInRange(n) {
   return count;
 }
 
-function generateEnemyValue(min, max) {
+function generateEnemyValue(min, max, uniqueValues) {
   // Build enemies from random prime combos so factors span all of 1-100,
   // not just even numbers. Picks 2-3 distinct primes, multiplies them
   // into a base, then finds a random multiple in [min, max].
@@ -480,14 +480,25 @@ function generateEnemyValue(min, max) {
 
     var mult = Math.floor(Math.random() * (maxMult - minMult + 1)) + minMult;
     var value = mult * base;
-    if (value >= min && value <= max && countFactorsInRange(value) >= 4) {
+    if (value >= min && value <= max && countFactorsInRange(value) >= 4 && !uniqueValues.has(value)) {
       return value;
     }
   }
   // Fallback: nearest multiple of 15 (odd) or 60 in range
   var odd = Math.ceil(min / 15) * 15;
-  if (odd >= min && odd <= max && countFactorsInRange(odd) >= 4) return odd;
-  return Math.ceil(min / 60) * 60;
+  if (odd >= min && odd <= max && countFactorsInRange(odd) >= 4 && !uniqueValues.has(odd)) return odd;
+  var fallback = Math.ceil(min / 60) * 60;
+  if (fallback >= min && fallback <= max && countFactorsInRange(fallback) >= 4 && !uniqueValues.has(fallback)) return fallback;
+  
+  // fallback fallback
+  var num = null;
+  while (num == null) {
+    num = Math.floor(Math.random() * (max - min + 1)) + min;
+    if (uniqueValues.has(num)) {
+      num = null;
+    }
+  }
+  return num;
 }
 
 function generateEnemies() {
@@ -500,11 +511,12 @@ function generateEnemies() {
     var max = levelConfig.max;
     var uniqueValues = new Set();
     while (row.length < numEnemies) {
-      var value = generateEnemyValue(min, max);
+      var value = generateEnemyValue(min, max, uniqueValues);
       if (!uniqueValues.has(value)) {
         uniqueValues.add(value);
-        row.push({ value: value, isDefeated: false });
+        //row.push({ value: value, isDefeated: false });
       }
+      row.push({ value: value, isDefeated: false });
     }
     row.sort((a, b) => a.value - b.value);
     pyramid.push(row);

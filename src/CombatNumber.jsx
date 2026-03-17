@@ -18,6 +18,7 @@ export default function CombatNumber(props) {
     level,
     buttonContainerHeight,
     isFactor,
+    attackFirst,
   } = props;
   var intervalRef = useRef(null);
   var lastAttackTimeRef = useRef(null);
@@ -53,13 +54,21 @@ export default function CombatNumber(props) {
     if (winState == "combat") {
       lastAttackTimeRef.current = Date.now();
       if (isAuto) {
-        onNumberAttack();
+        if (attackFirst) {
+          onNumberAttack();
+        }
         setAttackInterval();
       } else {
-        // manual mode: start first cooldown
-        setCooldownRunning(true);
-        setAttackReady(false);
-        startCooldownTimer();
+        if (attackFirst) {
+          // manual mode: attack ready immediately
+          setAttackReady(true);
+          setCooldownRunning(false);
+        } else {
+          // manual mode: start first cooldown
+          setCooldownRunning(true);
+          setAttackReady(false);
+          startCooldownTimer();
+        }
       }
     }
     if (winState != "combat" || healthRef.current == 0) {
