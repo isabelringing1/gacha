@@ -6,7 +6,7 @@
         "category": "speed-up",
         "name": "Rabbit's Foot",
         "desc": "+15% Roll Speed",
-        "cost": 200,
+        "cost": 10,
         "new_time_multiplier": 0.85,
         "consumable": true
       },
@@ -15,7 +15,7 @@
         "category": "speed-up",
         "name": "Horseshoe",
         "desc": "+30% Roll Speed",
-        "cost": 300,
+        "cost": 20,
         "new_time_multiplier": 0.7,
         "consumable": true
       },
@@ -24,7 +24,7 @@
         "category": "rarity-highlight",
         "name": "Acorn",
         "desc": "Unlock Rarity Highlight",
-        "cost": 300,
+        "cost": 20,
         "consumable": true
       },
       {
@@ -32,7 +32,7 @@
         "category": "speed-up",
         "name": "Wishbone",
         "desc": "+45% Roll Speed",
-        "cost": 400,
+        "cost": 30,
         "new_time_multiplier": 0.55,
         "consumable": true
       },
@@ -41,7 +41,7 @@
         "category": "speed-up",
         "name": "Oranges",
         "desc": "+60% Roll Speed",
-        "cost": 600,
+        "cost": 40,
         "new_time_multiplier": 0.4,
         "consumable": true
       },
@@ -50,7 +50,7 @@
         "category": "speed-up",
         "name": "Dice",
         "desc": "+75% Roll Speed",
-        "cost": 800,
+        "cost": 50,
         "new_time_multiplier": 0.25,
         "consumable": true
       },
@@ -59,7 +59,7 @@
         "category": "speed-up",
         "name": "Scarab",
         "desc": "+90% Roll Speed",
-        "cost": 1000,
+        "cost": 60,
         "new_time_multiplier": 0.1,
         "consumable": true
       }
@@ -71,7 +71,7 @@
         "category": "diamond-upgrade",
         "name": "Four Leaf Clover",
         "desc": "+5 Max \u2666\uFE0E",
-        "cost": 300,
+        "cost": 10,
         "diamond_upgrade": 5,
         "consumable": true
       },
@@ -80,7 +80,7 @@
         "category": "diamond-upgrade",
         "name": "Cat",
         "desc": "+5 Max \u2666\uFE0E",
-        "cost": 600,
+        "cost": 20,
         "diamond_upgrade": 5,
         "consumable": true
       },
@@ -89,7 +89,7 @@
         "category": "diamond-upgrade",
         "name": "Penny",
         "desc": "+5 Max \u2666\uFE0E",
-        "cost": 900,
+        "cost": 30,
         "diamond_upgrade": 5,
         "consumable": true
       },
@@ -98,7 +98,7 @@
         "category": "diamond-upgrade",
         "desc": "+5 Max \u2666\uFE0E",
         "name": "Ladybug",
-        "cost": 1200,
+        "cost": 40,
         "diamond_upgrade": 5,
         "consumable": true
       },
@@ -107,7 +107,7 @@
         "category": "diamond-upgrade",
         "name": "Shooting Star",
         "desc": "+5 Max \u2666\uFE0E",
-        "cost": 1500,
+        "cost": 50,
         "diamond_upgrade": 5,
         "consumable": true
       }
@@ -117,7 +117,7 @@
         "id": "hearts",
         "name": "Heart Restock",
         "desc": "+1 \u2665\uFE0E",
-        "cost": 100,
+        "cost": 10,
         "amount": 1,
         "consumable": false
       }

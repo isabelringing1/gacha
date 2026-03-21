@@ -5,106 +5,107 @@
     "max": 500,
     "base_total_rewards": 100,
     "rewards": {
-      "diamonds": 90,
-      "hearts": 10
+      "spades": 90,
+      "clubs": 10
     }
   },
   {
     "level": 2,
     "min": 800,
     "max": 1500,
-    "base_total_rewards": 150,
+    "base_total_rewards": 200,
     "rewards": {
-      "diamonds": 85,
-      "hearts": 15
+      "spades": 80,
+      "clubs": 15,
+      "hearts": 5
     }
   },
   {
     "level": 3,
     "min": 1800,
     "max": 4000,
-    "base_total_rewards": 200,
+    "base_total_rewards": 400,
     "rewards": {
-      "diamonds": 80,
-      "hearts": 15,
-      "clubs": 5
+      "spades": 80,
+      "clubs": 10,
+      "hearts": 10
     }
   },
   {
     "level": 4,
     "min": 4500,
     "max": 10000,
-    "base_total_rewards": 300,
+    "base_total_rewards": 600,
     "rewards": {
-      "diamonds": 75,
-      "hearts": 15,
-      "clubs": 10
+      "spades": 75,
+      "clubs": 15,
+      "hearts": 10
     }
   },
   {
     "level": 5,
     "min": 12000,
     "max": 30000,
-    "base_total_rewards": 400,
+    "base_total_rewards": 800,
     "rewards": {
-      "diamonds": 70,
-      "hearts": 20,
-      "clubs": 10
+      "spades": 70,
+      "clubs": 20,
+      "hearts": 10
     }
   },
   {
     "level": 6,
     "min": 35000,
     "max": 80000,
-    "base_total_rewards": 500,
+    "base_total_rewards": 1000,
     "rewards": {
-      "diamonds": 65,
-      "hearts": 20,
-      "clubs": 15
+      "spades": 65,
+      "clubs": 20,
+      "hearts": 15
     }
   },
   {
     "level": 7,
     "min": 100000,
     "max": 200000,
-    "base_total_rewards": 650,
+    "base_total_rewards": 1300,
     "rewards": {
-      "diamonds": 60,
-      "hearts": 20,
-      "clubs": 20
+      "spades": 60,
+      "clubs": 20,
+      "hearts": 20
     }
   },
   {
     "level": 8,
     "min": 250000,
     "max": 450000,
-    "base_total_rewards": 800,
+    "base_total_rewards": 1600,
     "rewards": {
-      "diamonds": 55,
-      "hearts": 25,
-      "clubs": 20
+      "spades": 55,
+      "clubs": 25,
+      "hearts": 20
     }
   },
   {
     "level": 9,
     "min": 500000,
     "max": 800000,
-    "base_total_rewards": 1000,
+    "base_total_rewards": 2000,
     "rewards": {
-      "diamonds": 50,
-      "hearts": 25,
-      "clubs": 25
+      "spades": 50,
+      "clubs": 25,
+      "hearts": 25
     }
   },
   {
     "level": 10,
     "min": 1000000,
     "max": 1500000,
-    "base_total_rewards": 1200,
+    "base_total_rewards": 2400,
     "rewards": {
-      "diamonds": 45,
-      "hearts": 30,
-      "clubs": 25
+      "spades": 45,
+      "clubs": 30,
+      "hearts": 25
     }
   }
 ]

@@ -2077,6 +2077,10 @@ input[type="number"] {
   animation: damage 0.15s;
 }
 
+.shake-screen {
+  animation: shake-screen 0.3s;
+}
+
 .crit {
   color: red;
 }
@@ -2176,6 +2180,27 @@ input[type="number"] {
   }
   80% {
     transform: translate(0.15dvh, 0.15dvh);
+  }
+  100% {
+    transform: translate(0dvh, 0dvh);
+  }
+}
+
+@keyframes shake-screen {
+  0% {
+    transform: translate(0dvh, 0dvh);
+  }
+  20% {
+    transform: translate(0.8dvh, -0.6dvh);
+  }
+  40% {
+    transform: translate(0.6dvh, 0.8dvh);
+  }
+  60% {
+    transform: translate(0.5dvh, -0.5dvh);
+  }
+  80% {
+    transform: translate(0.4dvh, 0.4dvh);
   }
   100% {
     transform: translate(0dvh, 0dvh);
@@ -2694,6 +2719,15 @@ input[type="number"] {
   }
   50% {
     right: -140%;
+  }
+}
+
+@keyframes cloud-2 {
+  0% {
+    left: -70%;
+  }
+  50% {
+    left: -90%;
   }
 }
 

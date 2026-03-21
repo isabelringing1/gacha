@@ -57,8 +57,6 @@ export default function CombatPyramid(props) {
   function onChallenge() {
     var enemy = combatState.pyramidEnemies[selectedEnemy[0]][selectedEnemy[1]];
     if (enemy.isDefeated) return;
-    if (spades < CHALLENGE_COST) return;
-    setSpades(spades - CHALLENGE_COST);
     enemyRef.current = enemy.value;
     setEnemyState(enemy.value);
     setCombatState((prev) => ({
@@ -184,8 +182,8 @@ export default function CombatPyramid(props) {
               />
             ))}
         </div>
-        <button className="pyramid-challenge-button" onClick={onChallenge} disabled={spades < CHALLENGE_COST}>
-          CHALLENGE ({CHALLENGE_COST}&#x2660;&#xfe0e;)
+        <button className="pyramid-challenge-button" onClick={onChallenge}>
+          CHALLENGE
         </button>
       </div>
     </div>

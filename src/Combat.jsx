@@ -92,7 +92,7 @@ export default function Combat(props) {
     if (winState == "intro") {
       setTimeout(() => {
         var combatView = document.getElementById("combat-container");
-        combatView.classList.add("damage");
+        combatView.classList.add("shake-screen")
         var enemySection = document.getElementById("enemy-section");
         enemySection.style.opacity = 1;
         setTimeout(() => {
@@ -523,6 +523,7 @@ export default function Combat(props) {
                     buttonContainerHeight={getButtonContainerHeight()}
                     isFactor={currentEnemy % n == 0}
                     attackFirst={true}
+                    isTutorial={isTutorial}
                   />
                 ))}
             </div>

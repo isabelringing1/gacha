@@ -113,6 +113,9 @@ function App() {
   const [combatHighScore, setCombatHighScore] = useState(null);
   const [clubs, setClubs] = useState(0);
   const [spades, setSpades] = useState(0);
+  const [clubsUnlocked, setClubsUnlocked] = useState(false);
+  const [heartsUnlocked, setHeartsUnlocked] = useState(false);
+  const [spadesUnlocked, setSpadesUnlocked] = useState(false);
   const [showReequip, setShowReequip] = useState(false);
   const [firstCombatCompleted, setFirstCombatCompleted] = useState(false);
   const [isDraggingNumber, setIsDraggingNumber] = useState(false);
@@ -163,6 +166,24 @@ function App() {
   }, [rolls, bigNumberQueue]);
 
   useEffect(() => {
+    if (spades > 0 && !spadesUnlocked) {
+      setSpadesUnlocked(true);
+    }
+  }, [spades]);
+
+  useEffect(() => {
+    if (hearts > 0 && !heartsUnlocked) {
+      setHeartsUnlocked(true);
+    }
+  }, [hearts]);
+
+  useEffect(() => {
+    if (clubs > 0 && !clubsUnlocked) {
+      setClubsUnlocked(true);
+    }
+  }, [clubs]);
+
+  useEffect(() => {
     saveData();
   }, [
     numbers,
@@ -180,6 +201,9 @@ function App() {
     combatHighScore,
     combatUnlocked,
     firstCombatCompleted,
+    clubsUnlocked,
+    heartsUnlocked,
+    spadesUnlocked,
   ]);
 
   function saveData() {
@@ -209,6 +233,9 @@ function App() {
       spades: spades,
       clubs: clubs,
       firstCombatCompleted: firstCombatCompleted,
+      clubsUnlocked: clubsUnlocked,
+      heartsUnlocked: heartsUnlocked,
+      spadesUnlocked: spadesUnlocked,
     };
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
@@ -253,7 +280,9 @@ function App() {
         setSpades(saveData.spades);
         setClubs(saveData.clubs);
         setFirstCombatCompleted(saveData.firstCombatCompleted || false);
-
+        setClubsUnlocked(saveData.clubsUnlocked);
+        setHeartsUnlocked(saveData.heartsUnlocked);
+        setSpadesUnlocked(saveData.spadesUnlocked);
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
           var numDiamondsGained = 0;
@@ -957,15 +986,15 @@ function App() {
                 </div>
               </div>
 
-              <div id="spades-container">
+              <div id="spades-container" style={{ opacity: spadesUnlocked ? 1 : 0 }}>
                 &#x2660;&#xfe0e; {spades.toLocaleString()}
               </div>
             </div>
             <div>
-              <div id="clubs-container">
+              <div id="clubs-container" style={{ opacity: clubsUnlocked ? 1 : 0 }}>
                 &#x2663;&#xfe0e; {clubs.toLocaleString()}
               </div>
-              <div id="hearts-container">
+              <div id="hearts-container" style={{ opacity: heartsUnlocked ? 1 : 0 }}>
                 &hearts;&#xfe0e; {hearts.toLocaleString()}
               </div>
             </div>
