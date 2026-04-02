@@ -10,7 +10,7 @@ import {
 } from "./Util";
 import { isMobile, DIVIDE_LEVEL, CRIT_FACTOR } from "./constants.js";
 import EnemyNumber from "./EnemyNumber";
-import CombatPyramid from "./CombatPyramid.jsx";
+import CombatMenu from "./CombatMenu.jsx";
 
 export default function Combat(props) {
   const {
@@ -30,6 +30,15 @@ export default function Combat(props) {
     firstCombatCompleted,
     setFirstCombatCompleted,
     currentEnemy,
+    selectNumber,
+    isDraggingNumber,
+    onDragStateChange,
+    rarityHighlightUnlocked,
+    highlightedNumber,
+    highlightedNumbers,
+    rolledNumber,
+    badgedNumbers,
+    showCombat,
   } = props;
   const [enemyState, setEnemyState] = useState(null);
   const [winState, setWinState] = useState("pyramid");
@@ -382,7 +391,7 @@ export default function Combat(props) {
   return (
     <div className="combat-container" id="combat-container">
       {winState == "pyramid" && (
-        <CombatPyramid
+        <CombatMenu
           combatState={combatState}
           setCombatState={setCombatState}
           setWinState={setWinState}
@@ -390,11 +399,19 @@ export default function Combat(props) {
           setSelectingIndex={setSelectingIndex}
           numbers={numbers}
           showReequip={showReequip}
-          setShowReequip={setShowReequip}
           enemyRef={enemyRef}
           setEnemyState={setEnemyState}
           spades={spades}
           setSpades={setSpades}
+          selectNumber={selectNumber}
+          isDraggingNumber={isDraggingNumber}
+          onDragStateChange={onDragStateChange}
+          rarityHighlightUnlocked={rarityHighlightUnlocked}
+          highlightedNumber={highlightedNumber}
+          highlightedNumbers={highlightedNumbers}
+          rolledNumber={rolledNumber}
+          badgedNumbers={badgedNumbers}
+          showCombat={showCombat}
         />
       )}
       {showStartLabel && <div className="start-label">START!</div>}

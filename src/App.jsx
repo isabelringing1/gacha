@@ -769,14 +769,9 @@ function App() {
                 combatState={combatState}
                 setCombatState={setCombatState}
                 setShowCombat={() => {}}
-                setSelectingIndex={setSelectingIndex}
-                selectingIndex={selectingIndex}
                 firstCombatCompleted={firstCombatCompleted}
                 currentEnemy={getCurrentEnemy()}
                 onCombatEntryHovered={() => {}}
-                selectNumber={selectNumber}
-                isDraggingNumber={isDraggingNumber}
-                numbers={numbers}
               />
             </button>
           )}
@@ -934,6 +929,15 @@ function App() {
           firstCombatCompleted={firstCombatCompleted}
           setFirstCombatCompleted={setFirstCombatCompleted}
           currentEnemy={getCurrentEnemy()}
+          selectNumber={selectNumber}
+          isDraggingNumber={isDraggingNumber}
+          onDragStateChange={setIsDraggingNumber}
+          rarityHighlightUnlocked={rarityHighlightUnlocked}
+          highlightedNumber={highlightedNumber}
+          highlightedNumbers={highlightedNumbers}
+          rolledNumber={rolledNumber}
+          badgedNumbers={badgedNumbers}
+          showCombat={showCombat}
         />
       )}
 

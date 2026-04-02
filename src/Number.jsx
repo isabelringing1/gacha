@@ -18,6 +18,7 @@ function Number(props) {
     showCombat,
     onDragStateChange,
     isFactor,
+    inCombatMenu,
   } = props;
   const [hover, setHover] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -35,7 +36,12 @@ function Number(props) {
   if (data) {
     numTimesRolled = data;
     var level = getLevel(numTimesRolled);
-    opacity = 0.9;//level / getMaxLevel()
+    if (inCombatMenu) {
+      opacity = level / getMaxLevel()
+    }
+    else{
+      opacity = 0.9;
+    }
   }
   var containerClass = "number-container";
   var numberClass = "number";
@@ -105,12 +111,23 @@ function Number(props) {
       <div
         className={numberClass}
         id={"number-" + n}
-        draggable={false}
+        draggable={inCombatMenu && numTimesRolled > 0}
         style={{
           scale: hover ? 1.1 : 1,
           opacity: hover && selectingIndex != -1 && numTimesRolled > 0
               ? 1
               : opacity,
+          cursor: inCombatMenu && numTimesRolled > 0 ? "grab" : undefined,
+        }}
+        onDragStart={(e) => {
+          if (inCombatMenu && numTimesRolled > 0) {
+            e.dataTransfer.setData("text/plain", String(n));
+            e.dataTransfer.effectAllowed = "move";
+            if (onDragStateChange) onDragStateChange(n);
+          }
+        }}
+        onDragEnd={() => {
+          if (onDragStateChange) onDragStateChange(false);
         }}
         onMouseOver={() => {
           if (isMobile) {

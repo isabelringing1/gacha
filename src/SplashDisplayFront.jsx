@@ -21,8 +21,12 @@ export default function SplashDisplayFront(props) {
   );
   var randomNumberText =
     numberData[n][Math.floor(Math.random() * numberData[n].length)];
+  var isLongPhrase = randomNumberText.length > 50;
   var numberText = (
-    <span key="number-text" className="number-text">
+    <span
+      key="number-text"
+      className={"number-text" + (isLongPhrase ? " number-text-long" : "")}
+    >
       {randomNumberText}
     </span>
   );

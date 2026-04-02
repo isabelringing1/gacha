@@ -1,4 +1,3 @@
-import CombatEntrySlot from "./CombatEntrySlot";
 import cloud1 from "/cloud_1.png";
 import cloud2 from "/cloud_2.png";
 import cloud_bg from "/cloud_bg2.png";
@@ -9,26 +8,14 @@ export default function CombatEntry(props) {
     combatState,
     setCombatState,
     setShowCombat,
-    setSelectingIndex,
-    selectingIndex,
     firstCombatCompleted,
     onCombatEntryHovered,
     currentEnemy,
-    selectNumber,
-    isDraggingNumber,
-    numbers,
   } = props;
 
   var digits = String(currentEnemy)
     .split("")
     .map((digit) => Number(digit));
-
-  var draggingIsDuplicate = isDraggingNumber && combatState.team.includes(isDraggingNumber);
-  var duplicateSlotIndex = draggingIsDuplicate ? combatState.team.indexOf(isDraggingNumber) : -1;
-
-  function onEdit(index) {
-    setSelectingIndex(index);
-  }
 
   return (
     <div className={"combat-entry-outer dither-bg"} onMouseOver={() => onCombatEntryHovered(true)} onMouseOut={() => onCombatEntryHovered(false)}>
@@ -67,35 +54,6 @@ export default function CombatEntry(props) {
                 </div>
               );
             })}
-          </div>
-          <div className="combat-entry-info">
-            <div className="combat-entry-text">TEAM</div>
-
-            <div className="combat-slots-container">
-              {combatState.team.map((n, i) => {
-                return (
-                  <CombatEntrySlot
-                    key={"slot-" + i}
-                    number={n}
-                    index={i}
-                    onEdit={onEdit}
-                    selectingIndex={selectingIndex == i}
-                    inCombatEntry={true}
-                    currentEnemy={currentEnemy}
-                    onDropNumber={selectNumber}
-                    isDraggingNumber={isDraggingNumber}
-                    duplicateBlocked={draggingIsDuplicate && i !== duplicateSlotIndex}
-                    numTimesRolled={numbers[n]}
-                  />
-                );
-              })}
-            </div>
-            <button
-              className="combat-entry-button"
-              onClick={() => setShowCombat(true)}
-            >
-              Start
-            </button>
           </div>
         </div>
       </div>
