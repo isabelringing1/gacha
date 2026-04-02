@@ -35,7 +35,7 @@ function Number(props) {
   if (data) {
     numTimesRolled = data;
     var level = getLevel(numTimesRolled);
-    opacity = level / getMaxLevel()
+    opacity = 0.9;//level / getMaxLevel()
   }
   var containerClass = "number-container";
   var numberClass = "number";
@@ -105,28 +105,12 @@ function Number(props) {
       <div
         className={numberClass}
         id={"number-" + n}
-        draggable={numTimesRolled > 0}
+        draggable={false}
         style={{
           scale: hover ? 1.1 : 1,
-          opacity: dragging
-            ? 0.4
-            : hover && selectingIndex != -1 && numTimesRolled > 0
+          opacity: hover && selectingIndex != -1 && numTimesRolled > 0
               ? 1
               : opacity,
-        }}
-        onDragStart={(e) => {
-          if (numTimesRolled <= 0) {
-            e.preventDefault();
-            return;
-          }
-          e.dataTransfer.setData("text/plain", n.toString());
-          e.dataTransfer.effectAllowed = "move";
-          setDragging(true);
-          if (onDragStateChange) onDragStateChange(n);
-        }}
-        onDragEnd={() => {
-          setDragging(false);
-          if (onDragStateChange) onDragStateChange(0);
         }}
         onMouseOver={() => {
           if (isMobile) {

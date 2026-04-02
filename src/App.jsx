@@ -119,6 +119,8 @@ function App() {
   const [showReequip, setShowReequip] = useState(false);
   const [firstCombatCompleted, setFirstCombatCompleted] = useState(false);
   const [isDraggingNumber, setIsDraggingNumber] = useState(false);
+  const [currentPage, setCurrentPage] = useState("menu"); // "menu", "gacha", "combat"
+  const [showCombatUnlockedPopup, setShowCombatUnlockedPopup] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -139,6 +141,7 @@ function App() {
   useEffect(() => {
     if (rolls.length >= 3 && !combatUnlocked) {
       setCombatUnlocked(true);
+      setShowCombatUnlockedPopup(true);
       setCombatState((oldCombatState) => {
         return {
           ...oldCombatState,
@@ -743,6 +746,45 @@ function App() {
     return 100;
   }
 
+  var numbersCollected = Object.keys(numbers).filter(k => numbers[k] > 0).length;
+
+  if (currentPage === "menu") {
+    return (
+      <div id="content" className="menu-page">
+        <div className="menu-page-inner">
+          <button className="menu-page-button gacha-button dither-bg" onClick={() => setCurrentPage("gacha")}>
+            <div className="title">NUMBER GACHA</div>
+            <div className="menu-button-inner">
+              <div className="menu-button-inner-inner">
+                <div className="gacha-progress-label">{numbersCollected}%</div>
+                <div className="gacha-progress-bar">
+                  <div className="gacha-progress-fill" style={{ width: numbersCollected + "%" }}></div>
+                </div>
+              </div>
+            </div>
+          </button>
+          {combatUnlocked && (
+            <button className="menu-page-button combat-menu-button" onClick={() => { setCurrentPage("combat"); setShowCombat(true); }}>
+              <CombatEntry
+                combatState={combatState}
+                setCombatState={setCombatState}
+                setShowCombat={() => {}}
+                setSelectingIndex={setSelectingIndex}
+                selectingIndex={selectingIndex}
+                firstCombatCompleted={firstCombatCompleted}
+                currentEnemy={getCurrentEnemy()}
+                onCombatEntryHovered={() => {}}
+                selectNumber={selectNumber}
+                isDraggingNumber={isDraggingNumber}
+                numbers={numbers}
+              />
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       id="content"
@@ -834,25 +876,46 @@ function App() {
       <div className="goal-container">
         <div className="marquee-track">
           <span className="marquee-text">
-            {"NUMBER GACHA \u00A0 ".repeat(20)}
+            {showCombat ? "NUMBER BATTLE \u00A0 ".repeat(20) : "NUMBER GACHA \u00A0 ".repeat(20)}
           </span>
           <span className="marquee-text">
-            {"NUMBER GACHA \u00A0 ".repeat(20)}
+            {showCombat ? "NUMBER BATTLE \u00A0 ".repeat(20) : "NUMBER GACHA \u00A0 ".repeat(20)}
           </span>
         </div>
       </div>
       {!isMobile && !showCombat && <History rolls={rolls} />}
 
-      {showCombat && (
-        <button
-          className="combat-back-button"
-          onClick={() => {
-            setShowCombat(false);
-          }}
-        >
-          {"<"}
-        </button>
+      <button
+        className="home-button"
+        onClick={() => {
+          setShowCombat(false);
+          setCurrentPage("menu");
+        }}
+        onMouseOver={() => setShowCombatUnlockedPopup(false)}
+        onTouchStart={() => setShowCombatUnlockedPopup(false)}
+      >
+        HOME
+      </button>
+      {showCombatUnlockedPopup && (
+        <div className="combat-unlocked-popup dither-bg">
+          <div className="combat-unlocked-popup-inner">
+            <div className="combat-unlocked-popup-text-bold">COMBAT UNLOCKED</div>
+            <div className="combat-unlocked-popup-text">Check it out</div>
+          </div>
+          <div className="combat-unlocked-popup-arrow"></div>
+        </div>
       )}
+
+      {/*<button
+        className="info-button"
+        onClick={() => {
+         //setShowCombat(false);
+          //setCurrentPage("menu");
+        }}
+      >
+        i
+      </button>*/}
+
       {showCombat && (
         <Combat
           combatState={combatState}
@@ -1006,23 +1069,6 @@ function App() {
             id="column-3"
             style={{ opacity: showCombat ? 0 : 1 }}
           >
-            {combatUnlocked && (
-              <div className="combat-entry-container">
-                <CombatEntry
-                  combatState={combatState}
-                  setCombatState={setCombatState}
-                  setShowCombat={setShowCombat}
-                  setSelectingIndex={setSelectingIndex}
-                  selectingIndex={selectingIndex}
-                  firstCombatCompleted={firstCombatCompleted}
-                  currentEnemy={getCurrentEnemy()}
-                  onCombatEntryHovered={onCombatEntryHovered}
-                  selectNumber={selectNumber}
-                  isDraggingNumber={isDraggingNumber}
-                  numbers={numbers}
-                />
-              </div>
-            )}
             {charmShopState != "hidden" && (
               <CharmShop
                 clubs={clubs}

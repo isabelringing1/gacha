@@ -32,6 +32,88 @@ p {
   align-items: center;
 }
 
+.menu-page {
+  flex-direction: column;
+}
+
+.menu-page-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2dvh;
+}
+
+.menu-page-button {
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  background: none;
+  height: auto;
+}
+
+.gacha-button {
+  width: 50dvh;
+  max-width: 90vw;
+  padding: 0.8dvh;
+  border-radius: 2dvh;
+  background-color: #ffffff8b;
+}
+
+.menu-button-inner {
+  width: 100%;
+  display: flex;
+  border: 0.3dvh solid black;
+  border-radius: 2dvh;
+  background-color: #ffffff;
+  justify-content: center;
+  align-items: center;
+  padding: 1dvh 0;
+}
+
+.menu-button-inner-inner {
+  width: 87%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1dvh;
+  border-radius: 2dvh;
+  overflow: hidden;
+  background-color: #c9c8d2;
+  padding: 3dvh 2dvh;
+}
+
+.gacha-progress-label {
+  font-size: 5dvh;
+  font-weight: bold;
+  color: black;
+}
+
+.gacha-progress-bar {
+  width: 80%;
+  height: 2.5dvh;
+  background-color: white;
+  border: 0.3dvh solid black;
+  border-radius: 0.5dvh;
+  overflow: hidden;
+}
+
+.gacha-progress-fill {
+  height: 100%;
+  background-color: #333;
+  transition: width 0.3s ease;
+}
+
+.combat-menu-button {
+  width: 50dvh;
+  max-width: 90vw;
+}
+
+.combat-menu-button .combat-entry-outer {
+  width: 100%;
+  max-width: none;
+  pointer-events: none;
+}
+
 #columns {
   display: grid;
   grid-template-columns: 25vw minmax(0, 50vw) 25vw;
@@ -1266,7 +1348,7 @@ button:disabled {
   display: flex;
   justify-content: center;
   align-items: start;
-  padding-top: 2dvh;
+  padding-top: 5dvh;
 }
 
 .pack-shop {
@@ -1429,7 +1511,7 @@ button:disabled {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding-top: 1dvh;
+  padding-top: 7dvh;
 }
 
 .charm-shop {
@@ -2867,11 +2949,87 @@ input[type="number"] {
   font-size: 2dvh;
 }
 
-.combat-back-button {
+.home-button {
   position: absolute;
-  top: 4dvh;
-  left: 2dvh;
+  bottom: -0.5dvh;
+  right: -1dvh;
   z-index: 3;
+  height: 4.5dvh;
+  width: 11dvh;
+  background-color: white;
+  margin-top: 0.5dvh;
+  margin-right: 1dvh;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.combat-unlocked-popup {
+  position: absolute;
+  bottom: 5dvh;
+  right: 1dvh;
+  z-index: 4;
+  padding: 0.8dvh;
+  border-radius: 2dvh;
+  background-color: #ffffff8b;
+  animation: popup-bounce 0.4s ease-out;
+}
+
+@keyframes popup-bounce {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.combat-unlocked-popup-inner {
+  border: 0.3dvh solid black;
+  border-radius: 2dvh;
+  background-color: white;
+  padding: 2dvh 3dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5dvh;
+}
+
+.combat-unlocked-popup-text-bold {
+  font-size: 2.2dvh;
+  font-weight: bold;
+  color: black;
+  white-space: nowrap;
+}
+
+.combat-unlocked-popup-text {
+  font-size: 1.8dvh;
+  color: black;
+  white-space: nowrap;
+}
+
+.combat-unlocked-popup-arrow {
+  position: absolute;
+  bottom: -1.5dvh;
+  right: 3dvh;
+  width: 0;
+  height: 0;
+  border-left: 1.5dvh solid transparent;
+  border-right: 1.5dvh solid transparent;
+  border-top: 1.5dvh solid black;
+}
+
+.info-button {
+  position: absolute;
+  top: -0.5dvh;
+  right: -0.5dvh;
+  z-index: 3;
+  height: 4.1dvh;
+  width: 3vw;
+  background-color: white;
+  border-top-left-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-top: 0.5dvh;
+  font-weight: bold;
+  font-size: 2dvh;
+  font-family: monospace;
 }
 
 .combat-pyramid-container {

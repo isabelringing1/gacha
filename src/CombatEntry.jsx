@@ -32,7 +32,7 @@ export default function CombatEntry(props) {
 
   return (
     <div className={"combat-entry-outer dither-bg"} onMouseOver={() => onCombatEntryHovered(true)} onMouseOut={() => onCombatEntryHovered(false)}>
-      <div className="title">BATTLE</div>
+      <div className="title">NUMBER BATTLE</div>
       <div className="combat-entry-inner">
         <div className="combat-entry-inner-inner">
         <DitherShader
