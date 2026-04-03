@@ -138,7 +138,7 @@ const CardPack = (props) => {
           height={isMobile ? 470 : 658}
         />
       </div>
-      {/*<DitherShader
+      {<DitherShader
         src={cardPackOld}
         gridSize={2}
         ditherMode="bayer"
@@ -148,7 +148,7 @@ const CardPack = (props) => {
         className={"test"}
         id="test"
         objectFit="contain"
-      />*/}
+      />}
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 import PackShop from "./PackShop";
 import CharmShop from "./CharmShop.jsx";
+import Achievements from "./Achievements.jsx";
 import Sportsbook from "./Sportsbook.jsx";
 import Timer from "./Timer";
 import History from "./History";
@@ -53,6 +54,12 @@ export default function MenusContainer(props) {
     setClubs,
     spades,
     setSpades,
+    numbers,
+    claimedAchievements,
+    claimAchievement,
+    achievementsState,
+    canUnlockAchievements,
+    unlockAchievements,
   } = props;
 
   const [touchStart, setTouchStart] = useState(null);
@@ -168,6 +175,16 @@ export default function MenusContainer(props) {
             charmShopState={charmShopState}
             canUnlockCharmShop={canUnlockCharmShop}
             unlockCharmShop={unlockCharmShop}
+          />
+        )}
+        {achievementsState != "hidden" && isMobile && (
+          <Achievements
+            numbers={numbers}
+            claimedAchievements={claimedAchievements}
+            claimAchievement={claimAchievement}
+            achievementsState={achievementsState}
+            canUnlockAchievements={canUnlockAchievements}
+            unlockAchievements={unlockAchievements}
           />
         )}
 

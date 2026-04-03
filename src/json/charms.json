@@ -111,16 +111,7 @@
         "diamond_upgrade": 5,
         "consumable": true
       }
-    ],
-    [
-      {
-        "id": "hearts",
-        "name": "Heart Restock",
-        "desc": "+1 \u2665\uFE0E",
-        "cost": 10,
-        "amount": 1,
-        "consumable": false
-      }
     ]
+   
   ]
 }

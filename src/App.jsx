@@ -33,6 +33,7 @@ import Event from "./Event.jsx";
 import History from "./History.jsx";
 import Combat from "./Combat.jsx";
 import CombatEntry from "./CombatEntry.jsx";
+import Achievements from "./Achievements.jsx";
 import packData from "./json/packs.json";
 
 import arrow from "/arrow.png";
@@ -48,6 +49,7 @@ import {
   PACK_LIFETIME,
   NUM_TABS,
   UNLOCK_PACK_SHOP_COST,
+  UNLOCK_ACHIEVEMENTS_COST,
   UNLOCK_CHARM_SHOP_COST,
   UNLOCK_SPORTSBOOK_COST,
   isMobile,
@@ -86,6 +88,8 @@ function App() {
   const [charmShopState, setCharmShopState] = useState("hidden");
   const [charmShopEntries, setCharmShopEntries] = useState([0, 0]);
   const [purchasedCharms, setPurchasedCharms] = useState([]);
+  const [claimedAchievements, setClaimedAchievements] = useState([]);
+  const [achievementsState, setAchievementsState] = useState("hidden");
   const [animating, setAnimating] = useState(false);
   
   const [timeMultiplier, setTimeMultiplier] = useState(1);
@@ -139,7 +143,13 @@ function App() {
   };
 
   useEffect(() => {
-    if (rolls.length >= 3 && !combatUnlocked) {
+    if (claimedAchievements.length >= 1 && packShopState == "hidden") {
+      setPackShopState("locked");
+    }
+  }, [claimedAchievements]);
+
+  useEffect(() => {
+    if (rolls.length >= 25 && !combatUnlocked) {
       setCombatUnlocked(true);
       setShowCombatUnlockedPopup(true);
       setCombatState((oldCombatState) => {
@@ -149,8 +159,8 @@ function App() {
         };
       });
     }
-    if (rolls.length >= 5 && packShopState == "hidden") {
-      setPackShopState("locked");
+    if (rolls.length >= 3 && achievementsState == "hidden") {
+      setAchievementsState("locked");
     }
     if (
       rolls.length >= 15 &&
@@ -207,6 +217,8 @@ function App() {
     clubsUnlocked,
     heartsUnlocked,
     spadesUnlocked,
+    claimedAchievements,
+    achievementsState,
   ]);
 
   function saveData() {
@@ -239,6 +251,8 @@ function App() {
       clubsUnlocked: clubsUnlocked,
       heartsUnlocked: heartsUnlocked,
       spadesUnlocked: spadesUnlocked,
+      claimedAchievements: claimedAchievements,
+      achievementsState: achievementsState,
     };
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
@@ -286,6 +300,8 @@ function App() {
         setClubsUnlocked(saveData.clubsUnlocked);
         setHeartsUnlocked(saveData.heartsUnlocked);
         setSpadesUnlocked(saveData.spadesUnlocked);
+        setClaimedAchievements(saveData.claimedAchievements || []);
+        setAchievementsState(saveData.achievementsState || "hidden");
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
           var numDiamondsGained = 0;
@@ -406,6 +422,9 @@ function App() {
         return;
       }
       var pack = rollForPack();
+      while (pack.id == "copycat" && !lastPackOpened) {
+        pack = rollForPack();
+      }
       var newEntry = {
         id: pack.id,
         creation: Date.now(),
@@ -462,6 +481,18 @@ function App() {
     generatePackShopEntry(2);
   };
 
+  const canUnlockAchievements = () => {
+    return achievementsState == "locked" && spades >= UNLOCK_ACHIEVEMENTS_COST;
+  };
+
+  const unlockAchievements = () => {
+    if (!canUnlockAchievements()) {
+      return;
+    }
+    setAchievementsState("unlocked");
+    setSpades(spades - UNLOCK_ACHIEVEMENTS_COST);
+  };
+
   const canUnlockCharmShop = () => {
     return charmShopState == "locked" && spades >= UNLOCK_CHARM_SHOP_COST;
   };
@@ -471,8 +502,8 @@ function App() {
       return;
     }
     setCharmShopState("unlocked");
-    setClubs(clubs - UNLOCK_CHARM_SHOP_COST);
-    generateCharmShopEntry([0, 1, 2], purchasedCharms);
+    setSpades(spades - UNLOCK_CHARM_SHOP_COST);
+    generateCharmShopEntry([0, 1], purchasedCharms);
   };
 
   const canUnlockSportsbook = () => {
@@ -693,6 +724,13 @@ function App() {
     setSelectingIndex(-1);
   }
 
+  function claimAchievement(achievement) {
+    if (claimedAchievements.includes(achievement.id)) return;
+    setClaimedAchievements([...claimedAchievements, achievement.id]);
+    if (achievement.currency == "clubs") setClubs(clubs + achievement.reward_amount);
+    setClubsUnlocked(true);
+  }
+
   function claimRewards(rewards) {
     for (const [id, amt] of Object.entries(rewards)) {
       if (id == "diamonds") {
@@ -756,10 +794,10 @@ function App() {
             <div className="title">NUMBER GACHA</div>
             <div className="menu-button-inner">
               <div className="menu-button-inner-inner">
-                <div className="gacha-progress-label">{numbersCollected}%</div>
-                <div className="gacha-progress-bar">
+                <div className="gacha-progress-label">{ numbersCollected > 0 ? numbersCollected + "%" : "START"}</div>
+                { numbersCollected > 0 &&<div className="gacha-progress-bar">
                   <div className="gacha-progress-fill" style={{ width: numbersCollected + "%" }}></div>
-                </div>
+                </div>}
               </div>
             </div>
           </button>
@@ -1073,6 +1111,16 @@ function App() {
             id="column-3"
             style={{ opacity: showCombat ? 0 : 1 }}
           >
+            {achievementsState != "hidden" && (
+              <Achievements
+                numbers={numbers}
+                claimedAchievements={claimedAchievements}
+                claimAchievement={claimAchievement}
+                achievementsState={achievementsState}
+                canUnlockAchievements={canUnlockAchievements}
+                unlockAchievements={unlockAchievements}
+              />
+            )}
             {charmShopState != "hidden" && (
               <CharmShop
                 clubs={clubs}
@@ -1131,6 +1179,12 @@ function App() {
         setClubs={setClubs}
         spades={spades}
         setSpades={setSpades}
+        numbers={numbers}
+        claimedAchievements={claimedAchievements}
+        claimAchievement={claimAchievement}
+        achievementsState={achievementsState}
+        canUnlockAchievements={canUnlockAchievements}
+        unlockAchievements={unlockAchievements}
       />
     </div>
   );

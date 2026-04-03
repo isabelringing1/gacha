@@ -39,7 +39,7 @@ export default function CharmShop(props) {
                   clubs={clubs}
                 />
               ) : (
-                <div className={"empty-charm-shop-entry entry-" + i}></div>
+                <div className={"empty-charm-shop-entry entry-" + i} key={"charm-shop-entry-" + i}></div>
               );
             })}
           </div>
