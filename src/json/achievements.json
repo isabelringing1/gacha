@@ -8,5 +8,15 @@
   { "id": "reach_70", "name": "Reach 70%", "threshold": 70, "reward_amount": 5, "currency": "clubs" },
   { "id": "reach_80", "name": "Reach 80%", "threshold": 80, "reward_amount": 5, "currency": "clubs" },
   { "id": "reach_90", "name": "Reach 90%", "threshold": 90, "reward_amount": 5, "currency": "clubs" },
-  { "id": "reach_100", "name": "Reach 100%", "threshold": 100, "reward_amount": 5, "currency": "clubs" }
+  { "id": "reach_100", "name": "Reach 100%", "threshold": 100, "reward_amount": 5, "currency": "clubs" },
+  { "id": "multiples_3", "type": "multiples", "multiple": 3, "name": "Get all multiples of 3", "reward_amount": 10, "currency": "clubs" },
+  { "id": "multiples_4", "type": "multiples", "multiple": 4, "name": "Get all multiples of 4", "reward_amount": 10, "currency": "clubs" },
+  { "id": "multiples_5", "type": "multiples", "multiple": 5, "name": "Get all multiples of 5", "reward_amount": 20, "currency": "clubs" },
+  { "id": "multiples_6", "type": "multiples", "multiple": 6, "name": "Get all multiples of 6", "reward_amount": 10, "currency": "clubs" },
+  { "id": "multiples_7", "type": "multiples", "multiple": 7, "name": "Get all multiples of 7", "reward_amount": 10, "currency": "clubs" },
+  { "id": "multiples_8", "type": "multiples", "multiple": 8, "name": "Get all multiples of 8", "reward_amount": 10, "currency": "clubs" },
+  { "id": "multiples_9", "type": "multiples", "multiple": 9, "name": "Get all multiples of 9", "reward_amount": 10, "currency": "clubs" },
+  { "id": "multiples_10", "type": "multiples", "multiple": 10, "name": "Get all multiples of 10", "reward_amount": 20, "currency": "clubs" },
+  { "id": "multiples_11", "type": "multiples", "multiple": 11, "name": "Get all multiples of 11", "reward_amount": 10, "currency": "clubs" },
+  { "id": "multiples_12", "type": "multiples", "multiple": 12, "name": "Get all multiples of 12", "reward_amount": 10, "currency": "clubs" }
 ]

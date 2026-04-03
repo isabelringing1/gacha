@@ -143,12 +143,6 @@ function App() {
   };
 
   useEffect(() => {
-    if (claimedAchievements.length >= 1 && packShopState == "hidden") {
-      setPackShopState("locked");
-    }
-  }, [claimedAchievements]);
-
-  useEffect(() => {
     if (rolls.length >= 25 && !combatUnlocked) {
       setCombatUnlocked(true);
       setShowCombatUnlockedPopup(true);
@@ -161,6 +155,9 @@ function App() {
     }
     if (rolls.length >= 3 && achievementsState == "hidden") {
       setAchievementsState("locked");
+    }
+    if (rolls.length >= 10 && packShopState == "hidden") {
+      setPackShopState("locked");
     }
     if (
       rolls.length >= 15 &&
@@ -727,8 +724,11 @@ function App() {
   function claimAchievement(achievement) {
     if (claimedAchievements.includes(achievement.id)) return;
     setClaimedAchievements([...claimedAchievements, achievement.id]);
-    if (achievement.currency == "clubs") setClubs(clubs + achievement.reward_amount);
-    setClubsUnlocked(true);
+    if (achievement.currency == "clubs") {
+      setClubs(clubs + achievement.reward_amount);
+      setClubsUnlocked(true);
+    }
+    if (achievement.currency == "spades") setSpades(spades + achievement.reward_amount);
   }
 
   function claimRewards(rewards) {
@@ -916,7 +916,7 @@ function App() {
           </span>
         </div>
       </div>
-      {!isMobile && !showCombat && <History rolls={rolls} />}
+      {false && !isMobile && !showCombat && <History rolls={rolls} />}
 
       <button
         className="home-button"
@@ -1007,6 +1007,7 @@ function App() {
                 getRefreshEntryCost={getRefreshEntryCost}
                 refreshPackShopEntry={refreshPackShopEntry}
                 setHoveredPack={setHoveredPack}
+                hoveredPack={hoveredPack}
                 lastPackOpened={lastPackOpened}
               />
             )}

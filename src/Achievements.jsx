@@ -2,6 +2,14 @@ import { useState, useRef, useEffect } from "react";
 import achievementData from "./json/achievements.json";
 import { UNLOCK_ACHIEVEMENTS_COST } from "./constants.js";
 
+function getMultiplesOf(n) {
+  var result = [];
+  for (var i = n; i <= 100; i += n) {
+    result.push(String(i));
+  }
+  return result;
+}
+
 export default function Achievements(props) {
   const { numbers, claimedAchievements, claimAchievement, achievementsState, canUnlockAchievements, unlockAchievements } = props;
   const [fadingOut, setFadingOut] = useState([]);
@@ -69,7 +77,7 @@ export default function Achievements(props) {
                 id="achievements-progress-bar-text"
                 style={{
                   color: progress > 50 ? "white" : "black",
-                  left: progress > 50 ? (93 - progress) + "%" : progress + "%",
+                  left: progress > 50 ? (90 - progress) + "%" : progress + "%",
                 }}
               >
                 {progress}%
@@ -78,7 +86,17 @@ export default function Achievements(props) {
             <div className="achievements-entries">
               {visibleAchievements.map((achievement) => {
                 var claimed = claimedAchievements.includes(achievement.id);
-                var achieved = uniqueCount >= achievement.threshold;
+                var achieved, progressText;
+                if (achievement.type === "multiples") {
+                  var multiples = getMultiplesOf(achievement.multiple);
+                  var collected = multiples.filter((m) => numbers[m] !== undefined).length;
+                  var total = multiples.length;
+                  achieved = collected === total;
+                  progressText = " (" + collected + "/" + total + ")";
+                } else {
+                  achieved = uniqueCount >= achievement.threshold;
+                  progressText = "";
+                }
                 return (
                   <div
                     className={
@@ -88,7 +106,7 @@ export default function Achievements(props) {
                     }
                     key={achievement.id}
                   >
-                    <div className="achievement-entry-name">{achievement.name}</div>
+                    <div className="achievement-entry-name">{achievement.name}{progressText}</div>
                     <button
                       className="achievement-entry-button"
                       disabled={!achieved || claimed}

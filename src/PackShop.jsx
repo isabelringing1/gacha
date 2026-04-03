@@ -25,6 +25,7 @@ export default function PackShop(props) {
     getRefreshEntryCost,
     refreshPackShopEntry,
     setHoveredPack,
+    hoveredPack,
     lastPackOpened,
   } = props;
 
@@ -90,6 +91,7 @@ export default function PackShop(props) {
                     trashPack={trashPack}
                     setHighlightedNumbers={setHighlightedNumbers}
                     setHoveredPack={setHoveredPack}
+                    hoveredPack={hoveredPack}
                     lastPackOpened={lastPackOpened}
                   />
                 )

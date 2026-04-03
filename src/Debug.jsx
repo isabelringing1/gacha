@@ -37,6 +37,7 @@ const Debug = (props) => {
   const timeMultiplierRef = useRef(null);
   const chances3Ref = useRef(null);
   const simulateRef = useRef(null);
+  const canvasFilenameRef = useRef(null);
 
 
   var isLocalHost =
@@ -229,6 +230,28 @@ const Debug = (props) => {
           </button>
         </div>
 
+        <div>
+          <input type="text" ref={canvasFilenameRef} defaultValue="test" placeholder="filename" />
+          <button
+            className="debug-button"
+            onClick={() => {
+              const canvasParent = document.getElementsByClassName("test")[0];
+              console.log(canvasParent.children[0]);
+              if (canvasParent.children[0]) {
+                const name = canvasFilenameRef.current.value || "test";
+                const link = document.createElement("a");
+                link.download = `${name}.png`;
+                link.href = canvasParent.children[0].toDataURL("image/png");
+                link.click();
+              }
+              else{
+                console.log("No canvas found");
+              }
+            }}
+          >
+            Save Canvas
+          </button>
+        </div>
         <button
           className="debug-button"
           onClick={() => {

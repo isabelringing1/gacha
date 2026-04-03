@@ -54,10 +54,10 @@ p {
   padding: 0;
   background: none;
   height: auto;
+  width: 45dvh;
 }
 
 .gacha-button {
-  width: 45dvh;
   max-width: 90vw;
   padding: 0.8dvh;
   border-radius: 2dvh;
@@ -109,7 +109,6 @@ p {
 }
 
 .combat-menu-button {
-  width: 50dvh;
   max-width: 90vw;
 }
 
@@ -366,7 +365,7 @@ p {
   height: 50dvh;
   bottom: -20dvh;
   right: 50vw;
-  transform: translate(50%, 0%);
+  transform: translate(50%, 0%) scale(1.1, 1);
   width: 373px;
   height: 658px;
 }
@@ -1491,14 +1490,21 @@ button:disabled {
   color: #ff0000;
   margin-left: -9%;
   margin-top: -4%;
-  background-color: #ffffffb0;
-  aspect-ratio: 1 / 1;
-  border-radius: 2vh;
-  width: auto;
   height: 3dvh;
+  width: 3dvh;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.trash-button-img{
+  height: 3dvh;
+  width: 2.3dvh;
+  object-fit: contain;
+}
+
+.trash-button-img-hover{
+  height: 3.2dvh;
 }
 
 .trash-button:hover {
@@ -1722,7 +1728,7 @@ button:disabled {
 
 .achievement-entry-button {
   margin-bottom: 0;
-  font-size: 1.5dvh;
+  font-size: 2dvh;
   white-space: nowrap;
   background-color: white;
 }

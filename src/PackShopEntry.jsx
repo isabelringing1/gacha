@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { DitherShader } from "./dither-shader";
 import cardPackOld from "/card_pack_old.png";
 import priceTag from "/price_tag.png";
 import Timer from "./Timer.jsx";
+import trash from "/trash.png";
+import trash_highlight from "/trash_hover.png";
 
 import { getNumbersInPack, getPackCost } from "./Util";
 import { isMobile } from "./constants.js";
@@ -16,7 +19,10 @@ export default function PackShopEntry(props) {
     setHighlightedNumbers,
     setHoveredPack,
     lastPackOpened,
+    hoveredPack,
   } = props;
+
+  const [trashHovered, setTrashHovered] = useState(false);
 
   function canBuy() {
     return spades - getPackCost(pack) >= 0;
@@ -140,12 +146,21 @@ export default function PackShopEntry(props) {
             <div
               key="trash-button"
               className="trash-button"
+              onMouseOver={() => setTrashHovered(true)}
+              onMouseOut={() => setTrashHovered(false)}
               onClick={() => {
                 setHoveredPack(null);
                 trashPack(shopEntry);
               }}
             >
-              ✕
+              <DitherShader
+                src={trashHovered ? trash_highlight : trash}
+                gridSize={1}
+                ditherMode="bayer"
+                colorMode={"original"}
+                threshold={0}
+                className={"trash-button-img" + (trashHovered ? " trash-button-img-hover" : "")}
+              />
             </div>,
           ]}
         />

@@ -6,7 +6,7 @@ import {
 } from "./LineUtil";
 import Drawing from "./Drawing";
 import cardPackImg from "/card_pack.png";
-import cardPackOld from "/card_pack_old.png";
+import cardPackOld from "/80s_big.png";
 import { DitherShader } from "./dither-shader";
 import { isMobile } from "./constants.js";
 
@@ -23,7 +23,10 @@ const CardPack = (props) => {
   useEffect(() => {
     const context = canvasRef.current.getContext("2d");
     const image = new Image();
-    image.src = "./card_pack.png";
+    image.src = pack.big_art;
+    if (image.src == "" || image.src == null) {
+      image.src = "./card_pack.png";
+    }
     image.onload = () => {
       context.drawImage(image, 0, 0, 373, 658);
     };
@@ -138,17 +141,17 @@ const CardPack = (props) => {
           height={isMobile ? 470 : 658}
         />
       </div>
-      {<DitherShader
+      {/*<DitherShader
         src={cardPackOld}
         gridSize={2}
         ditherMode="bayer"
-        colorMode={"custom"}
+        colorMode={"original"}
         threshold={0}
         customPalette={["#575757", "#cbcbcbff", "#ffffffff"]}
         className={"test"}
         id="test"
         objectFit="contain"
-      />}
+      />*/}
     </div>
   );
 };
