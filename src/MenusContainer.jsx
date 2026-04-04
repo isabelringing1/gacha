@@ -185,6 +185,7 @@ export default function MenusContainer(props) {
             achievementsState={achievementsState}
             canUnlockAchievements={canUnlockAchievements}
             unlockAchievements={unlockAchievements}
+            setHighlightedNumbers={setHighlightedNumbers}
           />
         )}
 

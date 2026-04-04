@@ -365,7 +365,7 @@ p {
   height: 50dvh;
   bottom: -20dvh;
   right: 50vw;
-  transform: translate(50%, 0%) scale(1.1, 1);
+  transform: translate(50%, 0%) scale(1.15, 1);
   width: 373px;
   height: 658px;
 }

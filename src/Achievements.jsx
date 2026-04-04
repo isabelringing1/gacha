@@ -11,7 +11,7 @@ function getMultiplesOf(n) {
 }
 
 export default function Achievements(props) {
-  const { numbers, claimedAchievements, claimAchievement, achievementsState, canUnlockAchievements, unlockAchievements } = props;
+  const { numbers, claimedAchievements, claimAchievement, achievementsState, canUnlockAchievements, unlockAchievements, setHighlightedNumbers } = props;
   const [fadingOut, setFadingOut] = useState([]);
   const initialClaimed = useRef(claimedAchievements);
 
@@ -34,9 +34,17 @@ export default function Achievements(props) {
     }, 1000);
   }
 
-  var visibleAchievements = achievementData.filter(
-    (a) => !fadingOut.includes(a.id) && !initialClaimed.current.includes(a.id)
-  );
+  function getProgress(a) {
+    if (a.type === "multiples") {
+      var multiples = getMultiplesOf(a.multiple);
+      return multiples.filter((m) => numbers[m] !== undefined).length / multiples.length;
+    }
+    return uniqueCount / a.threshold;
+  }
+
+  var visibleAchievements = achievementData
+    .filter((a) => !fadingOut.includes(a.id) && !initialClaimed.current.includes(a.id))
+    .sort((a, b) => getProgress(b) - getProgress(a));
 
   var getCurrencyIcon = (currency) => {
     if (currency == "spades") {
@@ -105,6 +113,16 @@ export default function Achievements(props) {
                       (achieved && !claimed ? " can-claim" : "")
                     }
                     key={achievement.id}
+                    onMouseOver={() => {
+                      if (achievement.type === "multiples") {
+                        setHighlightedNumbers(getMultiplesOf(achievement.multiple).map(Number));
+                      }
+                    }}
+                    onMouseOut={() => {
+                      if (achievement.type === "multiples") {
+                        setHighlightedNumbers([]);
+                      }
+                    }}
                   >
                     <div className="achievement-entry-name">{achievement.name}{progressText}</div>
                     <button

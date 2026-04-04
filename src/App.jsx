@@ -32,7 +32,6 @@ import EventBanner from "./EventBanner.jsx";
 import Event from "./Event.jsx";
 import History from "./History.jsx";
 import Combat from "./Combat.jsx";
-import CombatEntry from "./CombatEntry.jsx";
 import Achievements from "./Achievements.jsx";
 import packData from "./json/packs.json";
 
@@ -123,7 +122,6 @@ function App() {
   const [showReequip, setShowReequip] = useState(false);
   const [firstCombatCompleted, setFirstCombatCompleted] = useState(false);
   const [isDraggingNumber, setIsDraggingNumber] = useState(false);
-  const [currentPage, setCurrentPage] = useState("menu"); // "menu", "gacha", "combat"
   const [showCombatUnlockedPopup, setShowCombatUnlockedPopup] = useState(false);
 
   useEffect(() => {
@@ -784,40 +782,6 @@ function App() {
     return 100;
   }
 
-  var numbersCollected = Object.keys(numbers).filter(k => numbers[k] > 0).length;
-
-  if (currentPage === "menu") {
-    return (
-      <div id="content" className="menu-page">
-        <div className="menu-page-inner">
-          <button className="menu-page-button gacha-button dither-bg" onClick={() => setCurrentPage("gacha")}>
-            <div className="title">NUMBER GACHA</div>
-            <div className="menu-button-inner">
-              <div className="menu-button-inner-inner">
-                <div className="gacha-progress-label">{ numbersCollected > 0 ? numbersCollected + "%" : "START"}</div>
-                { numbersCollected > 0 &&<div className="gacha-progress-bar">
-                  <div className="gacha-progress-fill" style={{ width: numbersCollected + "%" }}></div>
-                </div>}
-              </div>
-            </div>
-          </button>
-          {combatUnlocked && (
-            <button className="menu-page-button combat-menu-button" onClick={() => { setCurrentPage("combat"); setShowCombat(true); }}>
-              <CombatEntry
-                combatState={combatState}
-                setCombatState={setCombatState}
-                setShowCombat={() => {}}
-                firstCombatCompleted={firstCombatCompleted}
-                currentEnemy={getCurrentEnemy()}
-                onCombatEntryHovered={() => {}}
-              />
-            </button>
-          )}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div
       id="content"
@@ -918,17 +882,18 @@ function App() {
       </div>
       {false && !isMobile && !showCombat && <History rolls={rolls} />}
 
-      <button
-        className="home-button"
-        onClick={() => {
-          setShowCombat(false);
-          setCurrentPage("menu");
-        }}
-        onMouseOver={() => setShowCombatUnlockedPopup(false)}
-        onTouchStart={() => setShowCombatUnlockedPopup(false)}
-      >
-        HOME
-      </button>
+      {combatUnlocked && (
+        <button
+          className="home-button"
+          onClick={() => {
+            setShowCombat(!showCombat);
+          }}
+          onMouseOver={() => setShowCombatUnlockedPopup(false)}
+          onTouchStart={() => setShowCombatUnlockedPopup(false)}
+        >
+          {showCombat ? "GACHA" : "BATTLE"}
+        </button>
+      )}
       {showCombatUnlockedPopup && (
         <div className="combat-unlocked-popup dither-bg">
           <div className="combat-unlocked-popup-inner">
@@ -1120,6 +1085,7 @@ function App() {
                 achievementsState={achievementsState}
                 canUnlockAchievements={canUnlockAchievements}
                 unlockAchievements={unlockAchievements}
+                setHighlightedNumbers={setHighlightedNumbers}
               />
             )}
             {charmShopState != "hidden" && (

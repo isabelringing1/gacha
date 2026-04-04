@@ -40,7 +40,7 @@
       "min": 1,
       "max": 10,
       "art": "./00s.png",
-      "big_art": "./aughts_big.png",
+      "big_art": "./00s_big.png",
       "color_mode": "original",
       "custom_palette": ["#575757", "#cbcbcbff", "#ffffffff"],
       "rarity": 2,
