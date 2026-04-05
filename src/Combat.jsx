@@ -11,6 +11,8 @@ import {
 import { isMobile, DIVIDE_LEVEL, CRIT_FACTOR } from "./constants.js";
 import EnemyNumber from "./EnemyNumber";
 import CombatMenu from "./CombatMenu.jsx";
+import CombatShop from "./CombatShop.jsx";
+import CombatEntry from "./CombatEntry.jsx";
 
 export default function Combat(props) {
   const {
@@ -38,6 +40,7 @@ export default function Combat(props) {
   const [levelRewards, setLevelRewards] = useState({});
   const [score, setScore] = useState(0);
   const [isNewHighScore, setIsNewHighScore] = useState(false);
+  const [anySlotHovered, setAnySlotHovered] = useState(false);
 
   const enemyRef = useRef(null);
   const healthArrayRef = useRef();
@@ -331,24 +334,45 @@ export default function Combat(props) {
     setWinState("pyramid");
   }
 
+  var [selectedEnemy, setSelectedEnemy] = useState(
+    combatState && combatState.selectedEnemyCoords
+      ? combatState.selectedEnemyCoords
+      : [0, 0]
+  );
+
+  function onChallenge() {
+    if (!combatState || !combatState.pyramidEnemies) return;
+    var enemy =
+      combatState.pyramidEnemies[selectedEnemy[0]][selectedEnemy[1]];
+    if (enemy.isDefeated) return;
+    enemyRef.current = enemy.value;
+    setEnemyState(enemy.value);
+    setCombatState((prev) => ({
+      ...prev,
+      enemy: enemy.value,
+      selectedEnemyCoords: [selectedEnemy[0], selectedEnemy[1]],
+    }));
+    setWinState("combat");
+  }
+
   return (
     <div className="combat-container" id="combat-container">
       {winState == "pyramid" && (
-        <CombatMenu
-          combatState={combatState}
-          setCombatState={setCombatState}
-          setWinState={setWinState}
-          selectingIndex={selectingIndex}
-          setSelectingIndex={setSelectingIndex}
-          numbers={numbers}
-          showReequip={showReequip}
-          enemyRef={enemyRef}
-          setEnemyState={setEnemyState}
-          spades={spades}
-          setSpades={setSpades}
-          selectNumber={selectNumber}
-          isDraggingNumber={isDraggingNumber}
-        />
+        <>
+          <CombatShop />
+          <CombatEntry currentEnemy={currentEnemy} onChallenge={onChallenge} />
+          <CombatMenu
+            combatState={combatState}
+            selectingIndex={selectingIndex}
+            setSelectingIndex={setSelectingIndex}
+            numbers={numbers}
+            showReequip={showReequip}
+            selectNumber={selectNumber}
+            isDraggingNumber={isDraggingNumber}
+            anySlotHovered={anySlotHovered}
+            setAnySlotHovered={setAnySlotHovered}
+          />
+        </>
       )}
       {winState == "combat" && !showReequip && (
         <div className="score-container">Score: {score.toLocaleString()}</div>
@@ -389,6 +413,7 @@ export default function Combat(props) {
         </div>
       )}
       {winState !== "pyramid" && (
+        <>
         <div className="combat-view">
           <div className="enemy-section" id="enemy-section">
             <EnemyNumber
@@ -442,6 +467,7 @@ export default function Combat(props) {
                         combatState.numberStates[n].health <= 0
                       }
                       currentEnemy={currentEnemy}
+                      setAnySlotHovered={setAnySlotHovered}
                     />
                   );
                 })}
@@ -483,6 +509,7 @@ export default function Combat(props) {
             </div>
           </div>
         </div>
+        </>
       )}
     </div>
   );

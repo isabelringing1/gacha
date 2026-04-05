@@ -5,13 +5,17 @@ import { getRarityData, getLevel, getNumToUpgrade } from "./Util";
 import { CRIT_FACTOR } from "./constants.js";
 
 export default function NumberTooltip(props) {
-  const { n, numTimesRolled, isMobile, isCombat, attackNumber, isFactor } = props;
+  const { n, numTimesRolled, isMobile, isCombat, attackNumber, isFactor, makeTop } = props;
   var cn = "number-tooltip dither-bg";
   var cnTail = "tooltip-tail number-tail";
 
   if (isCombat) {
     cn += " combat-tooltip";
-    cnTail += " combat-tooltip-tail";
+    if (makeTop) {
+      cnTail += " combat-tooltip-tail-top";
+    } else {
+      cnTail += " combat-tooltip-tail";
+    }
   } else {
     if (n <= 20) {
       cn += " top";

@@ -37,11 +37,14 @@ function Number(props) {
     numTimesRolled = data;
     var level = getLevel(numTimesRolled);
     if (inCombatMenu) {
-      opacity = level / getMaxLevel()
+      opacity = map(level / getMaxLevel(), 0, 1, 0.2, 1);
     }
     else{
       opacity = 0.9;
     }
+  }
+  function map(number, inMin, inMax, outMin, outMax) {
+    return ((number - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
   }
   var containerClass = "number-container";
   var numberClass = "number";

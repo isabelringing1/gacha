@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import NumberTooltip from "./NumberTooltip";
 
 export default function CombatEntrySlot(props) {
-  var { currentEnemy, index, number, onEdit, selectingIndex, numTimesRolled, isDead, inCombatEntry, onDropNumber, isDraggingNumber, duplicateBlocked } = props;
+  var { currentEnemy, index, number, onEdit, selectingIndex, numTimesRolled, isDead, inCombatEntry, onDropNumber, isDraggingNumber, duplicateBlocked, setAnySlotHovered } = props;
 
   var [hover, setHover] = useState(false);
   var [dragOver, setDragOver] = useState(false);
@@ -14,7 +14,7 @@ export default function CombatEntrySlot(props) {
     if (!slotRef.current) return { top: 0, left: 0 };
     var rect = slotRef.current.getBoundingClientRect();
     return {
-      top: rect.bottom * 1.15,
+      top: rect.bottom - 300,
       left: rect.left + rect.width / 2,
     };
   }
@@ -23,8 +23,8 @@ export default function CombatEntrySlot(props) {
     <div
       ref={slotRef}
       className={"combat-slot" + (inCombatEntry ? " combat-slot-for-entry" : "") + (isFactor ? " factor-bg" : "") + (dragOver && !duplicateBlocked ? " drag-over" : "") + (isDraggingNumber && inCombatEntry && !duplicateBlocked ? " drag-pulse" : "") + (duplicateBlocked ? " duplicate-blocked" : "")}
-      onMouseOver={() => setHover(true)}
-      onMouseOut={() => setHover(false)}
+      onMouseOver={() => {setHover(true); setAnySlotHovered(true)}}
+      onMouseOut={() => {setHover(false); setAnySlotHovered(false)}}
       onDragOver={(e) => {
         if (inCombatEntry && !duplicateBlocked) {
           e.preventDefault();
@@ -52,7 +52,7 @@ export default function CombatEntrySlot(props) {
       }}
     >
       {hover && !selectingIndex && inCombatEntry && (
-        <div className="combat-slot-hover-view">DRAG TO SWAP</div>
+        <div className="combat-slot-hover-view"></div>
       )}
       {hover && number && inCombatEntry && createPortal(
         <div className="combat-slot-tooltip-portal" style={{
@@ -68,6 +68,7 @@ export default function CombatEntrySlot(props) {
             isCombat={true}
             numTimesRolled={numTimesRolled}
             isFactor={isFactor}
+            makeTop={true}
           />
         </div>,
         document.body

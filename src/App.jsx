@@ -889,7 +889,7 @@ function App() {
         </button>
       )}
 
-      <button
+      {/*<button
         className="about-button"
         onClick={() => {
          //setShowCombat(false);
@@ -897,7 +897,7 @@ function App() {
         }}
       >
         ABOUT
-      </button>
+      </button>*/}
 
       {showCombat && (
         <Combat

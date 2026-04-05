@@ -4,16 +4,14 @@ import CombatEntrySlot from "./CombatEntrySlot";
 export default function CombatMenu(props) {
   var {
     combatState,
-    setCombatState,
-    setWinState,
     selectingIndex,
     setSelectingIndex,
     numbers,
     showReequip,
-    enemyRef,
-    setEnemyState,
     selectNumber,
     isDraggingNumber,
+    anySlotHovered,
+    setAnySlotHovered,
   } = props;
 
   var [selectedEnemy, setSelectedEnemy] = useState(
@@ -32,21 +30,6 @@ export default function CombatMenu(props) {
   var duplicateSlotIndex = draggingIsDuplicate
     ? combatState.team.indexOf(isDraggingNumber)
     : -1;
-
-  function onChallenge() {
-    if (!combatState || !combatState.pyramidEnemies) return;
-    var enemy =
-      combatState.pyramidEnemies[selectedEnemy[0]][selectedEnemy[1]];
-    if (enemy.isDefeated) return;
-    enemyRef.current = enemy.value;
-    setEnemyState(enemy.value);
-    setCombatState((prev) => ({
-      ...prev,
-      enemy: enemy.value,
-      selectedEnemyCoords: [selectedEnemy[0], selectedEnemy[1]],
-    }));
-    setWinState("combat");
-  }
 
   return (
     <div
@@ -75,12 +58,11 @@ export default function CombatMenu(props) {
                   combatState.numberStates[n] &&
                   combatState.numberStates[n].health <= 0
                 }
+                setAnySlotHovered={setAnySlotHovered}
               />
             ))}
         </div>
-        <button className="combat-menu-start-button" onClick={onChallenge}>
-          START
-        </button>
+           <div className="combat-menu-hover-view" style={{ opacity: anySlotHovered ? 1 : 0 }}>DRAG INTO SLOT TO SWAP</div>
       </div>
     </div>
   );

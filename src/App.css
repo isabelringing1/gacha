@@ -85,6 +85,7 @@ p {
   overflow: hidden;
   background-color: #c9c8d2;
   padding: 3dvh 2dvh;
+ 
 }
 
 .gacha-progress-label {
@@ -874,6 +875,11 @@ button:disabled {
   rotate: 0deg !important;
   bottom: auto;
   top: -28px;
+}
+
+.combat-tooltip-tail-top{
+  rotate: 180deg !important;
+  bottom: -28px;
 }
 
 .menu-tooltip-tail {
@@ -1726,7 +1732,7 @@ button:disabled {
     background-color: rgb(255, 255, 109);
   }
   50% {
-    background-color: rgb(255, 255, 153);
+    background-color: rgb(235, 235, 235);
   }
   100% {
     background-color: rgb(255, 255, 109);
@@ -1753,15 +1759,9 @@ button:disabled {
 @keyframes achievement-fade-out {
   0% {
     opacity: 1;
-    max-height: 5dvh;
-    padding: 0.8dvh 1.5dvh;
-    margin-bottom: 0.5dvh;
   }
   50% {
     opacity: 0;
-    max-height: 5dvh;
-    padding: 0.8dvh 1.5dvh;
-    margin-bottom: 0.5dvh;
   }
   100% {
     opacity: 0;
@@ -2568,11 +2568,60 @@ input[type="number"] {
   padding-top: 3dvh;
 }
 
+.combat-entry-column {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 25vw;
+  height: 70dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 7dvh;
+  pointer-events: auto;
+}
+
+.combat-entry-column .combat-entry-outer {
+  width: 80%;
+  max-width: 500px;
+  height: auto;
+  margin-top: 0;
+}
+
+.combat-entry-column .combat-entry-inner-inner {
+  justify-content: center;
+  align-items: center;
+}
+
+.combat-entry-column .floating-num {
+  position: relative;
+  left: auto;
+  font-size: 10dvh;
+}
+
+.cloud-1 {
+  width: 28dvh;
+  height: 18dvh;
+  
+  bottom: -7dvh;
+  right: -110%;
+  animation: cloud-1 34s infinite ease-in-out;
+  
+}
+
+.cloud-2 {
+  width: 22dvh;
+  height: 13dvh;
+  left: -70%;
+  bottom: -6dvh;
+  animation: cloud-2 34s infinite ease-in-out;
+}
+
 .combat-entry-outer {
   width: 80%;
   max-width: 550px;
   margin-top: 1dvh;
-  height: 20dvh;
+  height: 15dvh;
   padding: 0.8dvh;
   display: flex;
   flex-direction: column;
@@ -2586,21 +2635,17 @@ input[type="number"] {
   width: 100%;
   height: 100%;
   display: flex;
-  border: 0.3dvh solid black;
-  border-radius: 2dvh;
-  background-color: #ffffff;
-  display: flex;
+  height: 20dvh;
   justify-content: center;
   align-items: center;
 }
 
 .combat-entry-inner-inner {
-  width: 95%;
-  height: 90%;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 2dvh;
   overflow: hidden;
   pointer-events: none;
   background-color: #c9c8d2;
@@ -2608,6 +2653,7 @@ input[type="number"] {
   flex-direction: column;
   justify-content: end;
   position: relative;
+  box-shadow: inset 0 0 1dvh rgba(0, 0, 0, 0.5);
 }
 
 .cloud-bg{
@@ -2649,7 +2695,7 @@ input[type="number"] {
   font-size: 2dvh;
   display: flex;
   align-items: end;
-  margin: 0 0 1.3dvh;
+  margin: 0 0 0.3dvh;
 }
 
 .combat-slot {
@@ -2711,11 +2757,17 @@ input[type="number"] {
   margin-right: 0.6dvh;
 }
 
+.combat-menu-hover-view{
+  font-size: 1dvh;
+  color: rgba(0, 0, 0, 0.514);
+  font-weight: 200;
+}
+
 .combat-slot-hover-view {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.353);
+  background-color: rgba(0, 0, 0, 0.153);
   font-size: 1.3dvh;
   display: flex;
   justify-content: center;
@@ -2948,27 +3000,11 @@ input[type="number"] {
 
 .floating-num-cloud {
   position: absolute;
-  width: 100%;
-  height: 100%;
   opacity: 0.66;
   user-select: none;
   z-index: 1;
 }
 
-.cloud-1{
-  animation: cloud-1 34s infinite ease-in-out;
-  width: 27dvh;
-  height: 16dvh;
-  bottom: -3dvh;
-  right: -110%;
-}
-
-.cloud-2{
-  width: 20dvh;
-  height: 9dvh;
-  bottom: -2dvh;
-  left: -70%
-}
 
 
 @keyframes cloud-1 {
@@ -2982,10 +3018,10 @@ input[type="number"] {
 
 @keyframes cloud-2 {
   0% {
-    left: -70%;
+    left: -100%;
   }
   50% {
-    left: -90%;
+    left: -150%;
   }
 }
 
@@ -3226,6 +3262,40 @@ input[type="number"] {
   font-family: monospace;
 }
 
+.combat-shop-container {
+  position: absolute;
+  left: 0;
+  top: 15dvh;
+  width: 25vw;
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  padding-top: 7dvh;
+  pointer-events: auto;
+  max-height: 35dvh;
+}
+
+.combat-shop {
+  width: 80%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 3dvh;
+  padding: 1.2dvh;
+}
+
+.combat-shop-entries{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(255, 255, 255);
+  border: 0.3dvh solid black;
+  border-radius: 3dvh;
+}
+
 .combat-menu-container {
   display: flex;
   flex-direction: column;
@@ -3275,7 +3345,7 @@ input[type="number"] {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 3dvh 2dvh;
+  padding-bottom: 7dvh;
   width: 100%;
 }
 
