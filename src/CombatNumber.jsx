@@ -19,7 +19,6 @@ export default function CombatNumber(props) {
     buttonContainerHeight,
     isFactor,
     attackFirst,
-    isTutorial,
   } = props;
   var intervalRef = useRef(null);
   var lastAttackTimeRef = useRef(null);
@@ -275,7 +274,7 @@ export default function CombatNumber(props) {
                 ATTACK
               </button>
             )}
-            {level.canBlock && !isTutorial && (
+            {level.canBlock && (
               <CombatButton
                 id="block"
                 text={"BLOCK"}

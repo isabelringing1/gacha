@@ -12,11 +12,10 @@ import {
   rollForCombatEnemy,
   generateEnemies,
   getFactors,
-  rollFudged
 } from "./Util";
 import "./App.css";
 
-import Number from "./Number";
+import NumberGrid from "./NumberGrid";
 import Debug from "./Debug";
 import Timer from "./Timer";
 import SplashDisplayFront from "./SplashDisplayFront";
@@ -105,6 +104,7 @@ function App() {
   const [rarityHighlightUnlocked, setRarityHighlightUnlocked] = useState(false);
   const [showCombat, setShowCombat] = useState(false);
   const [selectingIndex, setSelectingIndex] = useState(-1);
+  const [isCombatActive, setIsCombatActive] = useState(false);
   const [combatUnlocked, setCombatUnlocked] = useState(false);
   const [combatState, setCombatState] = useState({
     level: 1,
@@ -120,9 +120,9 @@ function App() {
   const [heartsUnlocked, setHeartsUnlocked] = useState(false);
   const [spadesUnlocked, setSpadesUnlocked] = useState(false);
   const [showReequip, setShowReequip] = useState(false);
-  const [firstCombatCompleted, setFirstCombatCompleted] = useState(false);
   const [isDraggingNumber, setIsDraggingNumber] = useState(false);
-  const [showCombatUnlockedPopup, setShowCombatUnlockedPopup] = useState(false);
+  const [combatButtonSeen, setCombatButtonSeen] = useState(false);
+  const [diamondsUnlocked, setDiamondsUnlocked] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -143,7 +143,6 @@ function App() {
   useEffect(() => {
     if (rolls.length >= 25 && !combatUnlocked) {
       setCombatUnlocked(true);
-      setShowCombatUnlockedPopup(true);
       setCombatState((oldCombatState) => {
         return {
           ...oldCombatState,
@@ -208,12 +207,12 @@ function App() {
     combatState,
     combatHighScore,
     combatUnlocked,
-    firstCombatCompleted,
     clubsUnlocked,
     heartsUnlocked,
     spadesUnlocked,
     claimedAchievements,
     achievementsState,
+    diamondsUnlocked,
   ]);
 
   function saveData() {
@@ -242,12 +241,12 @@ function App() {
       combatUnlocked: combatUnlocked,
       spades: spades,
       clubs: clubs,
-      firstCombatCompleted: firstCombatCompleted,
       clubsUnlocked: clubsUnlocked,
       heartsUnlocked: heartsUnlocked,
       spadesUnlocked: spadesUnlocked,
       claimedAchievements: claimedAchievements,
       achievementsState: achievementsState,
+      diamondsUnlocked: diamondsUnlocked,
     };
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
@@ -291,12 +290,12 @@ function App() {
         setCombatHighScore(saveData.combatHighScore);
         setSpades(saveData.spades);
         setClubs(saveData.clubs);
-        setFirstCombatCompleted(saveData.firstCombatCompleted || false);
         setClubsUnlocked(saveData.clubsUnlocked);
         setHeartsUnlocked(saveData.heartsUnlocked);
         setSpadesUnlocked(saveData.spadesUnlocked);
         setClaimedAchievements(saveData.claimedAchievements || []);
         setAchievementsState(saveData.achievementsState || "hidden");
+        setDiamondsUnlocked(saveData.diamondsUnlocked || (saveData.rolls && saveData.rolls.length > 0));
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
           var numDiamondsGained = 0;
@@ -343,11 +342,12 @@ function App() {
     setSelectingIndex(-1);
 
     if (cheatNumber == -1) {
+      if (!diamondsUnlocked) setDiamondsUnlocked(true);
       setDiamonds(diamonds - 1);
       if (!nextDiamondRefreshTime) {
         setNextDiamondRefreshTime(Date.now() + REFRESH_TIME);
       }
-      rolledNumber = rolls.length < 3 ? rollFudged(rolls.length) : roll();
+      rolledNumber = roll();
     }
     showRolledNumber(rolledNumber, false);
   };
@@ -762,10 +762,6 @@ function App() {
       return 0;
     }
 
-    if (!firstCombatCompleted && combatState.team.length > 0) {
-      return combatState.team.reduce((sum, n) => sum + (n || 0), 0);
-    }
-    
     if (combatState.selectedEnemyCoords) {
       var [row, col] = combatState.selectedEnemyCoords;
       return combatState.pyramidEnemies[row][col].value;
@@ -884,35 +880,24 @@ function App() {
 
       {combatUnlocked && (
         <button
-          className="home-button"
-          onClick={() => {
-            setShowCombat(!showCombat);
-          }}
-          onMouseOver={() => setShowCombatUnlockedPopup(false)}
-          onTouchStart={() => setShowCombatUnlockedPopup(false)}
+          className={"home-button" + (!combatButtonSeen && !showCombat ? " can-claim" : "")}
+          onClick={() => setShowCombat(!showCombat)}
+          onMouseEnter={() => setCombatButtonSeen(true)}
+          onTouchStart={() => setCombatButtonSeen(true)}
         >
           {showCombat ? "GACHA" : "BATTLE"}
         </button>
       )}
-      {showCombatUnlockedPopup && (
-        <div className="combat-unlocked-popup dither-bg">
-          <div className="combat-unlocked-popup-inner">
-            <div className="combat-unlocked-popup-text-bold">COMBAT UNLOCKED</div>
-            <div className="combat-unlocked-popup-text">Check it out</div>
-          </div>
-          <div className="combat-unlocked-popup-arrow"></div>
-        </div>
-      )}
 
-      {/*<button
-        className="info-button"
+      <button
+        className="about-button"
         onClick={() => {
          //setShowCombat(false);
           //setCurrentPage("menu");
         }}
       >
-        i
-      </button>*/}
+        ABOUT
+      </button>
 
       {showCombat && (
         <Combat
@@ -929,18 +914,10 @@ function App() {
           setHighScore={setCombatHighScore}
           showReequip={showReequip}
           setShowReequip={setShowReequip}
-          firstCombatCompleted={firstCombatCompleted}
-          setFirstCombatCompleted={setFirstCombatCompleted}
           currentEnemy={getCurrentEnemy()}
           selectNumber={selectNumber}
           isDraggingNumber={isDraggingNumber}
-          onDragStateChange={setIsDraggingNumber}
-          rarityHighlightUnlocked={rarityHighlightUnlocked}
-          highlightedNumber={highlightedNumber}
-          highlightedNumbers={highlightedNumbers}
-          rolledNumber={rolledNumber}
-          badgedNumbers={badgedNumbers}
-          showCombat={showCombat}
+          setIsCombatActive={setIsCombatActive}
         />
       )}
 
@@ -990,33 +967,21 @@ function App() {
           </div>
         )}
         <div className="column" id="column-2">
-          <div
-            id="numbers-grid"
-            style={{
-              marginRight: !showCombat ? 0 : showReequip ? "40vw" : "200vw",
-              zIndex: showReequip ? 3 : 0,
-            }}
-          >
-            {Array.from({ length: 100 }, (_, i) => i + 1).map((n) => {
-              return (
-                <Number
-                  key={"number-" + n}
-                  n={n}
-                  data={numbers[n]}
-                  isHighlighted={
-                    highlightedNumber === n || highlightedNumbers.includes(n)
-                  }
-                  isRolled={rolledNumber === n}
-                  isBadged={badgedNumbers.includes(n)}
-                  rarityHighlightUnlocked={rarityHighlightUnlocked}
-                  selectingIndex={selectingIndex}
-                  selectNumber={selectNumber}
-                  combatState={combatState}
-                  showCombat={showCombat}
-                  onDragStateChange={setIsDraggingNumber}
-                />
-              );
-            })}
+          <div id="numbers-grid" style={{ opacity: isCombatActive ? 0 : 1 }}>
+            <NumberGrid
+              numbers={numbers}
+              highlightedNumber={highlightedNumber}
+              highlightedNumbers={highlightedNumbers}
+              rolledNumber={rolledNumber}
+              badgedNumbers={badgedNumbers}
+              rarityHighlightUnlocked={rarityHighlightUnlocked}
+              selectingIndex={selectingIndex}
+              selectNumber={selectNumber}
+              combatState={combatState}
+              showCombat={showCombat}
+              onDragStateChange={setIsDraggingNumber}
+              inCombatMenu={showCombat}
+            />
           </div>
           {isMobile && (
             <div id="arrows-container">
@@ -1042,7 +1007,7 @@ function App() {
             style={{ opacity: showCombat ? 0 : 1 }}
           >
             <div>
-              <div className="diamonds-container" id="diamonds-container">
+              <div className="diamonds-container" id="diamonds-container" style={{ opacity: diamondsUnlocked ? 1 : 0 }}>
                 <div>
                   &diams;&#xfe0e; {diamonds}/{maxDiamonds}{" "}
                   {!isMobile && nextDiamondRefreshTime && (
@@ -1056,15 +1021,16 @@ function App() {
                   )}
                 </div>
               </div>
-
-              <div id="spades-container" style={{ opacity: spadesUnlocked ? 1 : 0 }}>
-                &#x2660;&#xfe0e; {spades.toLocaleString()}
-              </div>
-            </div>
-            <div>
               <div id="clubs-container" style={{ opacity: clubsUnlocked ? 1 : 0 }}>
                 &#x2663;&#xfe0e; {clubs.toLocaleString()}
               </div>
+              
+            </div>
+            <div>
+            <div id="spades-container" style={{ opacity: spadesUnlocked ? 1 : 0 }}>
+                &#x2660;&#xfe0e; {spades.toLocaleString()}
+              </div>
+              
               <div id="hearts-container" style={{ opacity: heartsUnlocked ? 1 : 0 }}>
                 &hearts;&#xfe0e; {hearts.toLocaleString()}
               </div>
@@ -1125,6 +1091,7 @@ function App() {
         setPackShopEntriesUnlocked={setPackShopEntriesUnlocked}
         generatePackShopEntry={generatePackShopEntry}
         rollNumber={rollNumber}
+        diamondsUnlocked={diamondsUnlocked}
         refreshDiamonds={refreshDiamonds}
         trySwipe={trySwipe}
         setShowOutOfDiamonds={setShowOutOfDiamonds}

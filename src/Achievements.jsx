@@ -105,6 +105,7 @@ export default function Achievements(props) {
                   achieved = uniqueCount >= achievement.threshold;
                   progressText = "";
                 }
+                var fillPercent = Math.min(getProgress(achievement), 1) * 100;
                 return (
                   <div
                     className={
@@ -124,6 +125,9 @@ export default function Achievements(props) {
                       }
                     }}
                   >
+                    {!achieved && (
+                      <div className="achievement-progress-fill" style={{ width: fillPercent + "%" }} />
+                    )}
                     <div className="achievement-entry-name">{achievement.name}{progressText}</div>
                     <button
                       className="achievement-entry-button"

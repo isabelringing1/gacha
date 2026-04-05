@@ -163,7 +163,7 @@ p {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
-  transition: margin-right 0.4s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .number-container {
@@ -1508,7 +1508,7 @@ button:disabled {
 }
 
 .trash-button:hover {
-  scale: 1.1;
+  scale: 1.2;
 }
 
 .pack-shop-entry-locked {
@@ -1699,9 +1699,22 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8dvh 1.5dvh;
+  padding: 3dvh 1.5dvh;
   background-color: rgb(235, 235, 235);
   border-radius: 1.5dvh;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.achievement-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background-color: rgb(195, 195, 195);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .can-claim {
@@ -1861,8 +1874,8 @@ button:disabled {
 
 .hearts-span {
   display: flex;
-  justify-content: center;
-  width: 100vw;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .paper-bg {
@@ -2173,6 +2186,7 @@ input[type="number"] {
   z-index: 2;
   height: 100%;
   width: 100%;
+  pointer-events: none;
 }
 
 .combat-view {
@@ -3112,18 +3126,36 @@ input[type="number"] {
 }
 
 .home-button {
+  font-size: 2dvh;
   position: absolute;
   bottom: -0.5dvh;
   right: -1dvh;
   z-index: 3;
-  height: 4.5dvh;
-  width: 11dvh;
+  height: 5dvh;
+  width: 12dvh;
   background-color: white;
   margin-top: 0.5dvh;
   margin-right: 1dvh;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
+}
+
+.about-button {
+  font-size: 2dvh;
+  position: absolute;
+  bottom: -0.5dvh;
+  left: -1dvh;
+  z-index: 3;
+  height: 5dvh;
+  width: 13dvh;
+  background-color: white;
+  margin-top: 0.5dvh;
+  margin-right: 1dvh;
+  border-top-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-right: 0.3dvh solid rgba(0, 0, 0, 0.686);
 }
 
 .combat-unlocked-popup {
@@ -3198,8 +3230,9 @@ input[type="number"] {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: end;
   width: 50%;
-  height: 90%;
+  height: 100%;
   transition: opacity 0.2s linear;
   z-index: 1;
 }
@@ -3220,6 +3253,8 @@ input[type="number"] {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+    width: 93%;
+    height: 93%;
 }
 
 .combat-menu-number-wrapper .number-container {
@@ -3227,24 +3262,20 @@ input[type="number"] {
   height: 100%;
 }
 
-.combat-menu-level-subscript {
-  font-size: 1dvh;
-  font-family: monospace;
-  color: #000000;
-  line-height: 1;
+.star-level-star {
   position: absolute;
-  bottom: 15%;
-  right: 5%;
+  width: 15%;
+  height: 15%;
   pointer-events: none;
   user-select: none;
-  font-weight: bold;
+  overflow: visible;
 }
 
 .combat-menu-team-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1dvh 2dvh;
+  padding: 3dvh 2dvh;
   width: 100%;
 }
 

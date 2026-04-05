@@ -106,7 +106,8 @@ export default function NumberTooltip(props) {
             <b>Lvl {getLevel(numTimesRolled)} </b>
           </div>
         )}
-        {!isCombat && <div className="number-tooltip-text">{getNumToUpgrade(numTimesRolled)} to upgrade</div>}
+        {!isCombat && <div className="number-tooltip-text">Rolled {numTimesRolled} time{numTimesRolled == 1 ? "" : "s"}</div>}
+        {isCombat && <div className="number-tooltip-text">{getNumToUpgrade(numTimesRolled)} to upgrade</div>}
       </div>
     </div>
   );

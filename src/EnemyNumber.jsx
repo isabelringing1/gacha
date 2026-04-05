@@ -2,12 +2,12 @@ import { time } from "motion";
 import { useEffect, useRef, useState } from "react";
 
 export default function EnemyNumber(props) {
-  const { isSetup, enemyRef, onAttack, winState, winStateRef, isTutorial } = props;
+  const { isSetup, enemyRef, onAttack, winState, winStateRef } = props;
 
   var timeoutRef = useRef(null);
 
   useEffect(() => {
-    if (isSetup || isTutorial) {
+    if (isSetup) {
       return;
     }
 

@@ -33,6 +33,7 @@ export default function MenusContainer(props) {
     packShopState,
     setPackShopState,
     rollNumber,
+    diamondsUnlocked,
     refreshDiamonds,
     trySwipe,
     setShowOutOfDiamonds,
@@ -120,7 +121,7 @@ export default function MenusContainer(props) {
               disabled={isRollButtonDisabled()}
               onClick={rollNumber}
             >
-              Roll (&diams;&#xfe0e;1)
+              {diamondsUnlocked ? <>Roll (&diams;&#xfe0e;1)</> : "Roll"}
             </button>
             {diamonds <= 0 && (
               <button

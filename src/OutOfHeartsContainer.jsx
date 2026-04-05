@@ -107,19 +107,8 @@ export default function OutOfHeartsContainer(props) {
                   generateMathProblems();
                 }}
               >
-                Do Easy Math Problems{" "}
+                Do Some Math Problems{" "}
                 <div>(+{EASY_DIAMONDS} &diams;&#xfe0e;)</div>
-              </button>
-
-              <button
-                className="out-of-hearts-button"
-                onClick={() => {
-                  setShowMath(2);
-                  generateMathProblems(true);
-                }}
-              >
-                Do Hard Math Problems{" "}
-                <div>(+{HARD_DIAMONDS} &diams;&#xfe0e;)</div>
               </button>
             </div>
           </div>

@@ -27,18 +27,10 @@ export default function Combat(props) {
     setHighScore,
     showReequip,
     setShowReequip,
-    firstCombatCompleted,
-    setFirstCombatCompleted,
     currentEnemy,
     selectNumber,
     isDraggingNumber,
-    onDragStateChange,
-    rarityHighlightUnlocked,
-    highlightedNumber,
-    highlightedNumbers,
-    rolledNumber,
-    badgedNumbers,
-    showCombat,
+    setIsCombatActive,
   } = props;
   const [enemyState, setEnemyState] = useState(null);
   const [winState, setWinState] = useState("pyramid");
@@ -46,8 +38,6 @@ export default function Combat(props) {
   const [levelRewards, setLevelRewards] = useState({});
   const [score, setScore] = useState(0);
   const [isNewHighScore, setIsNewHighScore] = useState(false);
-  const [showStartLabel, setShowStartLabel] = useState(false);
-  const [isTutorial, setIsTutorial] = useState(false);
 
   const enemyRef = useRef(null);
   const healthArrayRef = useRef();
@@ -79,46 +69,22 @@ export default function Combat(props) {
         newCombatState.pyramidEnemies = generateEnemies();
       }
 
-      if (!firstCombatCompleted) {
-        var teamSum = newCombatState.team.reduce((sum, n) => sum + (n || 0), 0);
-        newCombatState.enemy = teamSum;
-        enemyRef.current = teamSum;
-        setEnemyState(teamSum);
-        setIsTutorial(true);
-        setWinState("intro");
-      }
-
       setCombatState(newCombatState);
     } else {
       resetCombatState();
     }
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (setIsCombatActive) setIsCombatActive(false);
+    };
   }, []);
 
   useEffect(() => {
     winStateRef.current = winState;
-    if (winState == "intro") {
-      setTimeout(() => {
-        var combatView = document.getElementById("combat-container");
-        combatView.classList.add("shake-screen")
-        var enemySection = document.getElementById("enemy-section");
-        enemySection.style.opacity = 1;
-        setTimeout(() => {
-          setShowStartLabel(true);
-          var startTimer = setTimeout(() => setShowStartLabel(false), 500);
-          return () => clearTimeout(startTimer);
-        }, 150);
-      }, 1650);
-
-
-      var introTimer = setTimeout(() => {
-        setWinState("combat");
-      }, 2200);
-      return () => clearTimeout(introTimer);
-    }
+    if (setIsCombatActive) setIsCombatActive(winState !== "pyramid");
     if (winState == "win") {
-      if (!isTutorial) {
+      {
         var rewards = generateCombatRewards(combatState.level, combatState.enemy);
         console.log("rewards: ", rewards);
         setLevelRewards(rewards);
@@ -296,29 +262,6 @@ export default function Combat(props) {
   }
 
   function onNext() {
-    if (isTutorial) {
-      setFirstCombatCompleted(true);
-      setIsTutorial(false);
-      setCombatState((oldCombatState) => {
-        var newCombatState = { ...oldCombatState };
-        newCombatState.selectedEnemyCoords = [0, 0];
-        for (var i = 1; i <= 100; i++) {
-          var level = getLevelData(numbers[i]);
-          newCombatState.numberStates[i] = {
-            n: i,
-            health: i,
-            block: false,
-            shields: level.shields,
-            initialShields: level.shields,
-            team: [null, null, null]
-          };
-        }
-        return newCombatState;
-      });
-      setWinState("pyramid");
-      return;
-    }
-
     setCombatState((oldCombatState) => {
       var newCombatState = { ...oldCombatState };
       var coords = newCombatState.selectedEnemyCoords;
@@ -405,45 +348,29 @@ export default function Combat(props) {
           setSpades={setSpades}
           selectNumber={selectNumber}
           isDraggingNumber={isDraggingNumber}
-          onDragStateChange={onDragStateChange}
-          rarityHighlightUnlocked={rarityHighlightUnlocked}
-          highlightedNumber={highlightedNumber}
-          highlightedNumbers={highlightedNumbers}
-          rolledNumber={rolledNumber}
-          badgedNumbers={badgedNumbers}
-          showCombat={showCombat}
         />
       )}
-      {showStartLabel && <div className="start-label">START!</div>}
       {winState == "combat" && !showReequip && (
         <div className="score-container">Score: {score.toLocaleString()}</div>
       )}
       {winState == "win" && (
         <div className="combat-outcome-popup">
           <div>SUCCESS</div>
-          {isTutorial ? (
-            <div className="combat-outcome-popup-text">
-              <div>You are ready.</div>
-              <div> Climb the pyramid. </div>
-            </div>
-            
-          ) : (
-            <div>
-              <div className="combat-outcome-popup-text">Rewards:</div>
-              {levelRewards &&
-                Object.keys(levelRewards).map((r, i) => {
-                  return (
-                    <div
-                      key={"rewards-" + i}
-                      className="combat-outcome-popup-text"
-                    >
-                      {getCurrencyIcon(r)}
-                      {levelRewards[r].toLocaleString()}
-                    </div>
-                  );
-                })}
-            </div>
-          )}
+          <div>
+            <div className="combat-outcome-popup-text">Rewards:</div>
+            {levelRewards &&
+              Object.keys(levelRewards).map((r, i) => {
+                return (
+                  <div
+                    key={"rewards-" + i}
+                    className="combat-outcome-popup-text"
+                  >
+                    {getCurrencyIcon(r)}
+                    {levelRewards[r].toLocaleString()}
+                  </div>
+                );
+              })}
+          </div>
           <button onClick={onNext}>Continue</button>
         </div>
       )}
@@ -462,15 +389,14 @@ export default function Combat(props) {
         </div>
       )}
       {winState !== "pyramid" && (
-        <div className={"combat-view" + (winState === "intro" ? " combat-view-intro" : "")}>
-          <div className={"enemy-section" + (winState === "intro" ? " stomp-in-short" : "")} id="enemy-section">
+        <div className="combat-view">
+          <div className="enemy-section" id="enemy-section">
             <EnemyNumber
               enemyRef={enemyRef}
               onAttack={onEnemyAttack}
               winState={winState}
               winStateRef={winStateRef}
               isSetup={showReequip}
-              isTutorial={isTutorial}
             />
             <div className="enemy-text-container">
               {records.map((r, i) => {
@@ -493,7 +419,7 @@ export default function Combat(props) {
           <div className="player-numbers-section">
             {showReequip && <div className="title your-team">YOUR TEAM</div>}
             <div
-              className={"player-numbers" + (winState === "intro" ? " walk-forward" : "")}
+              className="player-numbers"
               id="player-numbers"
             >
               {/* setup */}
@@ -540,7 +466,6 @@ export default function Combat(props) {
                     buttonContainerHeight={getButtonContainerHeight()}
                     isFactor={currentEnemy % n == 0}
                     attackFirst={true}
-                    isTutorial={isTutorial}
                   />
                 ))}
             </div>
