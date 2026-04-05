@@ -626,6 +626,15 @@ function App() {
     }, 1000);
   };
 
+  const buyCombatShopItem = (shopEntry, index) => {
+    if (shopEntry.currency === "spades") {
+      setSpades(spades - shopEntry.cost);
+    }
+    if (shopEntry.reward === "hearts") {
+      setHearts(hearts + 1);
+    }
+  };
+
   const buyCharm = (shopEntry, index = 0) => {
     setClubs(clubs - shopEntry.cost);
 
@@ -918,6 +927,7 @@ function App() {
           selectNumber={selectNumber}
           isDraggingNumber={isDraggingNumber}
           setIsCombatActive={setIsCombatActive}
+          buyCombatShopItem={buyCombatShopItem}
         />
       )}
 
@@ -1004,7 +1014,6 @@ function App() {
           )}
           <div
             className="wallet-container"
-            style={{ opacity: showCombat ? 0 : 1 }}
           >
             <div>
               <div className="diamonds-container" id="diamonds-container" style={{ opacity: diamondsUnlocked ? 1 : 0 }}>

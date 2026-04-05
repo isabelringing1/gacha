@@ -3296,6 +3296,41 @@ input[type="number"] {
   border-radius: 3dvh;
 }
 
+.combat-shop-entry{
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  padding: 0.5dvh;
+  margin-bottom: 1dvh;
+  background-color: #e4e4e4;
+  height: 10dvh;
+  border-radius: 2dvh;
+  
+}
+
+.combat-shop-entry-name{
+  width: 300%;
+  font-size: 2.1dvh;
+  padding: 0dvh 1dvh 0dvh 0dvh;
+  font-weight: bold;
+
+  color: black;
+  -webkit-text-stroke: 0.4dvh #ffffffb0;
+  paint-order: stroke fill;
+  
+}
+
+.combat-shop-info-container{
+  margin: 0 4%;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.combat-shop-entry-buy-button{
+  white-space: nowrap;
+}
+
 .combat-menu-container {
   display: flex;
   flex-direction: column;

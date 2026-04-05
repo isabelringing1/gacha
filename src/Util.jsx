@@ -424,14 +424,14 @@ function getMaxLevel() {
 }
 
 function rollForCombatEnemy(level) {
-  var levelData = combatData.find((l, i) => l.level == level);
+  var levelData = combatData.levels.find((l, i) => l.level == level);
   return Math.floor(
     Math.random() * (levelData.max - levelData.min) + levelData.min,
   );
 }
 
 function generateCombatRewards(level, enemy) {
-  var levelData = combatData.find((l, i) => l.level == level);
+  var levelData = combatData.levels.find((l, i) => l.level == level);
   var total =
     levelData.base_total_rewards +
     linMap(enemy, levelData.min, levelData.max, levelData.base_total_rewards);
@@ -506,7 +506,7 @@ function generateEnemies() {
   for (var level = 0; level < PYRAMID_LEVELS; level++) {
     var row = [];
     var numEnemies = PYRAMID_LEVELS - level;
-    var levelConfig = combatData[level];
+    var levelConfig = combatData.levels[level];
     var min = levelConfig.min;
     var max = levelConfig.max;
     var uniqueValues = new Set();
@@ -532,6 +532,9 @@ function getCurrencyIcon(id) {
     return "\u{2666}\u{FE0E}";
   }
   if (id == "clubs") {
+    return "\u{2660}\u{FE0E}";
+  }
+  if (id == "spades") {
     return "\u{2660}\u{FE0E}";
   }
 }

@@ -33,6 +33,7 @@ export default function Combat(props) {
     selectNumber,
     isDraggingNumber,
     setIsCombatActive,
+    buyCombatShopItem,
   } = props;
   const [enemyState, setEnemyState] = useState(null);
   const [winState, setWinState] = useState("pyramid");
@@ -359,7 +360,7 @@ export default function Combat(props) {
     <div className="combat-container" id="combat-container">
       {winState == "pyramid" && (
         <>
-          <CombatShop />
+          <CombatShop spades={spades} buyCombatShopItem={buyCombatShopItem} />
           <CombatEntry currentEnemy={currentEnemy} onChallenge={onChallenge} />
           <CombatMenu
             combatState={combatState}
