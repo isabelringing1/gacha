@@ -1,4 +1,3 @@
-import { useState } from "react";
 import CombatEntrySlot from "./CombatEntrySlot";
 
 export default function CombatMenu(props) {
@@ -12,18 +11,8 @@ export default function CombatMenu(props) {
     isDraggingNumber,
     anySlotHovered,
     setAnySlotHovered,
+    currentEnemy,
   } = props;
-
-  var [selectedEnemy, setSelectedEnemy] = useState(
-    combatState && combatState.selectedEnemyCoords
-      ? combatState.selectedEnemyCoords
-      : [0, 0]
-  );
-
-  var currentEnemy =
-    combatState && combatState.pyramidEnemies
-      ? combatState.pyramidEnemies[selectedEnemy[0]][selectedEnemy[1]].value
-      : 0;
 
   var draggingIsDuplicate =
     isDraggingNumber && combatState.team.includes(isDraggingNumber);

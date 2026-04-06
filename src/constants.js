@@ -29,7 +29,7 @@ const HARD_DIAMONDS = 10;
 const COMBAT_START_COST = 200;
 const CHALLENGE_COST = 100;
 const PYRAMID_LEVELS = 10;
-const AUTO_LEVEL = 2;
+const AUTO_LEVEL = 1;
 const DIVIDE_LEVEL = 5;
 const CRIT_FACTOR = 1.5;
 

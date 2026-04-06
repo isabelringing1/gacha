@@ -10,7 +10,7 @@ import {
   rollEventNumber,
   rollEvent,
   rollForCombatEnemy,
-  generateEnemies,
+  generateEnemyForLevel,
   getFactors,
 } from "./Util";
 import "./App.css";
@@ -110,8 +110,9 @@ function App() {
     level: 1,
     team: [null, null, null],
     numberStates: {},
-    pyramidEnemies: generateEnemies(),
-    selectedEnemyCoords: null,
+    combatLevel: 1,
+    active: false,
+    currentEnemyValue: generateEnemyForLevel(1),
   });
   const [combatHighScore, setCombatHighScore] = useState(null);
   const [clubs, setClubs] = useState(0);
@@ -189,6 +190,12 @@ function App() {
       setClubsUnlocked(true);
     }
   }, [clubs]);
+
+  useEffect(() => {
+    var currentEnemy = getCurrentEnemy();
+    var factors = getFactors(currentEnemy);
+    setBadgedNumbers(factors);
+  }, [combatState]);
 
   useEffect(() => {
     saveData();
@@ -278,12 +285,14 @@ function App() {
         setCurrentEvent(saveData.currentEvent);
         setLastPackOpened(saveData.lastPackOpened);
         setRarityHighlightUnlocked(saveData.rarityHighlightUnlocked);
+        saveData.combatState.active = false;
         setCombatState(saveData.combatState);
-        if (saveData.combatState && !saveData.combatState.pyramidEnemies) {
+        if (saveData.combatState && !saveData.combatState.combatLevel) {
           setCombatState((prev) => ({
             ...prev,
-            pyramidEnemies: generateEnemies(),
-            selectedEnemyCoords: null,
+            combatLevel: 1,
+            currentEnemyValue: generateEnemyForLevel(1),
+            active: false,
           }));
         }
         setCombatUnlocked(saveData.combatUnlocked);
@@ -755,36 +764,11 @@ function App() {
     }
   }
 
-  function onCombatEntryHovered(hovered) {
-    if (!hovered) {
-      setBadgedNumbers([]);
-      return;
-    }
-    var currentEnemy = getCurrentEnemy();
-    var factors = getFactors(currentEnemy);
-    console.log(factors);
-    setBadgedNumbers(factors);
-  }
-
   function getCurrentEnemy() {
-    if (!combatState || !combatState.pyramidEnemies) {
+    if (!combatState || !combatState.currentEnemyValue) {
       return 0;
     }
-
-    if (combatState.selectedEnemyCoords) {
-      var [row, col] = combatState.selectedEnemyCoords;
-      return combatState.pyramidEnemies[row][col].value;
-    }
-
-    for (var i = 0; i < combatState.pyramidEnemies.length; i++) {
-      var row = combatState.pyramidEnemies[i];
-      for (var j = 0; j < row.length; j++) {
-        if (!row[j].isDefeated) {
-          return row[j].value;
-        }
-      }
-    }
-    return 100;
+    return combatState.currentEnemyValue;
   }
 
   return (
@@ -878,16 +862,16 @@ function App() {
       <div className="goal-container">
         <div className="marquee-track">
           <span className="marquee-text">
-            {showCombat ? "NUMBER BATTLE \u00A0 ".repeat(20) : "NUMBER GACHA \u00A0 ".repeat(20)}
+            {("NUMBER " + (showCombat ? "BATTLE" : "GACHA") + " \u00A0 ").repeat(20)}
           </span>
           <span className="marquee-text">
-            {showCombat ? "NUMBER BATTLE \u00A0 ".repeat(20) : "NUMBER GACHA \u00A0 ".repeat(20)}
+            {("NUMBER " + (showCombat ? "BATTLE" : "GACHA") + " \u00A0 ").repeat(20)}
           </span>
         </div>
       </div>
       {false && !isMobile && !showCombat && <History rolls={rolls} />}
 
-      {combatUnlocked && (
+      {combatUnlocked && !combatState.active && (
         <button
           className={"home-button" + (!combatButtonSeen && !showCombat ? " can-claim" : "")}
           onClick={() => setShowCombat(!showCombat)}
@@ -910,6 +894,8 @@ function App() {
 
       {showCombat && (
         <Combat
+          hearts={hearts}
+          setHearts={setHearts}
           combatState={combatState}
           setShowCombat={setShowCombat}
           numbers={numbers}
@@ -1014,6 +1000,7 @@ function App() {
           )}
           <div
             className="wallet-container"
+            style={{ opacity: combatState.active ? 0 : 1 }}
           >
             <div>
               <div className="diamonds-container" id="diamonds-container" style={{ opacity: diamondsUnlocked ? 1 : 0 }}>

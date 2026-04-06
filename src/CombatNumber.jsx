@@ -19,6 +19,8 @@ export default function CombatNumber(props) {
     buttonContainerHeight,
     isFactor,
     attackFirst,
+    hearts,
+    setHearts
   } = props;
   var intervalRef = useRef(null);
   var lastAttackTimeRef = useRef(null);
@@ -136,6 +138,10 @@ export default function CombatNumber(props) {
   }
 
   function onHeal() {
+    if (hearts < 1) {
+      return;
+    }
+    setHearts(hearts - 1);
     setCombatState((prevCombatState) => {
       var newCombatState = { ...prevCombatState };
       if (
@@ -177,6 +183,7 @@ export default function CombatNumber(props) {
       alive &&
       combatState.numberStates[number].shields <
         combatState.numberStates[number].initialShields
+      && hearts > 0
     );
   }
 
@@ -261,7 +268,7 @@ export default function CombatNumber(props) {
             style={{ height: buttonContainerHeight + "dvh" }}
           >
             {isAuto ? (
-              <div className="combat-auto-label">AUTO</div>
+              <div className="combat-auto-label">{/*"AUTO"*/}</div>
             ) : (
               <button
                 className={

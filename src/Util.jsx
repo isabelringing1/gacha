@@ -501,6 +501,13 @@ function generateEnemyValue(min, max, uniqueValues) {
   return num;
 }
 
+function generateEnemyForLevel(combatLevel) {
+  var min = (combatLevel - 1) * 400 + 200;
+  var max = (combatLevel - 1) * 400 + 400;
+  var uniqueValues = new Set();
+  return generateEnemyValue(min, max, uniqueValues);
+}
+
 function generateEnemies() {
   var pyramid = [];
   for (var level = 0; level < PYRAMID_LEVELS; level++) {
@@ -619,6 +626,7 @@ export {
   rollForCombatEnemy,
   generateCombatRewards,
   generateEnemies,
+  generateEnemyForLevel,
   getCurrencyIcon,
   getFactors,
   rollFudged,

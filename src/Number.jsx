@@ -17,7 +17,6 @@ function Number(props) {
     combatState,
     showCombat,
     onDragStateChange,
-    isFactor,
     inCombatMenu,
   } = props;
   const [hover, setHover] = useState(false);
@@ -108,6 +107,7 @@ function Number(props) {
           n={n}
           numTimesRolled={numTimesRolled}
           isCombat={showCombat}
+          isFactor={isBadged}
         />
       )}
       {isDead && showCombat && <div className="num-dead-x">×</div>}

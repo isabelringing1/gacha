@@ -9,26 +9,20 @@ export default function NumberTooltip(props) {
   var cn = "number-tooltip dither-bg";
   var cnTail = "tooltip-tail number-tail";
 
-  if (isCombat) {
-    cn += " combat-tooltip";
-    if (makeTop) {
-      cnTail += " combat-tooltip-tail-top";
-    } else {
-      cnTail += " combat-tooltip-tail";
-    }
-  } else {
-    if (n <= 20) {
-      cn += " top";
-      cnTail += " tail-top";
-    }
-    if (n % 10 == 1 && isMobile) {
-      cn += " left";
-    }
-    if (n % 10 == 0 && isMobile) {
-      cn += " right";
-    }
+ 
+  
+  if (n <= 20) {
+    cn += " top";
+    cnTail += " tail-top";
+  }
+  if (n % 10 == 1 && isMobile) {
+    cn += " left";
+  }
+  if (n % 10 == 0 && isMobile) {
+    cn += " right";
   }
 
+  
   var factorsText = n + " is **prime**.";
   var f = factors(n);
   if (f.length > 2 || n == 1) {
@@ -78,7 +72,7 @@ export default function NumberTooltip(props) {
 
         {isFactor && (
           <div className="number-tooltip-text" style={{ color: "#89d0f0" }}>
-            FACTOR
+            <b>FACTOR</b>
           </div>
         )}
 

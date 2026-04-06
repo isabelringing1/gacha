@@ -82,7 +82,7 @@ export default function NumberGrid({
         data={numbers[n]}
         isHighlighted={highlightedNumber === n || (highlightedNumbers || []).includes(n)}
         isRolled={rolledNumber === n}
-        isBadged={(badgedNumbers || []).includes(n)}
+        isBadged={false}
         rarityHighlightUnlocked={rarityHighlightUnlocked}
         selectingIndex={selectingIndex}
         selectNumber={selectNumber}

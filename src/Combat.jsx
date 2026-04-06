@@ -6,7 +6,7 @@ import {
   getLevelData,
   generateCombatRewards,
   getCurrencyIcon,
-  generateEnemies,
+  generateEnemyForLevel,
 } from "./Util";
 import { isMobile, DIVIDE_LEVEL, CRIT_FACTOR } from "./constants.js";
 import EnemyNumber from "./EnemyNumber";
@@ -34,14 +34,17 @@ export default function Combat(props) {
     isDraggingNumber,
     setIsCombatActive,
     buyCombatShopItem,
+    hearts,
+    setHearts,
   } = props;
   const [enemyState, setEnemyState] = useState(null);
-  const [winState, setWinState] = useState("pyramid");
+  const [winState, setWinState] = useState("menu");
   const [records, setRecords] = useState([]);
   const [levelRewards, setLevelRewards] = useState({});
   const [score, setScore] = useState(0);
   const [isNewHighScore, setIsNewHighScore] = useState(false);
   const [anySlotHovered, setAnySlotHovered] = useState(false);
+  const [showStartLabel, setShowStartLabel] = useState(false);
 
   const enemyRef = useRef(null);
   const healthArrayRef = useRef();
@@ -69,8 +72,9 @@ export default function Combat(props) {
           team: [null, null, null],
         };
       }
-      if (!newCombatState.pyramidEnemies) {
-        newCombatState.pyramidEnemies = generateEnemies();
+      if (!newCombatState.combatLevel) {
+        newCombatState.combatLevel = 1;
+        newCombatState.currentEnemyValue = generateEnemyForLevel(1);
       }
 
       setCombatState(newCombatState);
@@ -86,10 +90,11 @@ export default function Combat(props) {
 
   useEffect(() => {
     winStateRef.current = winState;
-    if (setIsCombatActive) setIsCombatActive(winState !== "pyramid");
+    if (setIsCombatActive) setIsCombatActive(winState !== "menu");
     if (winState == "win") {
       {
-        var rewards = generateCombatRewards(combatState.level, combatState.enemy);
+        var rewardLevel = Math.min(combatState.combatLevel || 1, 10);
+        var rewards = generateCombatRewards(rewardLevel, combatState.enemy);
         console.log("rewards: ", rewards);
         setLevelRewards(rewards);
         claimRewards(rewards);
@@ -98,6 +103,39 @@ export default function Combat(props) {
           setIsNewHighScore(true);
         }
       }
+    }
+    if (winState == "intro") {
+      var playerNumbers = document.getElementById("player-numbers");
+      var enemySection = document.getElementById("enemy-section");
+      var combatContainer = document.getElementById("combat-container");
+
+      if (playerNumbers) {
+        playerNumbers.classList.remove("walk-forward");
+        void playerNumbers.offsetWidth;
+        playerNumbers.classList.add("walk-forward");
+      }
+      if (enemySection) {
+       
+        enemySection.style.opacity = 0;
+        setTimeout(() => {
+          enemySection.classList.remove("stomp-in-short");
+          void enemySection.offsetWidth;
+          enemySection.classList.add("stomp-in-short");
+          combatContainer.classList.remove("shake-screen");
+          combatContainer.classList.add("shake-screen");
+          enemySection.style.opacity = 1;
+          setTimeout(() => {
+            setWinState("combat");
+          }, 300);
+          
+        }, 1500);
+      }
+    }
+    if (winState == "combat") {
+      setShowStartLabel(true);
+      setTimeout(() => {
+        setShowStartLabel(false);
+      }, 500);
     }
     if (winState == "lose") {
     }
@@ -158,7 +196,12 @@ export default function Combat(props) {
     }
     enemyRef.current = Math.max(0, Math.floor(enemyRef.current / n));
     if (enemyRef.current == 0) {
-      setWinState("pyramid");
+      setCombatState((oldCombatState) => {
+        var newCombatState = { ...oldCombatState };
+        newCombatState.active = false;
+        return newCombatState;
+      });
+      setWinState("menu");
     }
   }
 
@@ -268,13 +311,10 @@ export default function Combat(props) {
   function onNext() {
     setCombatState((oldCombatState) => {
       var newCombatState = { ...oldCombatState };
-      var coords = newCombatState.selectedEnemyCoords;
-      if (coords && newCombatState.pyramidEnemies) {
-        newCombatState.pyramidEnemies[coords[0]][coords[1]] = {
-          ...newCombatState.pyramidEnemies[coords[0]][coords[1]],
-          isDefeated: true,
-        };
-      }
+      var nextLevel = (newCombatState.combatLevel || 1) + 1;
+      newCombatState.combatLevel = nextLevel;
+      newCombatState.currentEnemyValue = generateEnemyForLevel(nextLevel);
+      newCombatState.active = false;
       // Refresh all number states after battle
       for (var i = 1; i <= 100; i++) {
         var level = getLevelData(numbers[i]);
@@ -289,7 +329,7 @@ export default function Combat(props) {
       }
       return newCombatState;
     });
-    setWinState("pyramid");
+    setWinState("menu");
   }
 
   function resetCombatState() {
@@ -297,6 +337,7 @@ export default function Combat(props) {
       var newCombatState = { ...oldCombatState };
       newCombatState.level = 1;
       newCombatState.numberStates = [];
+      newCombatState.active = false;
       for (var i = 1; i <= 100; i++) {
         var level = getLevelData(numbers[i]);
         newCombatState.numberStates[i] = {
@@ -319,6 +360,7 @@ export default function Combat(props) {
     // Refresh all number states after battle
     setCombatState((oldCombatState) => {
       var newCombatState = { ...oldCombatState };
+      newCombatState.active = false;
       for (var i = 1; i <= 100; i++) {
         var level = getLevelData(numbers[i]);
         newCombatState.numberStates[i] = {
@@ -332,36 +374,31 @@ export default function Combat(props) {
       }
       return newCombatState;
     });
-    setWinState("pyramid");
+    setWinState("menu");
   }
 
-  var [selectedEnemy, setSelectedEnemy] = useState(
-    combatState && combatState.selectedEnemyCoords
-      ? combatState.selectedEnemyCoords
-      : [0, 0]
-  );
-
   function onChallenge() {
-    if (!combatState || !combatState.pyramidEnemies) return;
-    var enemy =
-      combatState.pyramidEnemies[selectedEnemy[0]][selectedEnemy[1]];
-    if (enemy.isDefeated) return;
-    enemyRef.current = enemy.value;
-    setEnemyState(enemy.value);
+    console.log(combatState);
+    if (!combatState || !combatState.currentEnemyValue) return;
+    var enemyValue = combatState.currentEnemyValue;
+    enemyRef.current = enemyValue;
+    setEnemyState(enemyValue);
     setCombatState((prev) => ({
       ...prev,
-      enemy: enemy.value,
-      selectedEnemyCoords: [selectedEnemy[0], selectedEnemy[1]],
+      enemy: enemyValue,
+      active: true
     }));
-    setWinState("combat");
+    setWinState("intro");
+    
   }
 
   return (
     <div className="combat-container" id="combat-container">
-      {winState == "pyramid" && (
+      {showStartLabel && <div className="start-label">START</div>}
+      {winState == "menu" && (
         <>
           <CombatShop spades={spades} buyCombatShopItem={buyCombatShopItem} />
-          <CombatEntry currentEnemy={currentEnemy} onChallenge={onChallenge} />
+          <CombatEntry currentEnemy={currentEnemy} onChallenge={onChallenge} combatLevel={combatState.combatLevel} levelRewards={levelRewards} />
           <CombatMenu
             combatState={combatState}
             selectingIndex={selectingIndex}
@@ -372,6 +409,7 @@ export default function Combat(props) {
             isDraggingNumber={isDraggingNumber}
             anySlotHovered={anySlotHovered}
             setAnySlotHovered={setAnySlotHovered}
+            currentEnemy={currentEnemy}
           />
         </>
       )}
@@ -379,9 +417,9 @@ export default function Combat(props) {
         <div className="score-container">Score: {score.toLocaleString()}</div>
       )}
       {winState == "win" && (
-        <div className="combat-outcome-popup">
-          <div>SUCCESS</div>
-          <div>
+        <div className="combat-outcome-popup dither-bg">
+          <div className="title">SUCCESS</div>
+          <div className="combat-outcome-popup-body">
             <div className="combat-outcome-popup-text">Rewards:</div>
             {levelRewards &&
               Object.keys(levelRewards).map((r, i) => {
@@ -395,25 +433,23 @@ export default function Combat(props) {
                   </div>
                 );
               })}
+              <button onClick={onNext}>Continue</button>
           </div>
-          <button onClick={onNext}>Continue</button>
+          
         </div>
       )}
       {winState == "lose" && (
-        <div className="combat-outcome-popup">
-          <div>DEFEAT</div>
-          <div className="combat-outcome-popup-text">
-            Score: {score.toLocaleString()}
+        <div className="combat-outcome-popup dither-bg">
+          <div className="title">YOU LOST</div>
+          <div className="combat-outcome-popup-body">
+            <div className="combat-outcome-popup-text">
+              Your calculations were off...
+            </div>
+            <button onClick={onBack}>Back</button>
           </div>
-          {isNewHighScore && <div>NEW HIGH SCORE!</div>}
-
-          <div className="combat-outcome-popup-text">
-            You shake yourself off and take a deep breath.
-          </div>
-          <button onClick={onBack}>Back</button>
         </div>
       )}
-      {winState !== "pyramid" && (
+      {winState !== "menu" && (
         <>
         <div className="combat-view">
           <div className="enemy-section" id="enemy-section">
@@ -493,6 +529,8 @@ export default function Combat(props) {
                     buttonContainerHeight={getButtonContainerHeight()}
                     isFactor={currentEnemy % n == 0}
                     attackFirst={true}
+                    hearts={hearts}
+                    setHearts={setHearts}
                   />
                 ))}
             </div>
@@ -509,6 +547,12 @@ export default function Combat(props) {
               )}
             </div>
           </div>
+
+          {winState == "combat" && (
+          <div id="hearts-container" className="hearts-container">
+                &hearts;&#xfe0e; {hearts.toLocaleString()}
+              </div>
+            )}
         </div>
         </>
       )}

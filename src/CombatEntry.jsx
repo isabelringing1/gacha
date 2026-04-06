@@ -4,16 +4,22 @@ import cloud_bg from "/cloud_bg2.png";
 import { DitherShader } from "./dither-shader";
 
 export default function CombatEntry(props) {
-  var { currentEnemy, onChallenge } = props;
+  var { currentEnemy, onChallenge, combatLevel, levelRewards } = props;
 
-  var digits = String(currentEnemy)
-    .split("")
-    .map((digit) => Number(digit));
+  var raw = String(currentEnemy).split("");
+  var len = raw.length;
+  var digits = raw.map((digit, i) => {
+    var posFromRight = len - 1 - i;
+    if (posFromRight > 0 && posFromRight % 3 === 0) {
+      return digit + ",";
+    }
+    return digit;
+  });
 
   return (
     <div className="combat-entry-column">
       <div className="combat-entry-outer">
-        <div className="title">NEXT UP</div>
+        <div className="title">LEVEL {combatLevel}</div>
         <div className="combat-entry-inner">
           <div className="combat-entry-inner-inner">
             <DitherShader
@@ -41,9 +47,10 @@ export default function CombatEntry(props) {
                 objectFit="contain"
               />
               {digits.map((digit, i) => {
+                var hasComma = digit.length > 1;
                 return (
                   <div id={"floating-num-" + i} key={"floating-num-" + i}>
-                    {digit}
+                    {hasComma ? digit[0] : digit}{hasComma && <span className="floating-num-comma">,</span>}
                   </div>
                 );
               })}
@@ -54,6 +61,11 @@ export default function CombatEntry(props) {
         <button className="combat-menu-start-button" onClick={onChallenge}>
             START
           </button>
+
+          <div className="combat-entry-rewards">
+            <div>REWARDS</div>
+              <div className="combat-entry-rewards-item"></div>
+          </div>
       </div>
     </div>
   );
