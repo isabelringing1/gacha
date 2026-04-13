@@ -4,7 +4,7 @@ import shadow from "/shadow.png";
 import { DitherShader } from "./dither-shader";
 
 export default function EnemyNumber(props) {
-  const { isSetup, enemyRef, onAttack, winState, winStateRef } = props;
+  const { isSetup, enemyRef, onAttack, winState, winStateRef, attributes = [] } = props;
 
   var timeoutRef = useRef(null);
 
@@ -13,7 +13,7 @@ export default function EnemyNumber(props) {
       return;
     }
 
-    if (winState == "combat") {
+    if (winState == "combat" && !attributes.includes("no_damage")) {
       console.log("Combat, setting attack");
       timeoutRef.current = setTimeout(() => {
         onEnemyAttack();
@@ -45,7 +45,8 @@ export default function EnemyNumber(props) {
       style={{ opacity: isSetup ? 0 : 1 }}
     >
       {enemyRef.current && enemyRef.current.toLocaleString()}
-      <DitherShader src={shadow} gridSize={2} ditherMode="bayer" className="shadow" objectFit="contain" />
+      {winState != "win" &&  <DitherShader src={shadow} gridSize={2} ditherMode="bayer" className="shadow" objectFit="contain" />}
+     
     </div>
   );
 }

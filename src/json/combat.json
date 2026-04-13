@@ -4,7 +4,8 @@
       "level": 1,
       "min": 200,
       "max": 500,
-      "base_total_rewards": 100,
+      "base_total_rewards": 20,
+      "attributes": ["no_damage"],
       "rewards": {
         "spades": 90,
         "clubs": 10
@@ -12,9 +13,9 @@
     },
     {
       "level": 2,
-      "min": 800,
-      "max": 1500,
-      "base_total_rewards": 200,
+      "min": 200,
+      "max": 500,
+      "base_total_rewards": 50,
       "rewards": {
         "spades": 80,
         "clubs": 15,
@@ -23,9 +24,9 @@
     },
     {
       "level": 3,
-      "min": 1800,
-      "max": 4000,
-      "base_total_rewards": 400,
+      "min": 500,
+      "max": 1000,
+      "base_total_rewards": 100,
       "rewards": {
         "spades": 80,
         "clubs": 10,

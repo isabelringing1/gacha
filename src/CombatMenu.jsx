@@ -12,6 +12,7 @@ export default function CombatMenu(props) {
     anySlotHovered,
     setAnySlotHovered,
     currentEnemy,
+    belowEntry,
   } = props;
 
   var draggingIsDuplicate =
@@ -22,7 +23,7 @@ export default function CombatMenu(props) {
 
   return (
     <div
-      className="combat-menu-container"
+      className={"combat-menu-container" + (belowEntry ? " combat-menu-below-entry" : "")}
       style={{ opacity: showReequip ? 0 : 1 }}
     >
       <div className="combat-menu-team-section">
@@ -51,7 +52,7 @@ export default function CombatMenu(props) {
               />
             ))}
         </div>
-           <div className="combat-menu-hover-view" style={{ opacity: anySlotHovered ? 1 : 0 }}>DRAG INTO SLOT TO SWAP</div>
+           <div className="combat-menu-hover-view" style={{ opacity: anySlotHovered && combatState.combatLevel > 1 ? 1 : 0 }}>DRAG INTO SLOT TO SWAP</div>
       </div>
     </div>
   );

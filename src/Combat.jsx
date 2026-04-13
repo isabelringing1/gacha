@@ -7,6 +7,7 @@ import {
   generateCombatRewards,
   getCurrencyIcon,
   generateEnemyForLevel,
+  getCombatLevelData,
 } from "./Util";
 import { isMobile, DIVIDE_LEVEL, CRIT_FACTOR } from "./constants.js";
 import EnemyNumber from "./EnemyNumber";
@@ -388,15 +389,25 @@ export default function Combat(props) {
     console.log(combatState);
     if (!combatState || !combatState.currentEnemyValue) return;
     var enemyValue = combatState.currentEnemyValue;
+
+    // Level 1: enemy is the sum of the three equipped numbers
+    if (combatState.combatLevel === 1) {
+      var teamSum = combatState.team.reduce((sum, n) => sum + (n || 0), 0);
+      if (teamSum > 0) {
+        enemyValue = teamSum;
+      }
+    }
+
     enemyRef.current = enemyValue;
     setEnemyState(enemyValue);
     setCombatState((prev) => ({
       ...prev,
       enemy: enemyValue,
+      currentEnemyValue: enemyValue,
       active: true
     }));
     setWinState("intro");
-    
+
   }
 
   function getRandomFailString() {
@@ -417,20 +428,45 @@ export default function Combat(props) {
       {showStartLabel && <div className="start-label">START</div>}
       {winState == "menu" && (
         <>
-          <CombatShop spades={spades} buyCombatShopItem={buyCombatShopItem} />
-          <CombatEntry currentEnemy={currentEnemy} onChallenge={onChallenge} combatLevel={combatState.combatLevel} levelRewards={combatState.levelRewards} />
-          <CombatMenu
-            combatState={combatState}
-            selectingIndex={selectingIndex}
-            setSelectingIndex={setSelectingIndex}
-            numbers={numbers}
-            showReequip={showReequip}
-            selectNumber={selectNumber}
-            isDraggingNumber={isDraggingNumber}
-            anySlotHovered={anySlotHovered}
-            setAnySlotHovered={setAnySlotHovered}
-            currentEnemy={currentEnemy}
+          {combatState.combatLevel > 1 && (
+            <CombatShop spades={spades} buyCombatShopItem={buyCombatShopItem} />
+          )}
+          <CombatEntry
+            currentEnemy={combatState.combatLevel === 1 ? combatState.team.reduce((sum, n) => sum + (n || 0), 0) : currentEnemy}
+            onChallenge={onChallenge}
+            combatLevel={combatState.combatLevel}
+            levelRewards={combatState.levelRewards}
+            centered={combatState.combatLevel === 1}
           />
+          {combatState.combatLevel === 1 && (
+            <CombatMenu
+              combatState={combatState}
+              selectingIndex={selectingIndex}
+              setSelectingIndex={setSelectingIndex}
+              numbers={numbers}
+              showReequip={showReequip}
+              selectNumber={selectNumber}
+              isDraggingNumber={isDraggingNumber}
+              anySlotHovered={anySlotHovered}
+              setAnySlotHovered={setAnySlotHovered}
+              currentEnemy={combatState.team.reduce((sum, n) => sum + (n || 0), 0)}
+              belowEntry={true}
+            />
+          )}
+          {combatState.combatLevel > 1 && (
+            <CombatMenu
+              combatState={combatState}
+              selectingIndex={selectingIndex}
+              setSelectingIndex={setSelectingIndex}
+              numbers={numbers}
+              showReequip={showReequip}
+              selectNumber={selectNumber}
+              isDraggingNumber={isDraggingNumber}
+              anySlotHovered={anySlotHovered}
+              setAnySlotHovered={setAnySlotHovered}
+              currentEnemy={currentEnemy}
+            />
+          )}
         </>
       )}
       {winState == "combat" && !showReequip && (
@@ -475,6 +511,7 @@ export default function Combat(props) {
               winState={winState}
               winStateRef={winStateRef}
               isSetup={showReequip}
+              attributes={(getCombatLevelData(combatState.combatLevel) || {}).attributes || []}
             />
             <div className="enemy-text-container">
               {records.map((r, i) => {

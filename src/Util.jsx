@@ -501,6 +501,10 @@ function generateEnemyValue(min, max, uniqueValues) {
   return num;
 }
 
+function getCombatLevelData(combatLevel) {
+  return combatData.levels.find((l) => l.level == combatLevel) || {};
+}
+
 function generateEnemyForLevel(combatLevel) {
   var min = (combatLevel - 1) * 400 + 200;
   var max = (combatLevel - 1) * 400 + 400;
@@ -627,6 +631,7 @@ export {
   generateCombatRewards,
   generateEnemies,
   generateEnemyForLevel,
+  getCombatLevelData,
   getCurrencyIcon,
   getFactors,
   rollFudged,

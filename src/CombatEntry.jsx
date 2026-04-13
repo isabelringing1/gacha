@@ -5,7 +5,7 @@ import { DitherShader } from "./dither-shader";
 import { getCurrencyIcon } from "./Util";
 
 export default function CombatEntry(props) {
-  var { currentEnemy, onChallenge, combatLevel, levelRewards } = props;
+  var { currentEnemy, onChallenge, combatLevel, levelRewards, centered } = props;
 
   var raw = String(currentEnemy).split("");
   var len = raw.length;
@@ -18,7 +18,7 @@ export default function CombatEntry(props) {
   });
 
   return (
-    <div className="combat-entry-column">
+    <div className={"combat-entry-column" + (centered ? " combat-entry-centered" : "")}>
       <div className="combat-entry-outer">
         <div className="title">LEVEL {combatLevel}</div>
         <div className="combat-entry-inner">

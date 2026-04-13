@@ -1041,7 +1041,7 @@ function App() {
           </div>
         )}
         <div className="column" id="column-2">
-          <div id="numbers-grid" style={{ opacity: isCombatActive ? 0 : 1 }}>
+          <div id="numbers-grid" style={{ opacity: isCombatActive || (showCombat && combatState && combatState.combatLevel === 1) ? 0 : 1 }}>
             <NumberGrid
               numbers={numbers}
               highlightedNumber={highlightedNumber}
@@ -1078,7 +1078,7 @@ function App() {
           )}
           <div
             className="wallet-container"
-            style={{ opacity: combatState.active ? 0 : 1 }}
+            style={{ opacity: combatState.active || (showCombat && combatState && combatState.combatLevel === 1) ? 0 : 1 }}
           >
             <div>
               <div className="diamonds-container" id="diamonds-container" style={{ opacity: diamondsUnlocked ? 1 : 0 }}>

@@ -65,7 +65,7 @@ const Debug = (props) => {
     }
     setNumbers(newNumbers);
     setRolls([...newRolls, ...rolls]);
-    setSpades(spades + numRolls.reduce((acc, curr) => acc + curr, 0));
+    setSpades(spades + newRolls.reduce((acc, curr) => acc + curr, 0));
     console.log(newNumbers);
   }
 

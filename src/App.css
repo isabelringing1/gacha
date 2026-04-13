@@ -2673,6 +2673,14 @@ input[type="number"] {
   pointer-events: auto;
 }
 
+.combat-entry-centered {
+  position: absolute;
+  right: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 20dvh;
+}
+
 .combat-entry-column .combat-entry-outer {
   width: 80%;
   max-width: 500px;
@@ -3468,6 +3476,17 @@ input[type="number"] {
   height: 100%;
   transition: opacity 0.2s linear;
   z-index: 1;
+}
+
+.combat-menu-below-entry {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  top: 60dvh;
+  width: 25vw;
+  height: auto;
+  justify-content: center;
 }
 
 .combat-menu-grid {
