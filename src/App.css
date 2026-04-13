@@ -1435,12 +1435,25 @@ button:disabled {
   justify-content: center;
   align-items: center;
   aspect-ratio: 2 / 3;
+  font-family: NewYork, serif;
+  font-size: 2dvh;
+}
+
+.pack-shop-unlock-title{
+  font-size: 2.5dvh;
+}
+
+.blank{
+  margin: 6%;
+  box-shadow: inset 0 0 1dvh #0000004c;
+  border-radius: 2dvh;
 }
 
 .locked-entry {
   margin: 8%;
   border-radius: 2dvh;
   background-color: rgb(235, 235, 235);
+  
 }
 
 .pack-shop-entry-img-container {
@@ -1492,7 +1505,7 @@ button:disabled {
 }
 
 .pack-shop-entry-expiry {
-  font-size: 1.5vh;
+  font-size: 2vh;
   text-align: center;
 }
 
@@ -1555,11 +1568,12 @@ button:disabled {
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   background-color: rgb(255, 255, 255);
   border: 0.3dvh solid black;
   border-radius: 3dvh;
+  height: 25dvh;
 }
 
 .charm-shop-locked {
@@ -1577,6 +1591,7 @@ button:disabled {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: clip;
 
   width: 90%;
 
@@ -1591,6 +1606,34 @@ button:disabled {
   color: black;
   -webkit-text-stroke: 0.4dvh #ffffffb0;
   paint-order: stroke fill;
+  z-index: 2;
+}
+
+.charm-shop-entry-img-container{
+  position: absolute;
+  right: -0.5dvh;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.charm-shop-entry-img{
+  width: 16.5dvh;
+  height: 11dvh;
+  aspect-ratio: 2 / 1;
+  z-index: 1;
+}
+
+.charm-shop-entry-img-shadow{
+  width: 16.5dvh;
+  height: 11dvh;
+  aspect-ratio: 2 / 1;
+  right: 0dvh;
+  top: -.6dvh;
+  z-index: 0;
+  position: absolute;
+  filter: brightness(0);
+  opacity: 0.6;
 }
 
 .entry-0 {
@@ -1598,11 +1641,12 @@ button:disabled {
 }
 
 .charm-shop-img-container {
-  width: 40%;
+  display: none;
 }
 
 .charm-shop-info-container {
-  width: 60%;
+  width: 100%;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1704,7 +1748,7 @@ button:disabled {
   border-top: none;
   border-bottom-left-radius: 1.5dvh;
   border-bottom-right-radius: 1.5dvh;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 3;
 }
 
 .achievement-entry {
@@ -1734,7 +1778,23 @@ button:disabled {
   animation: can-claim 1.3s ease-in-out infinite;
 }
 
+.can-claim-yellow {
+  animation: can-claim-yellow 1.3s ease-in-out infinite;
+} 
+
 @keyframes can-claim {
+  0% {
+    background-color: rgb(207, 207, 207);
+  }
+  50% {
+    background-color: rgb(235, 235, 235);
+  }
+  100% {
+    background-color: rgb(207, 207, 207);
+  }
+}
+
+@keyframes can-claim-yellow {
   0% {
     background-color: rgb(255, 255, 109);
   }
@@ -1806,7 +1866,7 @@ button:disabled {
 }
 
 .number-text-long {
-  font-size: 2.5dvh;
+  font-size: 3dvh;
 }
 
 .out-of-hearts-container {
@@ -1990,6 +2050,11 @@ input[type="number"] {
 
 .pack-shop-entry-unlock-button-container {
   text-align: center;
+  padding-top: 1dvh;
+}
+
+.pack-shop-entry-refresh-early{
+  padding-bottom: 1dvh;
 }
 
 .history {
@@ -2282,7 +2347,7 @@ input[type="number"] {
   font-family: Helvetica;
   text-align: center;
   position: absolute;
-  height: 30dvh;
+  height: 25dvh;
   width: 30dvh;
   border-radius: 2dvh;
   display: flex;
@@ -2294,12 +2359,8 @@ input[type="number"] {
 }
 
 .combat-outcome-popup-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
   padding: 1dvh;
-  height: 100%;
+  height: 90%;
   width: 92%;
   z-index: 1;
   border: 0.3dvh solid black;
@@ -2307,8 +2368,14 @@ input[type="number"] {
   background-color: white;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
+  padding-bottom: 4dvh;
+}
+
+.combat-outcome-popup-button{
+  position: absolute;
+  bottom: 3dvh;
 }
 
 .combat-popup {
@@ -2475,16 +2542,16 @@ input[type="number"] {
     transform: translate(0dvh, 0dvh);
   }
   20% {
-    transform: translate(0.8dvh, -0.6dvh);
+    transform: translate(1.8dvh, -1.6dvh);
   }
   40% {
-    transform: translate(0.6dvh, 0.8dvh);
+    transform: translate(1.6dvh, 1.8dvh);
   }
   60% {
     transform: translate(0.5dvh, -0.5dvh);
   }
   80% {
-    transform: translate(0.4dvh, 0.4dvh);
+    transform: translate(1.4dvh, 1.4dvh);
   }
   100% {
     transform: translate(0dvh, 0dvh);
@@ -2628,11 +2695,15 @@ input[type="number"] {
   width: 100%;
   text-align: center;
   font-size: 2dvh;
-  font-weight: bold;
   color: black;
   -webkit-text-stroke: 0.5dvh white;
   paint-order: stroke fill;
   margin-top: 2dvh;
+}
+
+.combat-entry-rewards-item{
+  font-family: "Helvetica";
+  font-weight: normal;
 }
 
 .cloud-1 {
@@ -3218,6 +3289,22 @@ input[type="number"] {
   border-bottom-left-radius: 0;
 }
 
+.run-away-button {
+  font-size: 2dvh;
+  position: absolute;
+  bottom: -0.5dvh;
+  right: -1dvh;
+  z-index: 3;
+  height: 5dvh;
+  width: 15dvh;
+  background-color: white;
+  margin-top: 0.5dvh;
+  margin-right: 1dvh;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
 .about-button {
   font-size: 2dvh;
   position: absolute;
@@ -3746,6 +3833,7 @@ input[type="number"] {
     aspect-ratio: auto;
   }
 
+  
   .pack-shop-entry-img {
     width: 5dvh;
     height: 8dvh;
@@ -3889,4 +3977,79 @@ input[type="number"] {
     width: 80%;
     position: relative;
   }
+}
+
+.win-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.win-popup {
+  font-size: 2dvh;
+  font-family: Helvetica;
+  text-align: center;
+  width: 35dvh;
+  border-radius: 2dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1dvh;
+}
+
+.win-popup-body {
+  padding: 1dvh;
+  width: 92%;
+  min-height: 10dvh;
+  border: 0.3dvh solid black;
+  border-radius: 2dvh;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.win-popup-text{
+  font-family: Helvetica;
+  text-align: center;
+  margin-top: 0.3dvh;
+}
+
+.win-popup-buttons{
+  display: flex;
+  flex-direction: column;
+  gap: 1dvh;
+  margin-top: 2dvh;
+  margin-bottom: 1dvh;
+}
+
+.win-popup-text-top{
+  margin-top: 1dvh;
+} 
+
+.combat-level-text{
+  margin-top: 2dvh;
+}
+
+.shadow{
+  position: relative;
+  width: 15dvh;
+  height: 5dvh;
+  pointer-events: none;
+  bottom: 8.5dvh;
+  z-index: -1;
+  opacity: 0.8;
+}
+
+.pack-timer{
+  font-family: NewYork, serif;
+  font-size: 3dvh;
 }

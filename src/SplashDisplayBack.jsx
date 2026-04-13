@@ -36,11 +36,6 @@ export default function SplashDisplayBack(props) {
     var number = document.getElementById("number-container-" + n);
     number.classList.remove("pulse-delay");
     number.classList.add("pulse-delay");
-    var spadesContainer = document.getElementById("spades-container");
-    if (spadesContainer) {
-      spadesContainer.classList.add("pulse-delay");
-    }
-
     setTimeout(() => {
       setBigNumberQueue(bigNumberQueue.slice(1));
       setAnimating(false);
@@ -51,10 +46,6 @@ export default function SplashDisplayBack(props) {
       setNumbers(newNumbers);
       setSpades(spades + n);
       setRolls([n, ...rolls]);
-      var spadesContainer = document.getElementById("spades-container");
-      if (spadesContainer) {
-        spadesContainer.classList.remove("pulse-delay");
-      }
       checkForEvent();
     }, 700);
   }

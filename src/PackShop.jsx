@@ -59,15 +59,16 @@ export default function PackShop(props) {
                     className="empty-entry pack-shop-entry blank"
                   >
                     <div className="pack-shop-entry-locked">
-                      New Pack in{" "}
+                      New Pack in{" "}<br/>
                       <Timer
                         endTime={shopEntry.nextRefreshTime}
                         onTimerEnd={() => generatePackShopEntry(1, [i])}
+                        addedClass="pack-timer"
                       />
                     </div>
                     <div className="pack-shop-entry-unlock-button-container">
-                      Refresh Early
-                      <br />
+                      <div className="pack-shop-entry-refresh-early">Refresh Early:</div>
+                      
                       <button
                         onClick={() => {
                           if (canBuyRefreshEntry(shopEntry)) {
@@ -100,7 +101,7 @@ export default function PackShop(props) {
                   className="locked-entry pack-shop-entry"
                   key={"pack-shop-pack-" + i}
                 >
-                  <div className="title">UNLOCK</div>
+                  <div className="pack-shop-unlock-title">UNLOCK</div>
                   <div className="pack-shop-entry-unlock-button-container">
                     <button
                       onClick={() => unlockShopEntry(i)}

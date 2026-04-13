@@ -539,7 +539,7 @@ function getCurrencyIcon(id) {
     return "\u{2666}\u{FE0E}";
   }
   if (id == "clubs") {
-    return "\u{2660}\u{FE0E}";
+    return "\u{2663}\u{FE0E}";
   }
   if (id == "spades") {
     return "\u{2660}\u{FE0E}";

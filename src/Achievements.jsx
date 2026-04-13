@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import achievementData from "./json/achievements.json";
 import { UNLOCK_ACHIEVEMENTS_COST } from "./constants.js";
+import { getCurrencyIcon } from "./Util";
 
 function getMultiplesOf(n) {
   var result = [];
@@ -45,21 +46,6 @@ export default function Achievements(props) {
   var visibleAchievements = achievementData
     .filter((a) => !fadingOut.includes(a.id) && !initialClaimed.current.includes(a.id))
     .sort((a, b) => getProgress(b) - getProgress(a));
-
-  var getCurrencyIcon = (currency) => {
-    if (currency == "spades") {
-      return "\u2660\ufe0e";
-    }
-    if (currency == "clubs") {
-      return "\u2663\ufe0e";
-    }
-    if (currency == "hearts") {
-      return "\u2665\ufe0e";
-    }
-    if (currency == "diamonds") {
-      return "\u2666\ufe0e";
-    }
-  }
 
   return (
     <div className="achievements-container">

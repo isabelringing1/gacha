@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useInterval, msToTime } from "./Util";
 
 function Timer(props) {
-  const { endTime, onTimerEnd } = props;
+  const { endTime, onTimerEnd, addedClass } = props;
 
   var [timeLeft, setTimeLeft] = useState(null);
   const [status, setStatus] = useState("idle");
@@ -30,7 +30,7 @@ function Timer(props) {
   }, [endTime]);
 
   var timeLeftString = timeLeft != null ? msToTime(timeLeft, true, true) : "";
-  return <span className="timer">{timeLeftString}</span>;
+  return <span className={"timer " + addedClass}>{timeLeftString}</span>;
 }
 
 export default Timer;

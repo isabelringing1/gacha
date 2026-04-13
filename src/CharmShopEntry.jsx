@@ -1,4 +1,6 @@
-export default function CharmShopEntry(props) {
+import { DitherShader } from "./dither-shader";
+
+export default function (props) {
   const { shopEntry, buyCharm, clubs, index } = props;
   function canBuy() {
     return clubs >= shopEntry.cost;
@@ -18,8 +20,17 @@ export default function CharmShopEntry(props) {
             &#x2663;&#xfe0e; {shopEntry.cost}
           </button>
         </div>
+        <div className="charm-shop-entry-img-container">
+              <DitherShader
+                src={shopEntry.art}
+                gridSize={2}
+                ditherMode="bayer"
+                colorMode={"original"}
+                threshold={0}
+                className={"charm-shop-entry-img"}
+              /></div>
+              <img src={shopEntry.art} className="charm-shop-entry-img-shadow" />
       </div>
-      <div className="charm-shop-img-container"></div>
     </div>
   );
 }

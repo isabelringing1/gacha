@@ -1,5 +1,7 @@
 import { time } from "motion";
 import { useEffect, useRef, useState } from "react";
+import shadow from "/shadow.png";
+import { DitherShader } from "./dither-shader";
 
 export default function EnemyNumber(props) {
   const { isSetup, enemyRef, onAttack, winState, winStateRef } = props;
@@ -43,6 +45,7 @@ export default function EnemyNumber(props) {
       style={{ opacity: isSetup ? 0 : 1 }}
     >
       {enemyRef.current && enemyRef.current.toLocaleString()}
+      <DitherShader src={shadow} gridSize={2} ditherMode="bayer" className="shadow" objectFit="contain" />
     </div>
   );
 }

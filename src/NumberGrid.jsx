@@ -1,7 +1,7 @@
 import Number from "./Number";
 import { getLevel } from "./Util";
 
-function StarLevel({ level }) {
+export function StarLevel({ level }) {
   if (level <= 0) return null;
   return (
     <>

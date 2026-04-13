@@ -14,6 +14,8 @@ import CombatMenu from "./CombatMenu.jsx";
 import CombatShop from "./CombatShop.jsx";
 import CombatEntry from "./CombatEntry.jsx";
 
+const failStrings = [ "Your calculations were off...", "Back to the drawing board.", "You'll crack it soon.", "Time to try something new."]
+
 export default function Combat(props) {
   const {
     combatState,
@@ -45,6 +47,7 @@ export default function Combat(props) {
   const [isNewHighScore, setIsNewHighScore] = useState(false);
   const [anySlotHovered, setAnySlotHovered] = useState(false);
   const [showStartLabel, setShowStartLabel] = useState(false);
+  const [failString, setFailString] = useState(getRandomFailString());
 
   const enemyRef = useRef(null);
   const healthArrayRef = useRef();
@@ -75,6 +78,7 @@ export default function Combat(props) {
       if (!newCombatState.combatLevel) {
         newCombatState.combatLevel = 1;
         newCombatState.currentEnemyValue = generateEnemyForLevel(1);
+        newCombatState.levelRewards = generateCombatRewards(1, newCombatState.currentEnemyValue);
       }
 
       setCombatState(newCombatState);
@@ -93,9 +97,7 @@ export default function Combat(props) {
     if (setIsCombatActive) setIsCombatActive(winState !== "menu");
     if (winState == "win") {
       {
-        var rewardLevel = Math.min(combatState.combatLevel || 1, 10);
-        var rewards = generateCombatRewards(rewardLevel, combatState.enemy);
-        console.log("rewards: ", rewards);
+        var rewards = combatState.levelRewards || {};
         setLevelRewards(rewards);
         claimRewards(rewards);
         if (scoreRef.current > highScore) {
@@ -122,11 +124,14 @@ export default function Combat(props) {
           void enemySection.offsetWidth;
           enemySection.classList.add("stomp-in-short");
           combatContainer.classList.remove("shake-screen");
-          combatContainer.classList.add("shake-screen");
+         
           enemySection.style.opacity = 1;
           setTimeout(() => {
+            combatContainer.classList.add("shake-screen");
+          }, 200);
+          setTimeout(() => {
             setWinState("combat");
-          }, 300);
+          }, 500);
           
         }, 1500);
       }
@@ -159,6 +164,7 @@ export default function Combat(props) {
     }
     if (allHealthZero && winState == "combat") {
       setWinState("lose");
+      setFailString(getRandomFailString());
     }
     healthArrayRef.current = healthArray;
   }, [combatState]);
@@ -314,6 +320,7 @@ export default function Combat(props) {
       var nextLevel = (newCombatState.combatLevel || 1) + 1;
       newCombatState.combatLevel = nextLevel;
       newCombatState.currentEnemyValue = generateEnemyForLevel(nextLevel);
+      newCombatState.levelRewards = generateCombatRewards(Math.min(nextLevel, 10), newCombatState.currentEnemyValue);
       newCombatState.active = false;
       // Refresh all number states after battle
       for (var i = 1; i <= 100; i++) {
@@ -392,13 +399,26 @@ export default function Combat(props) {
     
   }
 
+  function getRandomFailString() {
+    return failStrings[Math.floor(Math.random() * failStrings.length)];
+  }
+
   return (
     <div className="combat-container" id="combat-container">
+      {winState == "combat" && (
+        <button
+          className={"run-away-button"}
+          onClick={() => setShowCombat(!showCombat)}
+        >
+        RUN AWAY
+        </button>
+      )}
+
       {showStartLabel && <div className="start-label">START</div>}
       {winState == "menu" && (
         <>
           <CombatShop spades={spades} buyCombatShopItem={buyCombatShopItem} />
-          <CombatEntry currentEnemy={currentEnemy} onChallenge={onChallenge} combatLevel={combatState.combatLevel} levelRewards={levelRewards} />
+          <CombatEntry currentEnemy={currentEnemy} onChallenge={onChallenge} combatLevel={combatState.combatLevel} levelRewards={combatState.levelRewards} />
           <CombatMenu
             combatState={combatState}
             selectingIndex={selectingIndex}
@@ -420,20 +440,16 @@ export default function Combat(props) {
         <div className="combat-outcome-popup dither-bg">
           <div className="title">SUCCESS</div>
           <div className="combat-outcome-popup-body">
-            <div className="combat-outcome-popup-text">Rewards:</div>
-            {levelRewards &&
-              Object.keys(levelRewards).map((r, i) => {
-                return (
-                  <div
-                    key={"rewards-" + i}
-                    className="combat-outcome-popup-text"
-                  >
-                    {getCurrencyIcon(r)}
-                    {levelRewards[r].toLocaleString()}
-                  </div>
-                );
-              })}
-              <button onClick={onNext}>Continue</button>
+            <div className="combat-outcome-popup-text"><b>REWARDS:</b></div>
+            <div className="combat-entry-rewards">
+              {levelRewards && Object.keys(levelRewards).map((r, i) => (
+                <div key={"reward-" + i} className="combat-entry-rewards-item">
+                  {getCurrencyIcon(r)}
+                  {levelRewards[r].toLocaleString()}
+                </div>
+              ))}
+            </div>
+              <button className="combat-outcome-popup-button" onClick={onNext}>Continue</button>
           </div>
           
         </div>
@@ -443,9 +459,9 @@ export default function Combat(props) {
           <div className="title">YOU LOST</div>
           <div className="combat-outcome-popup-body">
             <div className="combat-outcome-popup-text">
-              Your calculations were off...
+              {failString}
             </div>
-            <button onClick={onBack}>Back</button>
+            <button onClick={onBack} className="combat-outcome-popup-button">Back</button>
           </div>
         </div>
       )}

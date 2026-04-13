@@ -33,6 +33,7 @@ const Debug = (props) => {
   const heartsInputRef = useRef(null);
   const diamondsInputRef = useRef(null);
   const spadesInputRef = useRef(null);
+  const clubsInputRef = useRef(null);
   const numberInputRef = useRef(null);
   const timeMultiplierRef = useRef(null);
   const chances3Ref = useRef(null);
@@ -178,6 +179,18 @@ const Debug = (props) => {
             }}
           >
             Set ♦
+          </button>
+        </div>
+
+        <div>
+          <input type="number" ref={clubsInputRef} />
+          <button
+            className="debug-button"
+            onClick={() => {
+              setClubs(parseInt(clubsInputRef.current.value));
+            }}
+          >
+            Set ♣
           </button>
         </div>
 

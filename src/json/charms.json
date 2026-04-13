@@ -8,7 +8,8 @@
         "desc": "+15% Roll Speed",
         "cost": 10,
         "new_time_multiplier": 0.85,
-        "consumable": true
+        "consumable": true,
+        "art": "./paw1.png"
       },
       {
         "id": "speed-up-2",
@@ -17,7 +18,8 @@
         "desc": "+30% Roll Speed",
         "cost": 20,
         "new_time_multiplier": 0.7,
-        "consumable": true
+        "consumable": true,
+        "art": "./horseshoe.png"
       },
       {
         "id": "rarity-highlight",
@@ -25,7 +27,8 @@
         "name": "Acorn",
         "desc": "Unlock Rarity Highlight",
         "cost": 20,
-        "consumable": true
+        "consumable": true,
+        "art": "./clover1.png"
       },
       {
         "id": "speed-up-3",
@@ -34,7 +37,8 @@
         "desc": "+45% Roll Speed",
         "cost": 30,
         "new_time_multiplier": 0.55,
-        "consumable": true
+        "consumable": true,
+        "art": "./wishbone.png"
       },
       {
         "id": "speed-up-4",
@@ -43,7 +47,8 @@
         "desc": "+60% Roll Speed",
         "cost": 40,
         "new_time_multiplier": 0.4,
-        "consumable": true
+        "consumable": true,
+        "art": "./clover.png"
       },
       {
         "id": "speed-up-5",
@@ -52,7 +57,8 @@
         "desc": "+75% Roll Speed",
         "cost": 50,
         "new_time_multiplier": 0.25,
-        "consumable": true
+        "consumable": true,
+        "art": "./clover.png"
       },
       {
         "id": "speed-up-6",
@@ -61,7 +67,8 @@
         "desc": "+90% Roll Speed",
         "cost": 60,
         "new_time_multiplier": 0.1,
-        "consumable": true
+        "consumable": true,
+        "art": "./scarab.png"
       }
     ],
 
@@ -73,7 +80,8 @@
         "desc": "+5 Max \u2666\uFE0E",
         "cost": 10,
         "diamond_upgrade": 5,
-        "consumable": true
+        "consumable": true,
+        "art": "./clover.png"
       },
       {
         "id": "diamond-upgrade-2",
@@ -82,7 +90,8 @@
         "desc": "+5 Max \u2666\uFE0E",
         "cost": 20,
         "diamond_upgrade": 5,
-        "consumable": true
+        "consumable": true,
+        "art": "./cat.png"
       },
       {
         "id": "diamond-upgrade-3",
@@ -91,7 +100,8 @@
         "desc": "+5 Max \u2666\uFE0E",
         "cost": 30,
         "diamond_upgrade": 5,
-        "consumable": true
+        "consumable": true,
+        "art": "./penny.png"
       },
       {
         "id": "diamond-upgrade-4",
@@ -100,7 +110,8 @@
         "name": "Ladybug",
         "cost": 40,
         "diamond_upgrade": 5,
-        "consumable": true
+        "consumable": true,
+        "art": "./ladybug.png"
       },
       {
         "id": "diamond-upgrade-5",
@@ -109,7 +120,8 @@
         "desc": "+5 Max \u2666\uFE0E",
         "cost": 50,
         "diamond_upgrade": 5,
-        "consumable": true
+        "consumable": true,
+        "art": "./star.png"
       }
     ]
    

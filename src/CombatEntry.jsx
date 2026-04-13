@@ -2,6 +2,7 @@ import cloud1 from "/cloud_1.png";
 import cloud2 from "/cloud_2.png";
 import cloud_bg from "/cloud_bg2.png";
 import { DitherShader } from "./dither-shader";
+import { getCurrencyIcon } from "./Util";
 
 export default function CombatEntry(props) {
   var { currentEnemy, onChallenge, combatLevel, levelRewards } = props;
@@ -64,7 +65,12 @@ export default function CombatEntry(props) {
 
           <div className="combat-entry-rewards">
             <div>REWARDS</div>
-              <div className="combat-entry-rewards-item"></div>
+              {levelRewards && Object.keys(levelRewards).map((r, i) => (
+                <div key={"reward-" + i} className="combat-entry-rewards-item">
+                  {getCurrencyIcon(r)}
+                  {levelRewards[r].toLocaleString()}
+                </div>
+              ))}
           </div>
       </div>
     </div>

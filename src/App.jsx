@@ -11,8 +11,11 @@ import {
   rollEvent,
   rollForCombatEnemy,
   generateEnemyForLevel,
+  generateCombatRewards,
   getFactors,
 } from "./Util";
+import { UNLOCK_ENTRY_COST } from "./constants.js";
+
 import "./App.css";
 
 import NumberGrid from "./NumberGrid";
@@ -32,6 +35,7 @@ import Event from "./Event.jsx";
 import History from "./History.jsx";
 import Combat from "./Combat.jsx";
 import Achievements from "./Achievements.jsx";
+import WinPopup from "./WinPopup.jsx";
 import packData from "./json/packs.json";
 
 import arrow from "/arrow.png";
@@ -65,6 +69,8 @@ function App() {
   const [showingRoll, setShowingRoll] = useState(-1);
   const [bigNumberQueue, setBigNumberQueue] = useState([]);
   const [currentPack, setCurrentPack] = useState(null);
+  const [numPacksOpened, setNumPacksOpened] = useState(0);
+  const [numRollButtonClicks, setNumRollButtonClicks] = useState(0);
 
   const [packShopState, setPackShopState] = useState("hidden"); //hidden, locked, unlocked
   const [packShopEntriesUnlocked, setPackShopEntriesUnlocked] = useState([
@@ -106,13 +112,17 @@ function App() {
   const [selectingIndex, setSelectingIndex] = useState(-1);
   const [isCombatActive, setIsCombatActive] = useState(false);
   const [combatUnlocked, setCombatUnlocked] = useState(false);
-  const [combatState, setCombatState] = useState({
-    level: 1,
-    team: [null, null, null],
-    numberStates: {},
-    combatLevel: 1,
-    active: false,
-    currentEnemyValue: generateEnemyForLevel(1),
+  const [combatState, setCombatState] = useState(() => {
+    var enemyValue = generateEnemyForLevel(1);
+    return {
+      level: 1,
+      team: [null, null, null],
+      numberStates: {},
+      combatLevel: 1,
+      active: false,
+      currentEnemyValue: enemyValue,
+      levelRewards: generateCombatRewards(1, enemyValue),
+    };
   });
   const [combatHighScore, setCombatHighScore] = useState(null);
   const [clubs, setClubs] = useState(0);
@@ -122,6 +132,10 @@ function App() {
   const [spadesUnlocked, setSpadesUnlocked] = useState(false);
   const [showReequip, setShowReequip] = useState(false);
   const [isDraggingNumber, setIsDraggingNumber] = useState(false);
+  const [showWinPopup, setShowWinPopup] = useState(false);
+  const [hasShownWinPopup, setHasShownWinPopup] = useState(false);
+  const [startTime, setStartTime] = useState(null);
+  const [pendingWinPopup, setPendingWinPopup] = useState(false);
   const [combatButtonSeen, setCombatButtonSeen] = useState(false);
   const [diamondsUnlocked, setDiamondsUnlocked] = useState(false);
 
@@ -177,7 +191,57 @@ function App() {
     if (spades > 0 && !spadesUnlocked) {
       setSpadesUnlocked(true);
     }
+    if (spadesUnlocked) {
+      var spadesContainer = document.getElementById("spades-container");
+      if (spadesContainer) {
+        pulse(spadesContainer);
+      }
+    }
   }, [spades]);
+
+  useEffect(() => {
+    var heartsContainer = document.getElementById("hearts-container");
+    if (heartsContainer) {
+      pulse(heartsContainer);
+    }
+  }, [hearts]);
+
+  useEffect(() => {
+    var clubsContainer = document.getElementById("clubs-container");
+    if (clubsContainer) {
+      pulse(clubsContainer);
+    }
+  }, [clubs]);
+
+  useEffect(() => {
+    var diamondsContainer = document.getElementById("diamonds-container");
+    if (diamondsContainer) {
+      pulse(diamondsContainer);
+    }
+  }, [diamonds]);
+
+  function pulse(item) {
+    item.classList.remove("pulse");
+    void item.offsetWidth;
+    item.classList.add("pulse");
+  }
+
+  useEffect(() => {
+    if (!showWinPopup && Object.keys(numbers).length === 100 && !hasShownWinPopup) {
+      if (currentPack) {
+        setPendingWinPopup(true);
+      } else {
+        setShowWinPopup(true);
+      }
+    }
+  }, [numbers]);
+
+  useEffect(() => {
+    if (pendingWinPopup && !currentPack && !hasShownWinPopup) {
+      setPendingWinPopup(false);
+      setShowWinPopup(true);
+    }
+  }, [currentPack]);
 
   useEffect(() => {
     if (hearts > 0 && !heartsUnlocked) {
@@ -220,6 +284,7 @@ function App() {
     claimedAchievements,
     achievementsState,
     diamondsUnlocked,
+    hasShownWinPopup,
   ]);
 
   function saveData() {
@@ -254,6 +319,10 @@ function App() {
       claimedAchievements: claimedAchievements,
       achievementsState: achievementsState,
       diamondsUnlocked: diamondsUnlocked,
+      numPacksOpened: numPacksOpened,
+      numRollButtonClicks: numRollButtonClicks,
+      startTime: startTime,
+      hasShownWinPopup: hasShownWinPopup,
     };
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
@@ -288,10 +357,12 @@ function App() {
         saveData.combatState.active = false;
         setCombatState(saveData.combatState);
         if (saveData.combatState && !saveData.combatState.combatLevel) {
+          var enemyValue = generateEnemyForLevel(1);
           setCombatState((prev) => ({
             ...prev,
             combatLevel: 1,
-            currentEnemyValue: generateEnemyForLevel(1),
+            currentEnemyValue: enemyValue,
+            levelRewards: generateCombatRewards(1, enemyValue),
             active: false,
           }));
         }
@@ -305,6 +376,10 @@ function App() {
         setClaimedAchievements(saveData.claimedAchievements || []);
         setAchievementsState(saveData.achievementsState || "hidden");
         setDiamondsUnlocked(saveData.diamondsUnlocked || (saveData.rolls && saveData.rolls.length > 0));
+        setNumPacksOpened(saveData.numPacksOpened || 0);
+        setNumRollButtonClicks(saveData.numRollButtonClicks || 0);
+        setStartTime(saveData.startTime || null);
+        setHasShownWinPopup(saveData.hasShownWinPopup || false);
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
           var numDiamondsGained = 0;
@@ -344,6 +419,8 @@ function App() {
   }, [combatState]);
 
   const rollNumber = (e, cheatNumber = -1) => {
+    if (!startTime) setStartTime(Date.now());
+    setNumRollButtonClicks(numRollButtonClicks + 1);
     if (diamonds <= 0 && cheatNumber == -1) {
       return;
     }
@@ -605,6 +682,7 @@ function App() {
   };
 
   const openPack = (pack) => {
+    setNumPacksOpened(numPacksOpened + 1);
     if (pack.id == "copycat") {
       pack = packData.packs[lastPackOpened];
     }
@@ -873,7 +951,7 @@ function App() {
 
       {combatUnlocked && !combatState.active && (
         <button
-          className={"home-button" + (!combatButtonSeen && !showCombat ? " can-claim" : "")}
+          className={"home-button" + (!combatButtonSeen && !showCombat ? " can-claim-yellow" : "")}
           onClick={() => setShowCombat(!showCombat)}
           onMouseEnter={() => setCombatButtonSeen(true)}
           onTouchStart={() => setCombatButtonSeen(true)}
@@ -1116,6 +1194,9 @@ function App() {
         canUnlockAchievements={canUnlockAchievements}
         unlockAchievements={unlockAchievements}
       />
+      {showWinPopup && (
+        <WinPopup combatLevel={combatState.combatLevel} rolls={rolls} numPacksOpened={numPacksOpened} numRollButtonClicks={numRollButtonClicks} startTime={startTime} onClose={() =>{ setShowWinPopup(false); setHasShownWinPopup(true); }} />
+      )}
     </div>
   );
 }
