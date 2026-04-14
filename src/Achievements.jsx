@@ -71,7 +71,7 @@ export default function Achievements(props) {
                 id="achievements-progress-bar-text"
                 style={{
                   color: progress > 50 ? "white" : "black",
-                  left: progress > 50 ? (90 - progress) + "%" : progress + "%",
+                  left: progress > 50 ? (progress- 18) + "%" : progress + "%",
                 }}
               >
                 {progress}%

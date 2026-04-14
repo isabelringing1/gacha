@@ -1,5 +1,5 @@
 [
-  { "id": "reach_10", "name": "Reach 10%", "threshold": 10, "reward_amount": 100, "currency": "spades" },
+  { "id": "reach_10", "name": "Reach 10%", "threshold": 10, "reward_amount": 5, "currency": "clubs" },
   { "id": "reach_20", "name": "Reach 20%", "threshold": 20, "reward_amount": 5, "currency": "clubs" },
   { "id": "reach_30", "name": "Reach 30%", "threshold": 30, "reward_amount": 6, "currency": "clubs" },
   { "id": "reach_40", "name": "Reach 40%", "threshold": 40, "reward_amount": 7, "currency": "clubs" },

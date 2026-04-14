@@ -93,6 +93,9 @@ function Number(props) {
     numberClass += " num-dead";
   }
 
+  var realOpacity = hover && selectingIndex != -1 && numTimesRolled > 0
+  ? 1 : opacity;
+  
   return (
     <div
       className={containerClass}
@@ -117,9 +120,7 @@ function Number(props) {
         draggable={inCombatMenu && numTimesRolled > 0}
         style={{
           scale: hover ? 1.1 : 1,
-          opacity: hover && selectingIndex != -1 && numTimesRolled > 0
-              ? 1
-              : opacity,
+          color: "rgba(0, 0, 0, " + realOpacity + ")",
           cursor: inCombatMenu && numTimesRolled > 0 ? "grab" : undefined,
         }}
         onDragStart={(e) => {

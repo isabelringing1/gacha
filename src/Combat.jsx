@@ -16,6 +16,7 @@ import CombatShop from "./CombatShop.jsx";
 import CombatEntry from "./CombatEntry.jsx";
 
 const failStrings = [ "Your calculations were off...", "Back to the drawing board.", "You'll crack it soon.", "Time to try something new."]
+const winStrings = [ "You're a natural.", "You made that look easy.", "PHEW.", "That was fast."]
 
 export default function Combat(props) {
   const {
@@ -37,6 +38,10 @@ export default function Combat(props) {
     isDraggingNumber,
     setIsCombatActive,
     buyCombatShopItem,
+    battleShopState,
+    canUnlockBattleShop,
+    unlockBattleShop,
+    clubs,
     hearts,
     setHearts,
   } = props;
@@ -49,6 +54,7 @@ export default function Combat(props) {
   const [anySlotHovered, setAnySlotHovered] = useState(false);
   const [showStartLabel, setShowStartLabel] = useState(false);
   const [failString, setFailString] = useState(getRandomFailString());
+  const [winString, setWinString] = useState(getRandomWinString());
 
   const enemyRef = useRef(null);
   const healthArrayRef = useRef();
@@ -97,6 +103,7 @@ export default function Combat(props) {
     winStateRef.current = winState;
     if (setIsCombatActive) setIsCombatActive(winState !== "menu");
     if (winState == "win") {
+      setWinString(getRandomWinString());
       {
         var rewards = combatState.levelRewards || {};
         setLevelRewards(rewards);
@@ -106,6 +113,9 @@ export default function Combat(props) {
           setIsNewHighScore(true);
         }
       }
+    }
+    if (winState == "lose") {
+      setFailString(getRandomFailString());
     }
     if (winState == "intro") {
       var playerNumbers = document.getElementById("player-numbers");
@@ -165,7 +175,6 @@ export default function Combat(props) {
     }
     if (allHealthZero && winState == "combat") {
       setWinState("lose");
-      setFailString(getRandomFailString());
     }
     healthArrayRef.current = healthArray;
   }, [combatState]);
@@ -222,14 +231,19 @@ export default function Combat(props) {
     var rollIndex =
       possibleIndices[Math.floor(Math.random() * possibleIndices.length)];
 
-    var windupDuration = 600;
-    var attackDuration = 200;
-    var totalDuration = windupDuration + attackDuration;
-    // Strike lands at ~87.5% of total animation
-    var strikeTiming = Math.round(totalDuration * 0.875);
+    var attackLength = (getCombatLevelData(combatState.combatLevel) || {}).attack_length || 0.8;
+    console.log(attackLength);
+    attackLength *= 1000; //ms
+    
+    var currTimestamp = Date.now();
+
+    // Strike lands at 75% of total animation
+    var strikeTiming = Math.round(attackLength * 0.75);
+    var cooldownTiming = Math.round(attackLength * 0.25);
 
     var enemyDiv = document.getElementById("enemy-number");
     enemyDiv.classList.remove("enemy-attack-0", "enemy-attack-1", "enemy-attack-2");
+    enemyDiv.style.setProperty('--strike-duration', attackLength + 'ms');
     void enemyDiv.offsetWidth;
     enemyDiv.classList.add("enemy-attack-" + rollIndex);
 
@@ -240,9 +254,15 @@ export default function Combat(props) {
       void numberDiv.offsetWidth;
       numberDiv.classList.add("damage");
 
+      var damageTimestamp = Date.now();
+      var damageDuration = damageTimestamp - currTimestamp;
+     
+
       setTimeout(() => {
         numberDiv.classList.remove("damage");
-      }, 200);
+      }, cooldownTiming);
+
+      console.log("Checking");
 
       setCombatState((oldCombatState) => {
         var newCombatState = { ...oldCombatState };
@@ -264,7 +284,7 @@ export default function Combat(props) {
     // Clean up enemy animation after full duration
     setTimeout(() => {
       enemyDiv.classList.remove("enemy-attack-" + rollIndex);
-    }, totalDuration);
+    }, attackLength);
   }
 
   function rollForCrit(n) {
@@ -414,6 +434,13 @@ export default function Combat(props) {
     return failStrings[Math.floor(Math.random() * failStrings.length)];
   }
 
+  function getRandomWinString() {
+    if (!combatState || combatState.combatLevel === 1) {
+      return "That's how you do it."
+    }
+    return winStrings[Math.floor(Math.random() * winStrings.length)];
+  }
+
   return (
     <div className="combat-container" id="combat-container">
       {winState == "combat" && (
@@ -429,7 +456,14 @@ export default function Combat(props) {
       {winState == "menu" && (
         <>
           {combatState.combatLevel > 1 && (
-            <CombatShop spades={spades} buyCombatShopItem={buyCombatShopItem} />
+            <CombatShop
+              spades={spades}
+              buyCombatShopItem={buyCombatShopItem}
+              battleShopState={battleShopState}
+              canUnlockBattleShop={canUnlockBattleShop}
+              unlockBattleShop={unlockBattleShop}
+              clubs={clubs}
+            />
           )}
           <CombatEntry
             currentEnemy={combatState.combatLevel === 1 ? combatState.team.reduce((sum, n) => sum + (n || 0), 0) : currentEnemy}
@@ -474,8 +508,11 @@ export default function Combat(props) {
       )}
       {winState == "win" && (
         <div className="combat-outcome-popup dither-bg">
-          <div className="title">SUCCESS</div>
+          <div className="title">YOU WON</div>
           <div className="combat-outcome-popup-body">
+            <div className="combat-outcome-popup-text">
+              {winString}
+            </div>
             <div className="combat-outcome-popup-text"><b>REWARDS:</b></div>
             <div className="combat-entry-rewards">
               {levelRewards && Object.keys(levelRewards).map((r, i) => (

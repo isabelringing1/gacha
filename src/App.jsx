@@ -54,6 +54,7 @@ import {
   UNLOCK_ACHIEVEMENTS_COST,
   UNLOCK_CHARM_SHOP_COST,
   UNLOCK_SPORTSBOOK_COST,
+  UNLOCK_BATTLE_SHOP_COST,
   isMobile,
 } from "./constants.js";
 import { s } from "motion/react-client";
@@ -138,6 +139,7 @@ function App() {
   const [pendingWinPopup, setPendingWinPopup] = useState(false);
   const [combatButtonSeen, setCombatButtonSeen] = useState(false);
   const [diamondsUnlocked, setDiamondsUnlocked] = useState(false);
+  const [battleShopState, setBattleShopState] = useState("locked");
 
   useEffect(() => {
     loadData();
@@ -311,6 +313,7 @@ function App() {
       combatState: combatState,
       combatHighScore: combatHighScore,
       combatUnlocked: combatUnlocked,
+      battleShopState: battleShopState,
       spades: spades,
       clubs: clubs,
       clubsUnlocked: clubsUnlocked,
@@ -367,6 +370,7 @@ function App() {
           }));
         }
         setCombatUnlocked(saveData.combatUnlocked);
+        if (saveData.battleShopState) setBattleShopState(saveData.battleShopState);
         setCombatHighScore(saveData.combatHighScore);
         setSpades(saveData.spades);
         setClubs(saveData.clubs);
@@ -713,6 +717,16 @@ function App() {
     }, 1000);
   };
 
+  const canUnlockBattleShop = () => {
+    return battleShopState === "locked" && clubs >= UNLOCK_BATTLE_SHOP_COST;
+  };
+
+  const unlockBattleShop = () => {
+    if (!canUnlockBattleShop()) return;
+    setBattleShopState("unlocked");
+    setClubs(clubs - UNLOCK_BATTLE_SHOP_COST);
+  };
+
   const buyCombatShopItem = (shopEntry, index) => {
     if (shopEntry.currency === "spades") {
       setSpades(spades - shopEntry.cost);
@@ -992,6 +1006,10 @@ function App() {
           isDraggingNumber={isDraggingNumber}
           setIsCombatActive={setIsCombatActive}
           buyCombatShopItem={buyCombatShopItem}
+          battleShopState={battleShopState}
+          canUnlockBattleShop={canUnlockBattleShop}
+          unlockBattleShop={unlockBattleShop}
+          clubs={clubs}
         />
       )}
 
