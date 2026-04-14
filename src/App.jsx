@@ -15,6 +15,7 @@ import {
   getFactors,
 } from "./Util";
 import { UNLOCK_ENTRY_COST } from "./constants.js";
+import ticket from "/ticket.png";
 
 import "./App.css";
 
@@ -123,6 +124,7 @@ function App() {
       active: false,
       currentEnemyValue: enemyValue,
       levelRewards: generateCombatRewards(1, enemyValue),
+      combatTickets: 0,
     };
   });
   const [combatHighScore, setCombatHighScore] = useState(null);
@@ -734,6 +736,12 @@ function App() {
     if (shopEntry.reward === "hearts") {
       setHearts(hearts + 1);
     }
+    if (shopEntry.reward === "combatTickets") {
+      setCombatState((prev) => ({
+        ...prev,
+        combatTickets: (prev.combatTickets || 0) + 1,
+      }));
+    }
   };
 
   const buyCharm = (shopEntry, index = 0) => {
@@ -1116,7 +1124,11 @@ function App() {
               <div id="clubs-container" style={{ opacity: clubsUnlocked ? 1 : 0 }}>
                 &#x2663;&#xfe0e; {clubs.toLocaleString()}
               </div>
-              
+              {showCombat && combatState.combatTickets > 0 && (
+                <div id="tickets-container">
+                  <img src={ticket} alt="ticket" className="ticket-icon" /> {combatState.combatTickets.toLocaleString()}
+                </div>
+              )}
             </div>
             <div>
             <div id="spades-container" style={{ opacity: spadesUnlocked ? 1 : 0 }}>

@@ -3,6 +3,12 @@ body {
   overflow: hidden;
 }
 
+.ticket-icon {
+  height: .7em;
+  vertical-align: middle;
+  padding-bottom: 0.2dvh;
+}
+
 body {
   margin: 0;
   width: 100vw;
@@ -3403,9 +3409,8 @@ input[type="number"] {
 .combat-shop-container {
   position: absolute;
   left: 0;
-  top: 15dvh;
+  top: 18dvh;
   width: 25vw;
-  height: 100dvh;
   display: flex;
   justify-content: center;
   padding-top: 7dvh;
@@ -3537,7 +3542,7 @@ input[type="number"] {
 .combat-menu-start-button {
   margin-top: 1dvh;
   font-size: 2dvh;
-  padding: 1dvh 3dvh;
+  padding: 1dvh 2dvh;
 }
 
 .combat-pyramid-container {

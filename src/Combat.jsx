@@ -408,6 +408,10 @@ export default function Combat(props) {
   function onChallenge() {
     console.log(combatState);
     if (!combatState || !combatState.currentEnemyValue) return;
+
+    // Require a ticket for levels > 1
+    if (combatState.combatLevel > 1 && (!combatState.combatTickets || combatState.combatTickets <= 0)) return;
+
     var enemyValue = combatState.currentEnemyValue;
 
     // Level 1: enemy is the sum of the three equipped numbers
@@ -424,7 +428,8 @@ export default function Combat(props) {
       ...prev,
       enemy: enemyValue,
       currentEnemyValue: enemyValue,
-      active: true
+      active: true,
+      combatTickets: prev.combatLevel > 1 ? (prev.combatTickets || 0) - 1 : (prev.combatTickets || 0),
     }));
     setWinState("intro");
 
@@ -443,10 +448,10 @@ export default function Combat(props) {
 
   return (
     <div className="combat-container" id="combat-container">
-      {winState == "combat" && (
+      {winState == "combat" && combatState.combatLevel > 1 && (
         <button
           className={"run-away-button"}
-          onClick={() => setShowCombat(!showCombat)}
+          onClick={onBack}
         >
         RUN AWAY
         </button>
@@ -471,6 +476,7 @@ export default function Combat(props) {
             combatLevel={combatState.combatLevel}
             levelRewards={combatState.levelRewards}
             centered={combatState.combatLevel === 1}
+            combatTickets={combatState.combatTickets || 0}
           />
           {combatState.combatLevel === 1 && (
             <CombatMenu

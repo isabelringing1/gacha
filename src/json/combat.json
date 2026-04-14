@@ -120,6 +120,12 @@
   ],
   "shop": [
     {
+      "name": "ticket_img",
+      "reward": "combatTickets",
+      "cost": 100,
+      "currency": "spades"
+    },
+    {
       "name": "\u2665\uFE0E",
       "reward": "hearts",
       "cost": 5,

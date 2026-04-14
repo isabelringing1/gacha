@@ -3,9 +3,10 @@ import cloud2 from "/cloud_2.png";
 import cloud_bg from "/cloud_bg2.png";
 import { DitherShader } from "./dither-shader";
 import { getCurrencyIcon } from "./Util";
+import ticket from "/ticket.png";
 
 export default function CombatEntry(props) {
-  var { currentEnemy, onChallenge, combatLevel, levelRewards, centered } = props;
+  var { currentEnemy, onChallenge, combatLevel, levelRewards, centered, combatTickets } = props;
 
   var raw = String(currentEnemy).split("");
   var len = raw.length;
@@ -59,8 +60,8 @@ export default function CombatEntry(props) {
             
           </div>
         </div>
-        <button className="combat-menu-start-button" onClick={onChallenge}>
-            START
+        <button className="combat-menu-start-button" onClick={onChallenge} disabled={combatLevel > 1 && (!combatTickets || combatTickets <= 0)}>
+          START (<img src={ticket} alt="ticket" className="ticket-icon" />1)
           </button>
 
           <div className="combat-entry-rewards">
