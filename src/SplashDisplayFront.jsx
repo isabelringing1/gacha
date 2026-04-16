@@ -2,15 +2,17 @@ import { useEffect } from "react";
 import ribbon from "/ribbon.png";
 import newBg from "/new_bg.png";
 import speech_bubble from "/speech_bubble.png";
+import lock from "/big_lock.png";
 import { DitherShader } from "./dither-shader";
 import { getRarityData, getRarity } from "./Util";
 import numberData from "./json/numbers.json";
+import rarityJson from "./json/rarity.json";
 
 export default function SplashDisplayFront(props) {
-  const { bigNumberEntry, isNew, animating } = props;
+  const { bigNumberEntry, isNew, animating, isLocked } = props;
   var n = bigNumberEntry.n;
-  var data = getRarityData(n);
-  var r = getRarity(n).toUpperCase();
+  var data = isLocked ? rarityJson["0"] : getRarityData(n);
+  var r = isLocked ? "LOCKED" : getRarity(n).toUpperCase();
   const letters = r.split("");
   const mid = (letters.length - 1) / 2;
 
@@ -60,7 +62,7 @@ export default function SplashDisplayFront(props) {
         objectFit="contain"
         threshold={0}
       />
-      <DitherShader
+      {!isLocked && <DitherShader
         src={speech_bubble}
         gridSize={2}
         ditherMode="bayer"
@@ -71,9 +73,9 @@ export default function SplashDisplayFront(props) {
         threshold={0}
         children={[numberText]}
         style={{ color: data.font_color }}
-      />
+      />}
 
-      {isNew && (
+      {isNew && !isLocked && (
         <div className="new-container">
           <DitherShader
             src={newBg}
@@ -90,7 +92,7 @@ export default function SplashDisplayFront(props) {
         </div>
       )}
       <span
-        className={"ribbon-text ribbon-text-" + getRarity(n)}
+        className={"ribbon-text ribbon-text-" + (isLocked ? "common" : getRarity(n))}
         style={{ color: data.font_color }}
       >
         {letters.map((char, i) => {
@@ -105,20 +107,31 @@ export default function SplashDisplayFront(props) {
       </span>
 
       <div className="big-numbers">
-        {digits.map((digit, i) => {
-          return (
-            <div
-              className="big-number"
-              id={"big-number-" + i}
-              key={"big-number-" + i}
-              style={{
-                color: data.font_color,
-              }}
-            >
-              {digit}
-            </div>
-          );
-        })}
+        {isLocked ? (
+          <DitherShader
+            src={lock}
+            gridSize={2}
+            ditherMode="bayer"
+            className="big-number-locked-icon"
+            objectFit="contain"
+            threshold={-0.1}
+          />
+        ) : (
+          digits.map((digit, i) => {
+            return (
+              <div
+                className="big-number"
+                id={"big-number-" + i}
+                key={"big-number-" + i}
+                style={{
+                  color: data.font_color,
+                }}
+              >
+                {digit}
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

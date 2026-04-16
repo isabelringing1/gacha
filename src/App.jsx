@@ -142,6 +142,16 @@ function App() {
   const [combatButtonSeen, setCombatButtonSeen] = useState(false);
   const [diamondsUnlocked, setDiamondsUnlocked] = useState(false);
   const [battleShopState, setBattleShopState] = useState("locked");
+  const [lockedNumbers, setLockedNumbers] = useState(() => {
+    var locked = [];
+    while (locked.length < 5) {
+      var n = Math.floor(Math.random() * 100) + 1;
+      if (!locked.includes(n)) {
+        locked.push(n);
+      }
+    }
+    return locked;
+  });
 
   useEffect(() => {
     loadData();
@@ -328,6 +338,7 @@ function App() {
       numRollButtonClicks: numRollButtonClicks,
       startTime: startTime,
       hasShownWinPopup: hasShownWinPopup,
+      lockedNumbers: lockedNumbers,
     };
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
@@ -386,6 +397,7 @@ function App() {
         setNumRollButtonClicks(saveData.numRollButtonClicks || 0);
         setStartTime(saveData.startTime || null);
         setHasShownWinPopup(saveData.hasShownWinPopup || false);
+        if (saveData.lockedNumbers) setLockedNumbers(saveData.lockedNumbers);
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
           var numDiamondsGained = 0;
@@ -923,6 +935,7 @@ function App() {
           bigNumberEntry={bigNumberQueue[0]}
           isNew={numbers[bigNumberQueue[0].n] == null}
           animating={animating}
+          isLocked={lockedNumbers.includes(bigNumberQueue[0].n)}
         />
       )}
       {bigNumberQueue.length > 0 && (
@@ -939,6 +952,7 @@ function App() {
           rolls={rolls}
           setRolls={setRolls}
           checkForEvent={checkForEvent}
+          isLocked={lockedNumbers.includes(bigNumberQueue[0].n)}
         />
       )}
       {currentPack && (
@@ -1081,6 +1095,7 @@ function App() {
               showCombat={showCombat}
               onDragStateChange={setIsDraggingNumber}
               inCombatMenu={showCombat}
+              lockedNumbers={lockedNumbers}
             />
           </div>
           {isMobile && (

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getRarityData } from "./Util";
 import Twinkle from "./Twinkle";
+import rarityJson from "./json/rarity.json";
 
 import { DitherShader } from "./dither-shader";
 
@@ -18,6 +19,7 @@ export default function SplashDisplayBack(props) {
     rolls,
     setRolls,
     checkForEvent,
+    isLocked,
   } = props;
 
   const [cn, setCn] = useState("big-number-container");
@@ -34,17 +36,21 @@ export default function SplashDisplayBack(props) {
     setCn("big-number-container zoom-out");
 
     var number = document.getElementById("number-container-" + n);
-    number.classList.remove("pulse-delay");
-    number.classList.add("pulse-delay");
+    if (number) {
+      number.classList.remove("pulse-delay");
+      number.classList.add("pulse-delay");
+    }
     setTimeout(() => {
       setBigNumberQueue(bigNumberQueue.slice(1));
       setAnimating(false);
       setCn("big-number-container");
 
-      var newNumbers = { ...numbers };
-      newNumbers[n] = newNumbers[n] ? newNumbers[n] + 1 : 1;
-      setNumbers(newNumbers);
-      setSpades(spades + n);
+      if (!isLocked) {
+        var newNumbers = { ...numbers };
+        newNumbers[n] = newNumbers[n] ? newNumbers[n] + 1 : 1;
+        setNumbers(newNumbers);
+        setSpades(spades + n);
+      }
       setRolls([n, ...rolls]);
       checkForEvent();
     }, 700);
@@ -52,7 +58,7 @@ export default function SplashDisplayBack(props) {
 
   useEffect(() => {
     var newTwinkleArray = [];
-    var newData = getRarityData(n);
+    var newData = isLocked ? rarityJson["0"] : getRarityData(n);
     setData(newData);
     for (var i = 0; i < newData.num_twinkles; i++) {
       var newTwinkle = (

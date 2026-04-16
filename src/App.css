@@ -9,6 +9,23 @@ body {
   padding-bottom: 0.2dvh;
 }
 
+.big-number-locked-icon {
+  height: 60dvh;
+  width: 60dvh;
+  animation: floating 3s infinite ease-in-out;
+  -webkit-animation: floating 3s infinite ease-in-out;
+  filter: drop-shadow(0 0 1dvh rgba(0, 0, 0, 0.3));
+  object-fit: contain;
+  padding-bottom: 6dvh;
+  rotate: 0deg;
+}
+
+.number-locked-icon {
+  width: 50%;
+  height: 50%;
+  object-fit: contain;
+}
+
 body {
   margin: 0;
   width: 100vw;
@@ -199,6 +216,8 @@ p {
   font-family: HelveticaBold;
   font-size: 4dvh;
   transition: scale 0.1 ease-in-out;
+  display: flex;
+  justify-content: center;
 }
 
 .number.highlighted {

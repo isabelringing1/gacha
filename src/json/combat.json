@@ -18,7 +18,8 @@
       "base_total_rewards": 50,
       "rewards": {
         "spades": 80,
-        "clubs": 15
+        "clubs": 15,
+        "keys": 1
       },
       "attack_length": 1.3
     },
@@ -41,7 +42,8 @@
       "rewards": {
         "spades": 75,
         "clubs": 15,
-        "hearts": 10
+        "hearts": 10,
+        "keys": 1
       },
       "attack_length": 1.4
     },
@@ -65,7 +67,8 @@
       "rewards": {
         "spades": 65,
         "clubs": 20,
-        "hearts": 15
+        "hearts": 15,
+        "keys": 1
       },
       "attack_length": 1.0
     },
@@ -89,7 +92,8 @@
       "rewards": {
         "spades": 55,
         "clubs": 25,
-        "hearts": 20
+        "hearts": 20,
+        "keys": 1
       },
       "attack_length": 0.8
     },
@@ -113,7 +117,8 @@
       "rewards": {
         "spades": 45,
         "clubs": 30,
-        "hearts": 25
+        "hearts": 25,
+        "keys": 1
       },
       "attack_length": 0.6
     }
