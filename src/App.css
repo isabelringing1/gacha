@@ -4,7 +4,13 @@ body {
 }
 
 .ticket-icon {
-  height: .7em;
+  height: .6em;
+  vertical-align: middle;
+  padding-bottom: 0.2dvh;
+}
+
+.key-icon {
+  height: .95em;
   vertical-align: middle;
   padding-bottom: 0.2dvh;
 }
@@ -16,7 +22,7 @@ body {
   -webkit-animation: floating 3s infinite ease-in-out;
   filter: drop-shadow(0 0 1dvh rgba(0, 0, 0, 0.3));
   object-fit: contain;
-  padding-bottom: 6dvh;
+  padding-bottom: 10dvh;
   rotate: 0deg;
 }
 
@@ -24,6 +30,15 @@ body {
   width: 50%;
   height: 50%;
   object-fit: contain;
+}
+
+.number-locked-icon.lock-pulse {
+  animation: lock-pulse 2s ease-in-out infinite;
+}
+
+@keyframes lock-pulse {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.4; }
 }
 
 body {
@@ -566,6 +581,8 @@ button:disabled {
   bottom: 0;
   right: 0;
   width: 400px;
+  max-height: 100dvh;
+  overflow-y: auto;
   background-color: rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column-reverse;
@@ -846,6 +863,7 @@ button:disabled {
 .number-tooltip-text {
   padding: 0.5dvh 0;
   font-family: "Helvetica";
+  width: 90%;
 }
 
 .number-tooltip-inner {
@@ -2373,7 +2391,6 @@ input[type="number"] {
   font-family: Helvetica;
   text-align: center;
   position: absolute;
-  height: 25dvh;
   width: 30dvh;
   border-radius: 2dvh;
   display: flex;
@@ -2387,6 +2404,7 @@ input[type="number"] {
 .combat-outcome-popup-body {
   padding: 1dvh;
   height: 90%;
+  min-height: 12dvh;
   width: 92%;
   z-index: 1;
   border: 0.3dvh solid black;
@@ -2437,7 +2455,9 @@ input[type="number"] {
 
 .combat-outcome-popup-text {
   font-family: Helvetica;
+  margin-top: 1dvh;
 }
+
 .attack#combat-number-0 {
   animation: attack-left 0.2s ease-in-out;
 }
@@ -2733,7 +2753,7 @@ input[type="number"] {
   color: black;
   -webkit-text-stroke: 0.5dvh white;
   paint-order: stroke fill;
-  margin-top: 2dvh;
+  margin-bottom: 4dvh;
 }
 
 .combat-entry-rewards-item{
@@ -3161,6 +3181,9 @@ input[type="number"] {
   50% {
     right: -140%;
   }
+  100%{
+    right: -110%;
+  }
 }
 
 @keyframes cloud-2 {
@@ -3169,6 +3192,9 @@ input[type="number"] {
   }
   50% {
     left: -150%;
+  }
+  100%{
+    left: -100%;
   }
 }
 
@@ -3471,7 +3497,6 @@ input[type="number"] {
 }
 
 .combat-shop-entry-name{
-  width: 300%;
   font-size: 2.1dvh;
   padding: 0dvh 1dvh 0dvh 0dvh;
   font-weight: bold;
@@ -3486,11 +3511,44 @@ input[type="number"] {
   margin: 0 4%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   height: 100%;
 }
 
 .combat-shop-entry-buy-button{
   white-space: nowrap;
+}
+
+.combat-shop-stepper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2dvh;
+
+  position: absolute;
+  left: 35%
+  
+}
+
+.combat-shop-stepper-btn {
+  font-size: 0.85dvh;
+  -webkit-text-stroke: rgb(0, 0, 0, 0);
+  height: 2dvh;
+  width: 4dvh;
+  padding: 0dvh 0.6dvh;
+  cursor: pointer;
+  background: #ccc;
+  border-radius: 0.4dvh;
+  font-weight: bold;
+}
+
+.combat-shop-stepper-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.combat-shop-stepper-btn:not(:disabled):hover {
+  background: #bbb;
 }
 
 .combat-menu-container {
@@ -4092,6 +4150,7 @@ input[type="number"] {
   bottom: 8.5dvh;
   z-index: -1;
   opacity: 0.8;
+  margin: 0 auto;
 }
 
 .pack-timer{

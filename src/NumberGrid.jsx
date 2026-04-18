@@ -50,6 +50,8 @@ export default function NumberGrid({
   onDragStateChange,
   inCombatMenu,
   lockedNumbers,
+  keys,
+  unlockNumber,
 }) {
   return Array.from({ length: 100 }, (_, i) => i + 1).map((n) => {
     if (inCombatMenu) {
@@ -71,8 +73,10 @@ export default function NumberGrid({
             onDragStateChange={onDragStateChange}
             inCombatMenu={true}
             isLocked={(lockedNumbers || []).includes(n)}
+            keys={keys}
+            unlockNumber={unlockNumber}
           />
-          {numTimesRolled > 0 && level > 0 && <StarLevel level={level} />}
+          {numTimesRolled > 0 && level > 0 && !(lockedNumbers || []).includes(n) && <StarLevel level={level} />}
         </div>
       );
     }
@@ -93,6 +97,8 @@ export default function NumberGrid({
         onDragStateChange={onDragStateChange}
         inCombatMenu={false}
         isLocked={(lockedNumbers || []).includes(n)}
+        keys={keys}
+        unlockNumber={unlockNumber}
       />
     );
   });

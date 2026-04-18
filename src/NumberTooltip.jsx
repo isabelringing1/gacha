@@ -3,9 +3,10 @@ import Markdown from "react-markdown";
 import tail from "/tail.png";
 import { getRarityData, getLevel, getNumToUpgrade } from "./Util";
 import { CRIT_FACTOR } from "./constants.js";
+import keyIcon from "/key.png";
 
 export default function NumberTooltip(props) {
-  const { n, numTimesRolled, isMobile, isCombat, attackNumber, isFactor, makeTop } = props;
+  const { n, numTimesRolled, isMobile, isCombat, attackNumber, isFactor, makeTop, isLocked, canUnlock } = props;
   var cn = "number-tooltip dither-bg";
   var cnTail = "tooltip-tail number-tail";
 
@@ -47,6 +48,35 @@ export default function NumberTooltip(props) {
       chance = Math.floor(chance);
     }
     return chance + "%";
+  }
+
+  if (isLocked) {
+    return (
+      <div className={cn} id={"number-tooltip-" + n}>
+        <div className="number-tooltip-inner">
+          <img className={cnTail} src={tail} />
+          {canUnlock ? (
+            <>
+              <div className="number-tooltip-text">
+                <b>CLICK TO UNLOCK</b>
+              </div>
+              <div className="number-tooltip-text">
+                1 <img src={keyIcon} alt="key" className="key-icon" />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="number-tooltip-text">
+                <b>LOCKED</b>
+              </div>
+              <div className="number-tooltip-text">
+                You'll need a key.
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -28,12 +28,15 @@ const Debug = (props) => {
     setSportsbookState,
     unlockSportsbook,
     setCombatUnlocked,
+    setKeys,
+    winBattleRef,
   } = props;
   const [showDebug, setShowDebug] = useState(false);
   const heartsInputRef = useRef(null);
   const diamondsInputRef = useRef(null);
   const spadesInputRef = useRef(null);
   const clubsInputRef = useRef(null);
+  const keysInputRef = useRef(null);
   const numberInputRef = useRef(null);
   const timeMultiplierRef = useRef(null);
   const chances3Ref = useRef(null);
@@ -134,6 +137,15 @@ const Debug = (props) => {
           Unlock Combat
         </button>
 
+        <button
+          className="debug-button"
+          onClick={() => {
+            winBattleRef?.current?.();
+          }}
+        >
+          Win Battle
+        </button>
+
         <div>
           <input type="number" ref={timeMultiplierRef} />
           <button
@@ -191,6 +203,18 @@ const Debug = (props) => {
             }}
           >
             Set ♣
+          </button>
+        </div>
+
+        <div>
+          <input type="number" ref={keysInputRef} />
+          <button
+            className="debug-button"
+            onClick={() => {
+              setKeys(parseInt(keysInputRef.current.value));
+            }}
+          >
+            Set 🗝
           </button>
         </div>
 

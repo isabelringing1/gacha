@@ -64,7 +64,7 @@ export default function CombatEntry(props) {
           START (<img src={ticket} alt="ticket" className="ticket-icon" />1)
           </button>
 
-          <div className="combat-entry-rewards">
+          <div className="combat-entry-rewards" style={{ marginTop: "2dvh" }}>
             <div>REWARDS</div>
               {levelRewards && Object.keys(levelRewards).map((r, i) => (
                 <div key={"reward-" + i} className="combat-entry-rewards-item">

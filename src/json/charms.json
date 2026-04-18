@@ -22,15 +22,6 @@
         "art": "./horseshoe.png"
       },
       {
-        "id": "rarity-highlight",
-        "category": "rarity-highlight",
-        "name": "Acorn",
-        "desc": "Unlock Rarity Highlight",
-        "cost": 20,
-        "consumable": true,
-        "art": "./clover1.png"
-      },
-      {
         "id": "speed-up-3",
         "category": "speed-up",
         "name": "Wishbone",

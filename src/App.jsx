@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   roll,
   rollMultiple,
@@ -16,6 +16,7 @@ import {
 } from "./Util";
 import { UNLOCK_ENTRY_COST } from "./constants.js";
 import ticket from "/ticket.png";
+import keyIcon from "/key.png";
 
 import "./App.css";
 
@@ -109,7 +110,7 @@ function App() {
   const [mousePos, setMousePos] = useState([]);
   const [currentEvent, setCurrentEvent] = useState(null);
   const [lastPackOpened, setLastPackOpened] = useState(null);
-  const [rarityHighlightUnlocked, setRarityHighlightUnlocked] = useState(false);
+  const [rarityHighlightUnlocked, setRarityHighlightUnlocked] = useState(true);
   const [showCombat, setShowCombat] = useState(false);
   const [selectingIndex, setSelectingIndex] = useState(-1);
   const [isCombatActive, setIsCombatActive] = useState(false);
@@ -133,6 +134,8 @@ function App() {
   const [clubsUnlocked, setClubsUnlocked] = useState(false);
   const [heartsUnlocked, setHeartsUnlocked] = useState(false);
   const [spadesUnlocked, setSpadesUnlocked] = useState(false);
+  const [keys, setKeys] = useState(0);
+  const [keysUnlocked, setKeysUnlocked] = useState(false);
   const [showReequip, setShowReequip] = useState(false);
   const [isDraggingNumber, setIsDraggingNumber] = useState(false);
   const [showWinPopup, setShowWinPopup] = useState(false);
@@ -142,6 +145,7 @@ function App() {
   const [combatButtonSeen, setCombatButtonSeen] = useState(false);
   const [diamondsUnlocked, setDiamondsUnlocked] = useState(false);
   const [battleShopState, setBattleShopState] = useState("locked");
+  const winBattleRef = useRef(null);
   const [lockedNumbers, setLockedNumbers] = useState(() => {
     var locked = [];
     while (locked.length < 5) {
@@ -180,7 +184,7 @@ function App() {
       });
     }
     if (rolls.length >= 3 && achievementsState == "hidden") {
-      setAchievementsState("locked");
+      setAchievementsState("unlocked");
     }
     if (rolls.length >= 10 && packShopState == "hidden") {
       setPackShopState("locked");
@@ -264,6 +268,19 @@ function App() {
   }, [hearts]);
 
   useEffect(() => {
+    if (keys > 0 && !keysUnlocked) {
+      setKeysUnlocked(true);
+    }
+  }, [keys]);
+
+  useEffect(() => {
+    var keysContainer = document.getElementById("keys-container");
+    if (keysContainer) {
+      pulse(keysContainer);
+    }
+  }, [keys]);
+
+  useEffect(() => {
     if (clubs > 0 && !clubsUnlocked) {
       setClubsUnlocked(true);
     }
@@ -295,6 +312,8 @@ function App() {
     clubsUnlocked,
     heartsUnlocked,
     spadesUnlocked,
+    keys,
+    keysUnlocked,
     claimedAchievements,
     achievementsState,
     diamondsUnlocked,
@@ -331,6 +350,8 @@ function App() {
       clubsUnlocked: clubsUnlocked,
       heartsUnlocked: heartsUnlocked,
       spadesUnlocked: spadesUnlocked,
+      keys: keys,
+      keysUnlocked: keysUnlocked,
       claimedAchievements: claimedAchievements,
       achievementsState: achievementsState,
       diamondsUnlocked: diamondsUnlocked,
@@ -390,6 +411,8 @@ function App() {
         setClubsUnlocked(saveData.clubsUnlocked);
         setHeartsUnlocked(saveData.heartsUnlocked);
         setSpadesUnlocked(saveData.spadesUnlocked);
+        setKeys(saveData.keys || 0);
+        setKeysUnlocked(saveData.keysUnlocked || false);
         setClaimedAchievements(saveData.claimedAchievements || []);
         setAchievementsState(saveData.achievementsState || "hidden");
         setDiamondsUnlocked(saveData.diamondsUnlocked || (saveData.rolls && saveData.rolls.length > 0));
@@ -741,17 +764,17 @@ function App() {
     setClubs(clubs - UNLOCK_BATTLE_SHOP_COST);
   };
 
-  const buyCombatShopItem = (shopEntry, index) => {
+  const buyCombatShopItem = (shopEntry, index, count = 1) => {
     if (shopEntry.currency === "spades") {
-      setSpades(spades - shopEntry.cost);
+      setSpades(spades - shopEntry.cost * count);
     }
     if (shopEntry.reward === "hearts") {
-      setHearts(hearts + 1);
+      setHearts(hearts + count);
     }
     if (shopEntry.reward === "combatTickets") {
       setCombatState((prev) => ({
         ...prev,
-        combatTickets: (prev.combatTickets || 0) + 1,
+        combatTickets: (prev.combatTickets || 0) + count,
       }));
     }
   };
@@ -859,6 +882,13 @@ function App() {
     if (achievement.currency == "spades") setSpades(spades + achievement.reward_amount);
   }
 
+  function unlockNumber(n) {
+    if (keys <= 0) return;
+    if (!lockedNumbers.includes(n)) return;
+    setKeys(keys - 1);
+    setLockedNumbers(lockedNumbers.filter((num) => num !== n));
+  }
+
   function claimRewards(rewards) {
     for (const [id, amt] of Object.entries(rewards)) {
       if (id == "diamonds") {
@@ -872,6 +902,9 @@ function App() {
       }
       if (id == "clubs") {
         setClubs(clubs + amt);
+      }
+      if (id == "keys" && amt > 0) {
+        setKeys(keys + 1);
       }
     }
   }
@@ -921,6 +954,8 @@ function App() {
         setSportsbookState={setSportsbookState}
         unlockSportsbook={unlockSportsbook}
         setCombatUnlocked={setCombatUnlocked}
+        setKeys={setKeys}
+        winBattleRef={winBattleRef}
       />
       {showOutOfDiamonds && (
         <OutOfHeartsContainer
@@ -1032,6 +1067,7 @@ function App() {
           canUnlockBattleShop={canUnlockBattleShop}
           unlockBattleShop={unlockBattleShop}
           clubs={clubs}
+          winBattleRef={winBattleRef}
         />
       )}
 
@@ -1096,6 +1132,8 @@ function App() {
               onDragStateChange={setIsDraggingNumber}
               inCombatMenu={showCombat}
               lockedNumbers={lockedNumbers}
+              keys={keys}
+              unlockNumber={unlockNumber}
             />
           </div>
           {isMobile && (
@@ -1152,6 +1190,9 @@ function App() {
               
               <div id="hearts-container" style={{ opacity: heartsUnlocked ? 1 : 0 }}>
                 &hearts;&#xfe0e; {hearts.toLocaleString()}
+              </div>
+              <div id="keys-container" style={{ opacity: keysUnlocked && keys > 0 ? 1 : 0 }}>
+                <img src={keyIcon} alt="key" className="key-icon" /> {keys.toLocaleString()}
               </div>
             </div>
           </div>

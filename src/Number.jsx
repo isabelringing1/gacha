@@ -20,6 +20,8 @@ function Number(props) {
     onDragStateChange,
     inCombatMenu,
     isLocked,
+    keys,
+    unlockNumber,
   } = props;
   const [hover, setHover] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -107,12 +109,14 @@ function Number(props) {
         zIndex: hover ? 2 : 1,
       }}
     >
-      {hover && numTimesRolled > 0 && (
+      {hover && (numTimesRolled > 0 || (isLocked && keys >= 1)) && (
         <NumberTooltip
           n={n}
           numTimesRolled={numTimesRolled}
           isCombat={showCombat}
           isFactor={isBadged}
+          isLocked={isLocked}
+          canUnlock={isLocked && keys >= 1}
         />
       )}
       {isDead && showCombat && <div className="num-dead-x">×</div>}
@@ -123,7 +127,7 @@ function Number(props) {
         style={{
           scale: hover ? 1.1 : 1,
           color: "rgba(0, 0, 0, " + realOpacity + ")",
-          cursor: inCombatMenu && numTimesRolled > 0 ? "grab" : undefined,
+          cursor: isLocked && keys >= 1 ? "pointer" : inCombatMenu && numTimesRolled > 0 ? "grab" : undefined,
         }}
         onDragStart={(e) => {
           if (inCombatMenu && numTimesRolled > 0) {
@@ -148,6 +152,10 @@ function Number(props) {
           setHover(false);
         }}
         onClick={() => {
+          if (isLocked && keys >= 1 && unlockNumber) {
+            unlockNumber(n);
+            return;
+          }
           if (selectingIndex != -1 && numTimesRolled > 0) {
             selectNumber(n, selectingIndex);
           }
@@ -159,7 +167,7 @@ function Number(props) {
           setHover(false);
         }}
       >
-        {isLocked ? (numTimesRolled == 0 ? "?" : <img src={lock} alt="locked" className="number-locked-icon" style={{ opacity: 0.1 }} />) : (numTimesRolled == 0 ? "?" : n)}
+        {isLocked ? (numTimesRolled == 0 ? "?" : <img src={lock} alt="locked" className={"number-locked-icon" + (keys >= 1 ? " lock-pulse" : "")} style={keys >= 1 ? undefined : { opacity: 0.1 }} />) : (numTimesRolled == 0 ? "?" : n)}
       </div>
     </div>
   );

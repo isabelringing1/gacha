@@ -108,14 +108,8 @@ export default function SplashDisplayFront(props) {
 
       <div className="big-numbers">
         {isLocked ? (
-          <DitherShader
-            src={lock}
-            gridSize={2}
-            ditherMode="bayer"
-            className="big-number-locked-icon"
-            objectFit="contain"
-            threshold={-0.1}
-          />
+          <img src={lock} alt="locked" className="big-number-locked-icon" />
+          
         ) : (
           digits.map((digit, i) => {
             return (

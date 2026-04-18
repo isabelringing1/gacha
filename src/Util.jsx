@@ -7,7 +7,7 @@ import betData from "./json/bets.json";
 import levelData from "./json/levels.json";
 import combatData from "./json/combat.json";
 import { PYRAMID_LEVELS } from "./constants.js";
-
+import keyIcon from "/key.png";
 //https://www.joshwcomeau.com/snippets/react-hooks/use-interval/
 function useInterval(callback, delay) {
   const intervalRef = useRef(null);
@@ -437,7 +437,11 @@ function generateCombatRewards(level, enemy) {
     linMap(enemy, levelData.min, levelData.max, levelData.base_total_rewards);
   var rewards = {};
   for (const [key, value] of Object.entries(levelData.rewards)) {
-    rewards[key] = Math.floor((value * total) / 100);
+    if (key == "keys") {
+      rewards[key] = value > 0 ? 1 : 0;
+    } else {
+      rewards[key] = Math.floor((value * total) / 100);
+    }
   }
   return rewards;
 }
@@ -547,6 +551,9 @@ function getCurrencyIcon(id) {
   }
   if (id == "spades") {
     return "\u{2660}\u{FE0E}";
+  }
+  if (id == "keys") {
+    return <img src={keyIcon} alt="key" className="key-icon" />;
   }
 }
 

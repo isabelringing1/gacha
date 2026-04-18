@@ -44,6 +44,7 @@ export default function Combat(props) {
     clubs,
     hearts,
     setHearts,
+    winBattleRef,
   } = props;
   const [enemyState, setEnemyState] = useState(null);
   const [winState, setWinState] = useState("menu");
@@ -60,6 +61,18 @@ export default function Combat(props) {
   const healthArrayRef = useRef();
   const winStateRef = useRef(winState);
   const scoreRef = useRef(0);
+
+  useEffect(() => {
+    if (winBattleRef) {
+      winBattleRef.current = () => {
+        if (winStateRef.current === "combat") {
+          enemyRef.current = 0;
+          setWinState("win");
+          setEnemyState(null);
+        }
+      };
+    }
+  }, [winBattleRef]);
   
 
   useEffect(() => {
