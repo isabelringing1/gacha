@@ -61,7 +61,7 @@ export default function CombatEntry(props) {
           </div>
         </div>
         <button className="combat-menu-start-button" onClick={onChallenge} disabled={combatLevel > 1 && (!combatTickets || combatTickets <= 0)}>
-          START (<img src={ticket} alt="ticket" className="ticket-icon" />1)
+          {combatLevel === 1 ? "START" : <>START (<img src={ticket} alt="ticket" className="ticket-icon" />1)</>}
           </button>
 
           <div className="combat-entry-rewards" style={{ marginTop: "2dvh" }}>

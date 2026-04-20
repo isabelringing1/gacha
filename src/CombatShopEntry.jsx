@@ -40,7 +40,7 @@ export default function CombatShopEntry(props) {
     holdTimerRef.current = setTimeout(() => {
       didHoldRef.current = true;
       onHeld();
-    }, 2000);
+    }, 700);
   }
 
   function cancelHold() {
@@ -96,7 +96,7 @@ export default function CombatShopEntry(props) {
             className="combat-shop-stepper-btn"
             disabled={decMax === 0}
             {...makeHoldProps(
-              () => setCount(0),
+              () => setCount(1),
               () => changeCount(-decMax)
             )}
           >&#x25BC;&#x25BC;</button>

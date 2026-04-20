@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import CombatButton from "./CombatButton";
 import NumberTooltip from "./NumberTooltip";
 import { AUTO_LEVEL, DIVIDE_LEVEL } from "./constants.js";
+import shield from "/shield.png";
 
 export default function CombatNumber(props) {
   const {
@@ -90,12 +91,16 @@ export default function CombatNumber(props) {
   }, [winState]);
 
 
+  function getCooldownMs() {
+    return Math.max(100, number * (isFactor ? 75 : 100));
+  }
+
   function setAttackInterval() {
     intervalRef.current = setInterval(
       () => {
         onNumberAttack();
       },
-      Math.max(100, number * 100),
+      getCooldownMs(),
     );
   }
 
@@ -108,7 +113,7 @@ export default function CombatNumber(props) {
     timeoutRef.current = setTimeout(() => {
       setCooldownRunning(false);
       setAttackReady(true);
-    }, Math.max(100, number * 100));
+    }, getCooldownMs());
   }
 
   function onManualAttack() {
@@ -212,7 +217,8 @@ export default function CombatNumber(props) {
           <div
             className={
               "combat-number " +
-              (combatState.numberStates[number].health == 0 ? " dead" : "")
+              (combatState.numberStates[number].health == 0 ? " dead" : "") +
+              (isFactor ? " factor" : "")
             }
             id={"combat-number-" + index}
           >
@@ -223,7 +229,7 @@ export default function CombatNumber(props) {
               className="combat-number-cooldown"
               style={{
                 opacity: alive && winState == "combat" ? 1 : 0,
-                "--animation-duration": number / 10 + "s",
+                "--animation-duration": number / (isFactor ? 20 : 10) + "s",
               }}
             ></div>
           )}
@@ -232,7 +238,7 @@ export default function CombatNumber(props) {
               className="combat-number-cooldown combat-number-cooldown-once"
               style={{
                 opacity: alive && winState == "combat" ? 1 : 0,
-                "--animation-duration": number / 10 + "s",
+                "--animation-duration": number / (isFactor ? 20 : 10) + "s",
               }}
             ></div>
           )}
@@ -259,7 +265,7 @@ export default function CombatNumber(props) {
                 })}
             </div>
           )}
-          <div className="block" style={{ opacity: block ? 1 : 0 }}></div>
+          <img src={shield} className="block" id={"armor-" + index} style={{ opacity: block ? 1 : 0 }} />
         </div>
 
         {winState == "combat" && (
@@ -268,12 +274,13 @@ export default function CombatNumber(props) {
             style={{ height: buttonContainerHeight + "dvh" }}
           >
             {isAuto ? (
-              <div className="combat-auto-label">{/*"AUTO"*/}</div>
+              <div className="combat-auto-label">{"AUTO"}</div>
             ) : (
               <button
                 className={
                   "combat-button attack-button" +
-                  (attackReady && alive ? " attack-button-ready" : "")
+                  (attackReady && alive ? " attack-button-ready" : "") +
+                  (combatState.combatLevel === 1 && attackReady && alive ? " can-claim-yellow" : "")
                 }
                 disabled={!attackReady || !alive}
                 onClick={onManualAttack}

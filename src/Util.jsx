@@ -85,22 +85,22 @@ const roll = (
   }
 
   var rarities = Object.keys(raritiesToNumber);
-  rarities.reverse();
-  console.log(rarities);
-  var rolledRarity = rarities[rarities.length - 1]; // assign most basic rarity as the fallback
+  rarities.reverse(); // [3, 2, 1, 0] — rarest first
+  var rolledRarity = rarities[rarities.length - 1]; // common as fallback
+  var roll = Math.random() * 100;
+  var cumulative = 0;
   for (var i in rarities) {
     var rarity = rarities[i];
-    var rarityChance = dropTable[rarity];
-    var roll = Math.random() * 100;
+    cumulative += dropTable[rarity];
     console.log(
       "rarity roll: roll was " +
         roll +
-        ", chance is " +
-        rarityChance +
+        ", cumulative threshold is " +
+        cumulative +
         " for rarity " +
         rarity,
     );
-    if (roll < rarityChance) {
+    if (roll < cumulative) {
       rolledRarity = rarity;
       break;
     }
@@ -423,18 +423,13 @@ function getMaxLevel() {
   return levelData[levelData.length - 1].level;
 }
 
-function rollForCombatEnemy(level) {
-  var levelData = combatData.levels.find((l, i) => l.level == level);
-  return Math.floor(
-    Math.random() * (levelData.max - levelData.min) + levelData.min,
-  );
-}
-
 function generateCombatRewards(level, enemy) {
   var levelData = combatData.levels.find((l, i) => l.level == level);
+  var min = getCombatLevelMin(level);
+  var max = getCombatLevelMax(level);
   var total =
     levelData.base_total_rewards +
-    linMap(enemy, levelData.min, levelData.max, levelData.base_total_rewards);
+    linMap(enemy, min, max, levelData.base_total_rewards);
   var rewards = {};
   for (const [key, value] of Object.entries(levelData.rewards)) {
     if (key == "keys") {
@@ -509,9 +504,17 @@ function getCombatLevelData(combatLevel) {
   return combatData.levels.find((l) => l.level == combatLevel) || {};
 }
 
+function getCombatLevelMin(combatLevel) {
+  return (combatLevel - 1) * 300;
+}
+
+function getCombatLevelMax(combatLevel) {
+  return (combatLevel - 1) * 300 + 200;
+}
+
 function generateEnemyForLevel(combatLevel) {
-  var min = (combatLevel - 1) * 400 + 200;
-  var max = (combatLevel - 1) * 400 + 400;
+  var min = getCombatLevelMin(combatLevel);
+  var max = getCombatLevelMax(combatLevel);
   var uniqueValues = new Set();
   return generateEnemyValue(min, max, uniqueValues);
 }
@@ -634,7 +637,6 @@ export {
   getLevelData,
   getLevel,
   getMaxLevel,
-  rollForCombatEnemy,
   generateCombatRewards,
   generateEnemies,
   generateEnemyForLevel,

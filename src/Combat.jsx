@@ -9,7 +9,7 @@ import {
   generateEnemyForLevel,
   getCombatLevelData,
 } from "./Util";
-import { isMobile, DIVIDE_LEVEL, CRIT_FACTOR } from "./constants.js";
+import { isMobile, DIVIDE_LEVEL, CRIT_BOOST } from "./constants.js";
 import EnemyNumber from "./EnemyNumber";
 import CombatMenu from "./CombatMenu.jsx";
 import CombatShop from "./CombatShop.jsx";
@@ -45,6 +45,7 @@ export default function Combat(props) {
     hearts,
     setHearts,
     winBattleRef,
+    onBattleStart,
   } = props;
   const [enemyState, setEnemyState] = useState(null);
   const [winState, setWinState] = useState("menu");
@@ -262,17 +263,27 @@ export default function Combat(props) {
 
     // Delay damage and hit flash to the strike moment
     setTimeout(() => {
-      var numberDiv = document.getElementById("combat-number-" + rollIndex);
-      numberDiv.classList.remove("damage");
-      void numberDiv.offsetWidth;
-      numberDiv.classList.add("damage");
+      var number = combatState.team[rollIndex];
+      var shields = combatState.numberStates[number]?.shields ?? 0;
+      var isBlocked = combatState.numberStates[number]?.block ?? false;
+
+      console.log("is blocked?", isBlocked);
+      var hitDiv;
+      if (isBlocked) {
+        hitDiv = document.getElementById("armor-" + rollIndex);
+      }
+      else {
+        hitDiv = document.getElementById("combat-number-" + rollIndex);
+      }
+
+      hitDiv.classList.remove("damage");
+      void hitDiv.offsetWidth;
+      hitDiv.classList.add("damage");
 
       var damageTimestamp = Date.now();
-      var damageDuration = damageTimestamp - currTimestamp;
-     
 
       setTimeout(() => {
-        numberDiv.classList.remove("damage");
+        hitDiv.classList.remove("damage");
       }, cooldownTiming);
 
       console.log("Checking");
@@ -304,7 +315,7 @@ export default function Combat(props) {
     var data = getRarityData(n);
     var chance = data.combat_crit_chance;
     if (currentEnemy % n == 0) {
-      chance *= CRIT_FACTOR;
+      chance += CRIT_BOOST;
       chance = Math.floor(chance);
     }
     return Math.random() * 100 <= chance;
@@ -371,6 +382,7 @@ export default function Combat(props) {
       return newCombatState;
     });
     setWinState("menu");
+    setShowCombat(false);
   }
 
   function resetCombatState() {
@@ -444,6 +456,7 @@ export default function Combat(props) {
       active: true,
       combatTickets: prev.combatLevel > 1 ? (prev.combatTickets || 0) - 1 : (prev.combatTickets || 0),
     }));
+    if (onBattleStart) onBattleStart();
     setWinState("intro");
 
   }

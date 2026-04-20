@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PackShopEntry from "./PackShopEntry";
 import Timer from "./Timer";
 import { UNLOCK_ENTRY_COST, UNLOCK_PACK_SHOP_COST } from "./constants.js";
@@ -28,6 +28,12 @@ export default function PackShop(props) {
     hoveredPack,
     lastPackOpened,
   } = props;
+
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const canUnlockShopEntry = () => {
     return spades >= UNLOCK_ENTRY_COST;
@@ -78,7 +84,7 @@ export default function PackShop(props) {
                         className="pack-shop-entry-unlock-button"
                         disabled={!canBuyRefreshEntry(shopEntry)}
                       >
-                        &#x2660;&#xfe0e; {getRefreshEntryCost()}
+                        &#x2660;&#xfe0e; {getRefreshEntryCost(shopEntry)}
                       </button>
                     </div>
                   </div>

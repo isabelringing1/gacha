@@ -9,10 +9,10 @@ import {
   getNextCharm,
   rollEventNumber,
   rollEvent,
-  rollForCombatEnemy,
   generateEnemyForLevel,
   generateCombatRewards,
   getFactors,
+  getLevel,
 } from "./Util";
 import { UNLOCK_ENTRY_COST } from "./constants.js";
 import ticket from "/ticket.png";
@@ -74,6 +74,7 @@ function App() {
   const [currentPack, setCurrentPack] = useState(null);
   const [numPacksOpened, setNumPacksOpened] = useState(0);
   const [numRollButtonClicks, setNumRollButtonClicks] = useState(0);
+  const [numBattles, setNumBattles] = useState(0);
 
   const [packShopState, setPackShopState] = useState("hidden"); //hidden, locked, unlocked
   const [packShopEntriesUnlocked, setPackShopEntriesUnlocked] = useState([
@@ -125,7 +126,7 @@ function App() {
       active: false,
       currentEnemyValue: enemyValue,
       levelRewards: generateCombatRewards(1, enemyValue),
-      combatTickets: 0,
+      combatTickets: 3,
     };
   });
   const [combatHighScore, setCombatHighScore] = useState(null);
@@ -144,7 +145,7 @@ function App() {
   const [pendingWinPopup, setPendingWinPopup] = useState(false);
   const [combatButtonSeen, setCombatButtonSeen] = useState(false);
   const [diamondsUnlocked, setDiamondsUnlocked] = useState(false);
-  const [battleShopState, setBattleShopState] = useState("locked");
+  const [battleShopState, setBattleShopState] = useState("unlocked");
   const winBattleRef = useRef(null);
   const [lockedNumbers, setLockedNumbers] = useState(() => {
     var locked = [];
@@ -179,7 +180,7 @@ function App() {
       setCombatState((oldCombatState) => {
         return {
           ...oldCombatState,
-          team: [rolls[0], rolls[1], rolls[2]],
+          team: getInitialTeam(rolls, numbers),
         };
       });
     }
@@ -245,14 +246,14 @@ function App() {
   }
 
   useEffect(() => {
-    if (!showWinPopup && Object.keys(numbers).length === 100 && !hasShownWinPopup) {
+    if (!showWinPopup && Object.keys(numbers).length === 100 && lockedNumbers.length === 0 && !hasShownWinPopup) {
       if (currentPack) {
         setPendingWinPopup(true);
       } else {
         setShowWinPopup(true);
       }
     }
-  }, [numbers]);
+  }, [numbers, lockedNumbers]);
 
   useEffect(() => {
     if (pendingWinPopup && !currentPack && !hasShownWinPopup) {
@@ -357,6 +358,7 @@ function App() {
       diamondsUnlocked: diamondsUnlocked,
       numPacksOpened: numPacksOpened,
       numRollButtonClicks: numRollButtonClicks,
+      numBattles: numBattles,
       startTime: startTime,
       hasShownWinPopup: hasShownWinPopup,
       lockedNumbers: lockedNumbers,
@@ -418,6 +420,7 @@ function App() {
         setDiamondsUnlocked(saveData.diamondsUnlocked || (saveData.rolls && saveData.rolls.length > 0));
         setNumPacksOpened(saveData.numPacksOpened || 0);
         setNumRollButtonClicks(saveData.numRollButtonClicks || 0);
+        setNumBattles(saveData.numBattles || 0);
         setStartTime(saveData.startTime || null);
         setHasShownWinPopup(saveData.hasShownWinPopup || false);
         if (saveData.lockedNumbers) setLockedNumbers(saveData.lockedNumbers);
@@ -544,7 +547,11 @@ function App() {
         return;
       }
       var pack = rollForPack();
-      while (pack.id == "copycat" && !lastPackOpened) {
+      var existingIds = new Set(newShopEntries.filter(Boolean).map((e) => e.id));
+      while (
+        (pack.id == "copycat" && !lastPackOpened) ||
+        existingIds.has(pack.id)
+      ) {
         pack = rollForPack();
       }
       var newEntry = {
@@ -695,12 +702,18 @@ function App() {
 
   const refreshPackShopEntry = (index) => {
     console.log("here", index);
+    const entry = cardShopEntries[index];
     generatePackShopEntry(1, [index]);
-    setSpades(spades - getRefreshEntryCost());
+    setSpades(spades - getRefreshEntryCost(entry));
   };
 
   const getRefreshEntryCost = (entry) => {
-    return REFRESH_ENTRY_BASE_COST; // todo - implement scaling logic
+    if (!entry || !entry.nextRefreshTime) return REFRESH_ENTRY_BASE_COST;
+    const secsLeft = (entry.nextRefreshTime - Date.now()) / 1000;
+    if (secsLeft > 46) return 50;
+    if (secsLeft > 31) return 40;
+    if (secsLeft > 16) return 30;
+    return 15;
   };
 
   const hidePack = () => {
@@ -909,6 +922,20 @@ function App() {
     }
   }
 
+  function getInitialTeam(rolls, numbers) {
+    var seen = new Set();
+    var team = [];
+    for (var n of rolls) {
+      if (!seen.has(n) && numbers[n] && getLevel(numbers[n]) === 1) {
+        seen.add(n);
+        team.push(n);
+        if (team.length === 3) break;
+      }
+    }
+    while (team.length < 3) team.push(null);
+    return team;
+  }
+
   function getCurrentEnemy() {
     if (!combatState || !combatState.currentEnemyValue) {
       return 0;
@@ -971,6 +998,14 @@ function App() {
           isNew={numbers[bigNumberQueue[0].n] == null}
           animating={animating}
           isLocked={lockedNumbers.includes(bigNumberQueue[0].n)}
+          isLevelUp={(() => {
+            var n = bigNumberQueue[0].n;
+            var count = numbers[n];
+            if (!count || count < 1) return false;
+            var newLevel = getLevel(count);
+            var prevLevel = getLevel(count - 1);
+            return newLevel >= 2 && newLevel > prevLevel;
+          })()}
         />
       )}
       {bigNumberQueue.length > 0 && (
@@ -1022,10 +1057,8 @@ function App() {
 
       {combatUnlocked && !combatState.active && (
         <button
-          className={"home-button" + (!combatButtonSeen && !showCombat ? " can-claim-yellow" : "")}
-          onClick={() => setShowCombat(!showCombat)}
-          onMouseEnter={() => setCombatButtonSeen(true)}
-          onTouchStart={() => setCombatButtonSeen(true)}
+          className={"home-button" + (!combatButtonSeen ? " can-claim-yellow" : "")}
+          onClick={() => { setCombatButtonSeen(true); setShowCombat(!showCombat); }}
         >
           {showCombat ? "GACHA" : "BATTLE"}
         </button>
@@ -1068,6 +1101,7 @@ function App() {
           unlockBattleShop={unlockBattleShop}
           clubs={clubs}
           winBattleRef={winBattleRef}
+          onBattleStart={() => setNumBattles((n) => n + 1)}
         />
       )}
 
@@ -1281,7 +1315,7 @@ function App() {
         unlockAchievements={unlockAchievements}
       />
       {showWinPopup && (
-        <WinPopup combatLevel={combatState.combatLevel} rolls={rolls} numPacksOpened={numPacksOpened} numRollButtonClicks={numRollButtonClicks} startTime={startTime} onClose={() =>{ setShowWinPopup(false); setHasShownWinPopup(true); }} />
+        <WinPopup combatLevel={combatState.combatLevel} rolls={rolls} numPacksOpened={numPacksOpened} numRollButtonClicks={numRollButtonClicks} numBattles={numBattles} startTime={startTime} onClose={() =>{ setShowWinPopup(false); setHasShownWinPopup(true); }} />
       )}
     </div>
   );

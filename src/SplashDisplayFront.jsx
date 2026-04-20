@@ -9,7 +9,7 @@ import numberData from "./json/numbers.json";
 import rarityJson from "./json/rarity.json";
 
 export default function SplashDisplayFront(props) {
-  const { bigNumberEntry, isNew, animating, isLocked } = props;
+  const { bigNumberEntry, isNew, animating, isLocked, isLevelUp } = props;
   var n = bigNumberEntry.n;
   var data = isLocked ? rarityJson["0"] : getRarityData(n);
   var r = isLocked ? "LOCKED" : getRarity(n).toUpperCase();

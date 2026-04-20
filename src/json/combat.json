@@ -2,8 +2,6 @@
   "levels": [
     {
       "level": 1,
-      "min": 200,
-      "max": 500,
       "base_total_rewards": 20,
       "attributes": ["no_damage"],
       "rewards": {
@@ -13,20 +11,16 @@
     },
     {
       "level": 2,
-      "min": 200,
-      "max": 500,
       "base_total_rewards": 50,
       "rewards": {
         "spades": 80,
         "clubs": 15,
         "keys": 1
       },
-      "attack_length": 1.3
+      "attack_length": 1.9
     },
     {
       "level": 3,
-      "min": 500,
-      "max": 1000,
       "base_total_rewards": 100,
       "rewards": {
         "spades": 80,
@@ -36,8 +30,6 @@
     },
     {
       "level": 4,
-      "min": 4500,
-      "max": 10000,
       "base_total_rewards": 600,
       "rewards": {
         "spades": 75,
@@ -48,8 +40,6 @@
     },
     {
       "level": 5,
-      "min": 12000,
-      "max": 30000,
       "base_total_rewards": 800,
       "rewards": {
         "spades": 70,
@@ -59,8 +49,6 @@
     },
     {
       "level": 6,
-      "min": 35000,
-      "max": 80000,
       "base_total_rewards": 1000,
       "rewards": {
         "spades": 65,
@@ -71,8 +59,6 @@
     },
     {
       "level": 7,
-      "min": 100000,
-      "max": 200000,
       "base_total_rewards": 1300,
       "rewards": {
         "spades": 60,
@@ -82,8 +68,6 @@
     },
     {
       "level": 8,
-      "min": 250000,
-      "max": 450000,
       "base_total_rewards": 1600,
       "rewards": {
         "spades": 55,
@@ -94,8 +78,6 @@
     },
     {
       "level": 9,
-      "min": 500000,
-      "max": 800000,
       "base_total_rewards": 2000,
       "rewards": {
         "spades": 50,
@@ -105,8 +87,6 @@
     },
     {
       "level": 10,
-      "min": 1000000,
-      "max": 1500000,
       "base_total_rewards": 2400,
       "rewards": {
         "spades": 45,

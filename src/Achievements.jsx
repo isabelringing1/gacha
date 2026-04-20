@@ -43,9 +43,31 @@ export default function Achievements(props) {
     return uniqueCount / a.threshold;
   }
 
+  // For reach_X: only the first unclaimed one is visible; all beyond it are locked
+  var reachAchievements = achievementData
+    .filter((a) => a.id.startsWith("reach_"))
+    .sort((a, b) => a.threshold - b.threshold);
+
+  // "Closest" = first reach achievement not yet achieved (progress < 100%)
+  var closestReachIndex = reachAchievements.findIndex(
+    (a) => uniqueCount < a.threshold
+  );
+
+  // All reach achievements beyond the closest are locked
+  var lockedReachIds = new Set(
+    closestReachIndex === -1
+      ? []
+      : reachAchievements.slice(closestReachIndex + 1).map((a) => a.id)
+  );
+
   var visibleAchievements = achievementData
     .filter((a) => !fadingOut.includes(a.id) && !initialClaimed.current.includes(a.id))
-    .sort((a, b) => getProgress(b) - getProgress(a));
+    .sort((a, b) => {
+      var aLocked = lockedReachIds.has(a.id);
+      var bLocked = lockedReachIds.has(b.id);
+      if (aLocked !== bLocked) return aLocked ? 1 : -1;
+      return getProgress(b) - getProgress(a);
+    });
 
   return (
     <div className="achievements-container">
@@ -79,6 +101,7 @@ export default function Achievements(props) {
             </div>
             <div className="achievements-entries">
               {visibleAchievements.map((achievement) => {
+                var isLocked = lockedReachIds.has(achievement.id);
                 var claimed = claimedAchievements.includes(achievement.id);
                 var achieved, progressText;
                 if (achievement.type === "multiples") {
@@ -92,6 +115,15 @@ export default function Achievements(props) {
                   progressText = "";
                 }
                 var fillPercent = Math.min(getProgress(achievement), 1) * 100;
+
+                if (isLocked) {
+                  return (
+                    <div className="achievement-entry achievement-entry-locked" key={achievement.id}>
+                      <div className="achievement-entry-name">LOCKED</div>
+                    </div>
+                  );
+                }
+
                 return (
                   <div
                     className={

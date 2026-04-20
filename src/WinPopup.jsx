@@ -1,5 +1,5 @@
 export default function WinPopup(props) {
-  var { rolls, numPacksOpened, numRollButtonClicks, startTime, combatLevel, onClose } = props;
+  var { rolls, numPacksOpened, numRollButtonClicks, numBattles, startTime, combatLevel, onClose } = props;
 
   function getElapsedText(returnText = false) {
     if (!startTime) return null;
@@ -46,6 +46,7 @@ export default function WinPopup(props) {
           <div className="win-popup-text"><b>{numRollButtonClicks}</b> rolls</div>
           <div className="win-popup-text"> <b>{numPacksOpened}</b> packs</div>
           <div className="win-popup-text"><b>{rolls.length}</b> numbers</div>
+          <div className="win-popup-text">and <b>{numBattles}</b> battles</div>
           {elapsedText && <div className="win-popup-text">{elapsedText}</div>}
 
           <div className="win-popup-text combat-level-text">You reached level <b>{combatLevel}</b> in battle. Try pushing yourself higher!</div>

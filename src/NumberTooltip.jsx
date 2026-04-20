@@ -2,7 +2,7 @@ import { factors, getRarity } from "./Util";
 import Markdown from "react-markdown";
 import tail from "/tail.png";
 import { getRarityData, getLevel, getNumToUpgrade } from "./Util";
-import { CRIT_FACTOR } from "./constants.js";
+import { CRIT_BOOST } from "./constants.js";
 import keyIcon from "/key.png";
 
 export default function NumberTooltip(props) {
@@ -10,7 +10,9 @@ export default function NumberTooltip(props) {
   var cn = "number-tooltip dither-bg";
   var cnTail = "tooltip-tail number-tail";
 
- 
+  if (isCombat) {
+    cn += " combat-tooltip";
+  }
   
   if (n <= 20) {
     cn += " top";
@@ -44,7 +46,7 @@ export default function NumberTooltip(props) {
     var data = getRarityData(n);
     var chance = data.combat_crit_chance;
     if (isFactor) {
-      chance *= CRIT_FACTOR;
+      chance += CRIT_BOOST;
       chance = Math.floor(chance);
     }
     return chance + "%";

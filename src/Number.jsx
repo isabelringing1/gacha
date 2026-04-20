@@ -167,7 +167,7 @@ function Number(props) {
           setHover(false);
         }}
       >
-        {isLocked ? (numTimesRolled == 0 ? "?" : <img src={lock} alt="locked" className={"number-locked-icon" + (keys >= 1 ? " lock-pulse" : "")} style={keys >= 1 ? undefined : { opacity: 0.1 }} />) : (numTimesRolled == 0 ? "?" : n)}
+        {isLocked ? (numTimesRolled == 0 ? "?" : <img src={lock} alt="locked" className={"number-locked-icon" + (keys >= 1 ? " lock-pulse" : "")} style={keys >= 1 ? undefined : { opacity: 0.4 }} />) : (numTimesRolled == 0 ? "?" : n)}
       </div>
     </div>
   );
