@@ -86,12 +86,9 @@ export default function NumberTooltip(props) {
       <div className="number-tooltip-inner">
         <img className={cnTail} src={tail} />
 
-        {isCombat && (
-          <div className="number-tooltip-text">
+        <div className="number-tooltip-text">
             <b>Lvl {getLevel(numTimesRolled)}</b>
           </div>
-        )}
-
         {isCombat && attackNumber > 0 && (
           <div className="number-tooltip-text">
             Attacks for <b>{attackNumber}</b> every {n / 10} seconds
@@ -105,12 +102,6 @@ export default function NumberTooltip(props) {
         {isFactor && (
           <div className="number-tooltip-text" style={{ color: "#89d0f0" }}>
             <b>FACTOR</b>
-          </div>
-        )}
-
-        {isCombat && (
-          <div className="number-tooltip-text">
-            Crit chance <b style={{ color: isFactor ? "#89d0f0" : "inherit" }}>{getCritChance()}</b>
           </div>
         )}
 
@@ -131,12 +122,12 @@ export default function NumberTooltip(props) {
           </div>
         </div>
 
-        {!isCombat && (
+        <div className="number-tooltip-text">Rolled {numTimesRolled} time{numTimesRolled == 1 ? "" : "s"}, {getNumToUpgrade(numTimesRolled)} more to upgrade</div>
+        {isCombat && (
           <div className="number-tooltip-text">
-            <b>Lvl {getLevel(numTimesRolled)} </b>
+            Crit chance <b style={{ color: isFactor ? "#89d0f0" : "inherit" }}>{getCritChance()}</b>
           </div>
         )}
-        <div className="number-tooltip-text">Rolled {numTimesRolled} time{numTimesRolled == 1 ? "" : "s"}, {getNumToUpgrade(numTimesRolled)} more to upgrade</div>
       </div>
     </div>
   );

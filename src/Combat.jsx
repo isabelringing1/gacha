@@ -46,6 +46,7 @@ export default function Combat(props) {
     setHearts,
     winBattleRef,
     onBattleStart,
+    setHeartsUnlocked,
   } = props;
   const [enemyState, setEnemyState] = useState(null);
   const [winState, setWinState] = useState("menu");
@@ -118,6 +119,7 @@ export default function Combat(props) {
     if (setIsCombatActive) setIsCombatActive(winState !== "menu");
     if (winState == "win") {
       setWinString(getRandomWinString());
+      setHeartsUnlocked(true);
       {
         var rewards = combatState.levelRewards || {};
         setLevelRewards(rewards);

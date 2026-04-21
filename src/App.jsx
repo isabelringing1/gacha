@@ -263,12 +263,6 @@ function App() {
   }, [currentPack]);
 
   useEffect(() => {
-    if (hearts > 0 && !heartsUnlocked) {
-      setHeartsUnlocked(true);
-    }
-  }, [hearts]);
-
-  useEffect(() => {
     if (keys > 0 && !keysUnlocked) {
       setKeysUnlocked(true);
     }
@@ -1061,6 +1055,7 @@ function App() {
           onClick={() => { setCombatButtonSeen(true); setShowCombat(!showCombat); }}
         >
           {showCombat ? "GACHA" : "BATTLE"}
+          {showCombat && <div className="home-button-combat-level">Lvl {combatState.combatLevel}</div>}
         </button>
       )}
 
@@ -1102,6 +1097,7 @@ function App() {
           clubs={clubs}
           winBattleRef={winBattleRef}
           onBattleStart={() => setNumBattles((n) => n + 1)}
+          setHeartsUnlocked={setHeartsUnlocked}
         />
       )}
 
@@ -1168,6 +1164,7 @@ function App() {
               lockedNumbers={lockedNumbers}
               keys={keys}
               unlockNumber={unlockNumber}
+              rolls={rolls}
             />
           </div>
           {isMobile && (

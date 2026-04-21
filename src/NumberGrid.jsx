@@ -52,7 +52,9 @@ export default function NumberGrid({
   lockedNumbers,
   keys,
   unlockNumber,
+  rolls,
 }) {
+  var rolledSet = new Set(rolls || []);
   return Array.from({ length: 100 }, (_, i) => i + 1).map((n) => {
     if (inCombatMenu) {
       var numTimesRolled = numbers[n] || 0;
@@ -73,6 +75,7 @@ export default function NumberGrid({
             onDragStateChange={onDragStateChange}
             inCombatMenu={true}
             isLocked={(lockedNumbers || []).includes(n)}
+            hasBeenRolled={rolledSet.has(n)}
             keys={keys}
             unlockNumber={unlockNumber}
           />
@@ -97,6 +100,7 @@ export default function NumberGrid({
         onDragStateChange={onDragStateChange}
         inCombatMenu={false}
         isLocked={(lockedNumbers || []).includes(n)}
+        hasBeenRolled={rolledSet.has(n)}
         keys={keys}
         unlockNumber={unlockNumber}
       />

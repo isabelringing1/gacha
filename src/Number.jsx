@@ -20,6 +20,7 @@ function Number(props) {
     onDragStateChange,
     inCombatMenu,
     isLocked,
+    hasBeenRolled,
     keys,
     unlockNumber,
   } = props;
@@ -167,7 +168,7 @@ function Number(props) {
           setHover(false);
         }}
       >
-        {isLocked ? (numTimesRolled == 0 ? "?" : <img src={lock} alt="locked" className={"number-locked-icon" + (keys >= 1 ? " lock-pulse" : "")} style={keys >= 1 ? undefined : { opacity: 0.4 }} />) : (numTimesRolled == 0 ? "?" : n)}
+        {isLocked ? (!hasBeenRolled ? "?" : <img src={lock} alt="locked" className={"number-locked-icon" + (keys >= 1 ? " lock-pulse" : "")} style={keys >= 1 ? undefined : { opacity: 0.4 }} />) : (numTimesRolled == 0 ? "?" : n)}
       </div>
     </div>
   );

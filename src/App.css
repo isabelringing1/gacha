@@ -838,11 +838,11 @@ button:disabled {
 
 .number-tooltip {
   width: 180px;
-  height: 130px;
+  height: 150px;
 
   border-radius: 2dvh;
   background-color: white;
-  font-size: 1.8dvh;
+  font-size: 1.5dvh;
 
   position: absolute;
   z-index: 2;
@@ -852,7 +852,7 @@ button:disabled {
   align-items: center;
   margin-bottom: 27dvh;
   text-align: center;
-  padding: 0.2dvh 1.1dvh 0.5dvh;
+  
   filter: drop-shadow(0 0.2dvh 0.4dvh rgba(0, 0, 0, 0.2));
 }
 
@@ -862,7 +862,7 @@ button:disabled {
 }
 
 .number-tooltip-text {
-  padding: 0.5dvh 0;
+  padding: 0.3dvh 0;
   font-family: "Helvetica";
   width: 90%;
 }
@@ -1424,7 +1424,7 @@ button:disabled {
   align-items: center;
   rotate: -13deg;
   opacity: 0.7;
-  color: rgb(119, 87, 5);
+  color: rgb(75, 0, 83);
 }
 
 .pack-shop-container {
@@ -3395,6 +3395,11 @@ input[type="number"] {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
+}
+
+.home-button-combat-level{
+  font-weight: bold;
+  font-size: 1.5dvh;
 }
 
 .run-away-button {

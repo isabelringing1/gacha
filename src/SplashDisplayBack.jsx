@@ -45,10 +45,10 @@ export default function SplashDisplayBack(props) {
       setAnimating(false);
       setCn("big-number-container");
 
-      var newNumbers = { ...numbers };
-      newNumbers[n] = newNumbers[n] ? newNumbers[n] + 1 : 1;
-      setNumbers(newNumbers);
       if (!isLocked) {
+        var newNumbers = { ...numbers };
+        newNumbers[n] = newNumbers[n] ? newNumbers[n] + 1 : 1;
+        setNumbers(newNumbers);
         setSpades(spades + n);
       }
       setRolls([n, ...rolls]);

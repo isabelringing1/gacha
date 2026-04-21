@@ -104,7 +104,7 @@ export default function SplashDisplayFront(props) {
             ditherMode="bayer"
             colorMode="custom"
             className="new-bg"
-            customPalette={["#feb909ff", "#fff382ff", "#ffffffff"]}
+            customPalette={["#d240ffff", "#f199ffff", "#ffffffff"]}
             objectFit="contain"
             threshold={0}
             children={[levelUpText]}

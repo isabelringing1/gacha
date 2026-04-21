@@ -2,16 +2,14 @@
   "levels": [
     {
       "level": 1,
-      "base_total_rewards": 20,
       "attributes": ["no_damage"],
       "rewards": {
-        "spades": 90,
+        "spades": 50,
         "clubs": 10
       }
     },
     {
       "level": 2,
-      "base_total_rewards": 50,
       "rewards": {
         "spades": 80,
         "clubs": 15,
@@ -21,79 +19,71 @@
     },
     {
       "level": 3,
-      "base_total_rewards": 100,
       "rewards": {
-        "spades": 80,
-        "clubs": 10
+        "spades": 100,
+        "clubs": 20
       },
       "attack_length": 1.7
     },
     {
       "level": 4,
-      "base_total_rewards": 600,
       "rewards": {
-        "spades": 75,
-        "clubs": 15,
+        "spades": 125,
+        "clubs": 25,
         "keys": 1
       },
       "attack_length": 1.4
     },
     {
       "level": 5,
-      "base_total_rewards": 800,
       "rewards": {
-        "spades": 70,
-        "clubs": 20
+        "spades": 150,
+        "clubs": 30
       },
       "attack_length": 1.2
     },
     {
       "level": 6,
-      "base_total_rewards": 1000,
       "rewards": {
-        "spades": 65,
-        "clubs": 20,
+        "spades": 175,
+        "clubs": 35,
         "keys": 1
       },
       "attack_length": 1.0
     },
     {
       "level": 7,
-      "base_total_rewards": 1300,
       "rewards": {
-        "spades": 60,
-        "clubs": 20
+        "spades": 200,
+        "clubs": 40
       },
-      "attack_length": 0.8
+      "attack_length": 1.0
     },
     {
       "level": 8,
-      "base_total_rewards": 1600,
       "rewards": {
-        "spades": 55,
-        "clubs": 25,
+        "spades": 250,
+        "clubs": 50,
         "keys": 1
       },
-      "attack_length": 0.8
+      "attack_length": 0.9
     },
     {
       "level": 9,
-      "base_total_rewards": 2000,
       "rewards": {
-        "spades": 50,
-        "clubs": 25
+        "spades": 300,
+        "clubs": 60
       },
       "attack_length": 0.8
     },
     {
       "level": 10,
-      "base_total_rewards": 2400,
       "rewards": {
-        "spades": 45,
-        "clubs": 30,
+        "spades": 500,
+        "clubs": 70,
         "keys": 1
       },
-      "attack_length": 0.6
+      "attack_length": 0.7
     }
   ],
   "shop": [

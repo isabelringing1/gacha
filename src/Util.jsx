@@ -425,26 +425,11 @@ function getMaxLevel() {
 
 function generateCombatRewards(level, enemy) {
   var levelData = combatData.levels.find((l, i) => l.level == level);
-  var min = getCombatLevelMin(level);
-  var max = getCombatLevelMax(level);
-  var total =
-    levelData.base_total_rewards +
-    linMap(enemy, min, max, levelData.base_total_rewards);
   var rewards = {};
   for (const [key, value] of Object.entries(levelData.rewards)) {
-    if (key == "keys") {
-      rewards[key] = value > 0 ? 1 : 0;
-    } else {
-      rewards[key] = Math.floor((value * total) / 100);
-    }
+    rewards[key] = value;
   }
   return rewards;
-}
-
-function linMap(value, min, max, total) {
-  const t = (value - min) / (max - min);
-  const clampedT = Math.min(Math.max(t, 0), 1);
-  return clampedT * (0.25 * total);
 }
 
 function countFactorsInRange(n) {
