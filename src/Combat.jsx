@@ -50,6 +50,30 @@ export default function Combat(props) {
   } = props;
   const [enemyState, setEnemyState] = useState(null);
   const [winState, setWinState] = useState("menu");
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const nextUnlock = combatState?.nextLevelUnlockTime || 0;
+  const waiting = now < nextUnlock;
+  const msRemaining = waiting ? nextUnlock - now : 0;
+  const totalSecRemaining = Math.ceil(msRemaining / 1000);
+  const minRemaining = Math.floor(totalSecRemaining / 60);
+  const secRemaining = totalSecRemaining % 60;
+  const elapsedMin = waiting
+    ? Math.floor((15 * 60 * 1000 - msRemaining) / 60000)
+    : 0;
+  const unlockEarlyCost = Math.max(0, 500 - elapsedMin * 30);
+  const canAffordUnlockEarly = spades >= unlockEarlyCost;
+
+  function onUnlockEarly() {
+    if (!waiting || !canAffordUnlockEarly) return;
+    setSpades(spades - unlockEarlyCost);
+    setCombatState((prev) => ({ ...prev, nextLevelUnlockTime: 0 }));
+  }
   const [records, setRecords] = useState([]);
   const [levelRewards, setLevelRewards] = useState({});
   const [score, setScore] = useState(0);
@@ -365,9 +389,13 @@ export default function Combat(props) {
     setCombatState((oldCombatState) => {
       var newCombatState = { ...oldCombatState };
       var nextLevel = (newCombatState.combatLevel || 1) + 1;
+      var completedLevel = oldCombatState.combatLevel || 1;
       newCombatState.combatLevel = nextLevel;
       newCombatState.currentEnemyValue = generateEnemyForLevel(nextLevel);
       newCombatState.levelRewards = generateCombatRewards(Math.min(nextLevel, 10), newCombatState.currentEnemyValue);
+      if (completedLevel > 1) {
+        newCombatState.nextLevelUnlockTime = Date.now() + 15 * 60 * 1000;
+      }
       newCombatState.active = false;
       // Refresh all number states after battle
       for (var i = 1; i <= 100; i++) {
@@ -435,6 +463,7 @@ export default function Combat(props) {
   function onChallenge() {
     console.log(combatState);
     if (!combatState) return;
+    if (waiting) return;
     if (combatState.combatLevel > 1 && !combatState.currentEnemyValue) return;
 
     // Require a ticket for levels > 1
@@ -506,6 +535,12 @@ export default function Combat(props) {
             levelRewards={combatState.levelRewards}
             centered={combatState.combatLevel === 1}
             combatTickets={combatState.combatTickets || 0}
+            waiting={waiting}
+            minRemaining={minRemaining}
+            secRemaining={secRemaining}
+            unlockEarlyCost={unlockEarlyCost}
+            canAffordUnlockEarly={canAffordUnlockEarly}
+            onUnlockEarly={onUnlockEarly}
           />
           {combatState.combatLevel === 1 && (
             <CombatMenu

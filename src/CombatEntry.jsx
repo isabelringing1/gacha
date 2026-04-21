@@ -6,7 +6,20 @@ import { getCurrencyIcon } from "./Util";
 import ticket from "/ticket.png";
 
 export default function CombatEntry(props) {
-  var { currentEnemy, onChallenge, combatLevel, levelRewards, centered, combatTickets } = props;
+  var {
+    currentEnemy,
+    onChallenge,
+    combatLevel,
+    levelRewards,
+    centered,
+    combatTickets,
+    waiting,
+    minRemaining,
+    secRemaining,
+    unlockEarlyCost,
+    canAffordUnlockEarly,
+    onUnlockEarly,
+  } = props;
 
   var raw = String(currentEnemy).split("");
   var len = raw.length;
@@ -22,7 +35,7 @@ export default function CombatEntry(props) {
     <div className={"combat-entry-column" + (centered ? " combat-entry-centered" : "")}>
       <div className="combat-entry-outer">
         <div className="title">LEVEL {combatLevel}</div>
-        <div className="combat-entry-inner">
+        <div className="combat-entry-inner" style={waiting ? { opacity: 0.7 } : undefined}>
           <div className="combat-entry-inner-inner">
             <DitherShader
               src={cloud_bg}
@@ -48,31 +61,57 @@ export default function CombatEntry(props) {
                 className="floating-num-cloud cloud-2"
                 objectFit="contain"
               />
-              {digits.map((digit, i) => {
-                var hasComma = digit.length > 1;
-                return (
-                  <div id={"floating-num-" + i} key={"floating-num-" + i}>
-                    {hasComma ? digit[0] : digit}{hasComma && <span className="floating-num-comma">,</span>}
-                  </div>
-                );
-              })}
+              {waiting ? (
+                <>
+                  <div id={"floating-num-0"} key={"floating-num-0"}>?</div>
+                  <div id={"floating-num-1"} key={"floating-num-1"}>?</div>
+                  <div id={"floating-num-2"} key={"floating-num-2"}>?</div>
+                </>
+              ) : (
+                digits.map((digit, i) => {
+                  var hasComma = digit.length > 1;
+                  return (
+                    <div id={"floating-num-" + i} key={"floating-num-" + i}>
+                      {hasComma ? digit[0] : digit}{hasComma && <span className="floating-num-comma">,</span>}
+                    </div>
+                  );
+                })
+              )}
             </div>
-            
+
           </div>
         </div>
-        <button className="combat-menu-start-button" onClick={onChallenge} disabled={combatLevel > 1 && (!combatTickets || combatTickets <= 0)}>
-          {combatLevel === 1 ? "START" : <>START (<img src={ticket} alt="ticket" className="ticket-icon" />1)</>}
-          </button>
-
-          <div className="combat-entry-rewards" style={{ marginTop: "2dvh" }}>
-            <div>REWARDS</div>
-              {levelRewards && Object.keys(levelRewards).map((r, i) => (
-                <div key={"reward-" + i} className="combat-entry-rewards-item">
-                  {getCurrencyIcon(r)}
-                  {levelRewards[r].toLocaleString()}
-                </div>
-              ))}
+        {waiting ? (
+          <div className="combat-menu-next-level-text">
+            Unlocks in {minRemaining} min {secRemaining} sec
           </div>
+        ) : (
+          <button className="combat-menu-start-button" onClick={onChallenge} disabled={combatLevel > 1 && (!combatTickets || combatTickets <= 0)}>
+            {combatLevel === 1 ? "START" : <>START (<img src={ticket} alt="ticket" className="ticket-icon" />1)</>}
+          </button>
+        )}
+
+          {waiting && (
+            <button
+              className="combat-menu-start-button combat-menu-unlock-early-button"
+              onClick={onUnlockEarly}
+              disabled={!canAffordUnlockEarly}
+            >
+              UNLOCK EARLY<br/> (&#x2660;&#xfe0e; {unlockEarlyCost})
+            </button>
+          )}
+
+          {!waiting && (
+            <div className="combat-entry-rewards" style={{ marginTop: "2dvh" }}>
+              <div>REWARDS</div>
+                {levelRewards && Object.keys(levelRewards).map((r, i) => (
+                  <div key={"reward-" + i} className="combat-entry-rewards-item">
+                    {getCurrencyIcon(r)}
+                    {levelRewards[r].toLocaleString()}
+                  </div>
+                ))}
+            </div>
+          )}
       </div>
     </div>
   );

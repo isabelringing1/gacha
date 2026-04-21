@@ -3674,6 +3674,17 @@ input[type="number"] {
   padding: 1dvh 2dvh;
 }
 
+.combat-menu-next-level-text {
+  margin-top: 1dvh;
+  font-size: 2dvh;
+  padding: 1dvh 2dvh;
+  font-family: NewYork, serif;
+  text-align: center;
+}
+
+.combat-menu-unlock-early-button{
+  height: 7dvh;
+}
 .combat-pyramid-container {
   display: flex;
   flex-direction: column;

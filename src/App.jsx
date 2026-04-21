@@ -64,6 +64,7 @@ import { s } from "motion/react-client";
 function App() {
   const [numbers, setNumbers] = useState({});
   const [rolls, setRolls] = useState([]);
+  const [now, setNow] = useState(Date.now());
   const [highlightedNumber, setHighlightedNumber] = useState(-1);
   const [rolledNumber, setRolledNumber] = useState(-1);
   const [diamonds, setDiamonds] = useState(BASE_MAX_DIAMONDS);
@@ -160,6 +161,11 @@ function App() {
 
   useEffect(() => {
     loadData();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -1055,7 +1061,13 @@ function App() {
           onClick={() => { setCombatButtonSeen(true); setShowCombat(!showCombat); }}
         >
           {showCombat ? "GACHA" : "BATTLE"}
-          {showCombat && <div className="home-button-combat-level">Lvl {combatState.combatLevel}</div>}
+          {showCombat && (
+            <div className="home-button-combat-level">
+              {combatState.nextLevelUnlockTime && now < combatState.nextLevelUnlockTime
+                ? "next in " + Math.ceil((combatState.nextLevelUnlockTime - now) / 60000) + " min"
+                : "Lvl " + combatState.combatLevel}
+            </div>
+          )}
         </button>
       )}
 
