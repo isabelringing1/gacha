@@ -9,6 +9,7 @@ export default function OutOfHeartsContainer(props) {
   const { setShowOutOfDiamonds, nextDiamondRefreshTime, setDiamonds, diamonds } = props;
   const [showMath, setShowMath] = useState(0); //0, 1, 2
   const [mathProblems, setMathProblems] = useState([]);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     if (mathProblems.length > 0) {
@@ -22,12 +23,28 @@ export default function OutOfHeartsContainer(props) {
     }
   }, [mathProblems]);
 
-  function generateMathProblems(isHard) {
+  function getNextDifficulty() {
+    const now = Date.now();
+    const hourStart = parseInt(localStorage.getItem("gacha_math_hour_start") || "0");
+    let completions = parseInt(localStorage.getItem("gacha_math_completions") || "0");
+    if (now - hourStart > 3600000) {
+      localStorage.setItem("gacha_math_hour_start", now.toString());
+      localStorage.setItem("gacha_math_completions", "0");
+      completions = 0;
+      console.log("reset completions");
+    }
+    console.log("completions: ", completions);
+    const nextCount = completions + 1;
+    const numProblems = nextCount <= 1 ? 3 : 6;
+    const maxDigits = nextCount <= 2 ? 15 : 15 + (nextCount - 2) * 15;
+    return { numProblems, maxDigits };
+  }
+
+  function generateMathProblems() {
     var newProblems = [];
-    var maxDigits = isHard ? 100 : 15;
+    var { numProblems, maxDigits } = getNextDifficulty();
     var numberPool = Array.from({ length: maxDigits }, (_, i) => i + 1);
-    var operationPool = isHard ? ["+", "-"] : ["+"];
-    var numProblems = isHard ? 6 : 3;
+    var operationPool = ["+"];
     for (var i = 0; i < numProblems; i++) {
       var rand1 = numberPool[Math.floor(Math.random() * numberPool.length)];
       var rand2 = numberPool[Math.floor(Math.random() * numberPool.length)];
@@ -63,11 +80,18 @@ export default function OutOfHeartsContainer(props) {
     setMathProblems(newProblems);
     if (newProblems.every((p) => p.isComplete)) {
       setDiamonds(diamonds + (showMath == 2 ? HARD_DIAMONDS : EASY_DIAMONDS));
-      var container = document.getElementsByClassName("out-of-hearts-outer")[0];
-      container.classList.add("flicker-out");
+      const prev = parseInt(localStorage.getItem("gacha_math_completions") || "0");
+      localStorage.setItem("gacha_math_completions", (prev + 1).toString());
+      console.log("completions: ", prev + 1);
+      setShowSuccess(true);
       setTimeout(() => {
-        setShowOutOfDiamonds(false);
-      }, 600);
+        var container = document.getElementsByClassName("out-of-hearts-outer")[0];
+        container.classList.add("flicker-out");
+        setTimeout(() => {
+          setShowOutOfDiamonds(false);
+          setShowSuccess(false);
+        }, 100);
+      }, 400);
     }
   }
 
@@ -114,6 +138,11 @@ export default function OutOfHeartsContainer(props) {
           </div>
 
           <div className="math-problems">
+            {showSuccess && (
+              <div className="math-success-overlay">
+                <span className="math-success-o">○</span>
+              </div>
+            )}
             <DitherShader
               src={ruled_paper}
               gridSize={2}

@@ -1002,8 +1002,8 @@ function App() {
             var n = bigNumberQueue[0].n;
             var count = numbers[n];
             if (!count || count < 1) return false;
-            var newLevel = getLevel(count);
-            var prevLevel = getLevel(count - 1);
+            var newLevel = getLevel(count + 1);
+            var prevLevel = getLevel(count);
             return newLevel >= 2 && newLevel > prevLevel;
           })()}
         />

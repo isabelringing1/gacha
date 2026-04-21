@@ -45,7 +45,7 @@
         "spades": 70,
         "clubs": 20
       },
-      "attack_length": 1.0
+      "attack_length": 1.2
     },
     {
       "level": 6,
@@ -106,7 +106,7 @@
     {
       "name": "\u2665\uFE0E",
       "reward": "hearts",
-      "cost": 5,
+      "cost": 10,
       "currency": "spades"
     }
   ]

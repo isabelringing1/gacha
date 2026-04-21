@@ -432,7 +432,8 @@ export default function Combat(props) {
 
   function onChallenge() {
     console.log(combatState);
-    if (!combatState || !combatState.currentEnemyValue) return;
+    if (!combatState) return;
+    if (combatState.combatLevel > 1 && !combatState.currentEnemyValue) return;
 
     // Require a ticket for levels > 1
     if (combatState.combatLevel > 1 && (!combatState.combatTickets || combatState.combatTickets <= 0)) return;

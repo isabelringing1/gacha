@@ -15,7 +15,7 @@
   },
   {
     "level": 2,
-    "rolls": 2,
+    "rolls": 3,
     "shields": 0,
     "critBoost": 5,
     "canBlock": true

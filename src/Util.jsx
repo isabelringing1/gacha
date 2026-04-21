@@ -479,7 +479,7 @@ function generateEnemyValue(min, max, uniqueValues) {
 
     var mult = Math.floor(Math.random() * (maxMult - minMult + 1)) + minMult;
     var value = mult * base;
-    if (value >= min && value <= max && countFactorsInRange(value) >= 4 && !uniqueValues.has(value)) {
+    if (value > 0 && value >= min && value <= max && countFactorsInRange(value) >= 4 && !uniqueValues.has(value)) {
       return value;
     }
   }

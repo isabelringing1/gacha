@@ -183,7 +183,7 @@ const Debug = (props) => {
 
 
         <div>
-          <input type="number" ref={diamondsInputRef} />
+          <input type="number" ref={diamondsInputRef} defaultValue={0} />
           <button
             className="debug-button"
             onClick={() => {

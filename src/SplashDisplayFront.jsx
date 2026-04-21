@@ -21,6 +21,11 @@ export default function SplashDisplayFront(props) {
       NEW
     </span>
   );
+  var levelUpText = (
+    <span className="level-up-text" key="level-up-text">
+      LEVEL UP
+    </span>
+  );
   var randomNumberText =
     numberData[n][Math.floor(Math.random() * numberData[n].length)];
   var isLongPhrase = randomNumberText.length > 50;
@@ -88,6 +93,22 @@ export default function SplashDisplayFront(props) {
             threshold={0}
             children={[newText]}
             style={{ color: "#775705ff" }}
+          />
+        </div>
+      )}
+      {isLevelUp && !isLocked && ( 
+        <div className="new-container">
+          <DitherShader
+            src={newBg}
+            gridSize={2}
+            ditherMode="bayer"
+            colorMode="custom"
+            className="new-bg"
+            customPalette={["#feb909ff", "#fff382ff", "#ffffffff"]}
+            objectFit="contain"
+            threshold={0}
+            children={[levelUpText]}
+            style={{ color: data.font_color }}
           />
         </div>
       )}
