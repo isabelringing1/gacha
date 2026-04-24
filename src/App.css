@@ -419,6 +419,34 @@ p {
   pointer-events: all;
 }
 
+.error-shake {
+  animation: error-shake 0.4s ease-in-out;
+}
+
+@keyframes error-shake {
+  0%, 100% {
+    transform: translate(50%, 0%) scale(1.15, 1);
+  }
+  15% {
+    transform: translate(calc(50% - 0.8dvh), 0%) scale(1.15, 1);
+  }
+  30% {
+    transform: translate(calc(50% + 0.8dvh), 0%) scale(1.15, 1);
+  }
+  45% {
+    transform: translate(calc(50% - 0.6dvh), 0%) scale(1.15, 1);
+  }
+  60% {
+    transform: translate(calc(50% + 0.6dvh), 0%) scale(1.15, 1);
+  }
+  75% {
+    transform: translate(calc(50% - 0.3dvh), 0%) scale(1.15, 1);
+  }
+  90% {
+    transform: translate(calc(50% + 0.3dvh), 0%) scale(1.15, 1);
+  }
+}
+
 .card-pack {
   position: absolute;
   height: 50dvh;

@@ -89,87 +89,81 @@ function screenLineToCanvasLine(line, canvas) {
   return canvasLine;
 }
 
+// Map an edge point to a perimeter parameter t, going clockwise from (0,0).
+// Top edge: t in [0, w]; right: [w, w+h]; bottom: [w+h, 2w+h]; left: [2w+h, 2(w+h)].
+function edgeParam(pt, width, height) {
+  const eps = 0.5;
+  if (pt.y <= eps) return pt.x;
+  if (pt.x >= width - eps) return width + pt.y;
+  if (pt.y >= height - eps) return 2 * width + height - pt.x;
+  if (pt.x <= eps) return 2 * width + 2 * height - pt.y;
+  return null;
+}
+
+function cornersOnArc(tFrom, tTo, clockwise, width, height) {
+  const perimeter = 2 * (width + height);
+  const corners = [
+    { x: width, y: 0, t: width },
+    { x: width, y: height, t: width + height },
+    { x: 0, y: height, t: 2 * width + height },
+    { x: 0, y: 0, t: 0 },
+  ];
+  const arcLen = clockwise
+    ? (tTo - tFrom + perimeter) % perimeter
+    : (tFrom - tTo + perimeter) % perimeter;
+  return corners
+    .map((c) => ({
+      ...c,
+      dist: clockwise
+        ? (c.t - tFrom + perimeter) % perimeter
+        : (tFrom - c.t + perimeter) % perimeter,
+    }))
+    .filter((c) => c.dist > 0 && c.dist < arcLen)
+    .sort((a, b) => a.dist - b.dist)
+    .map((c) => ({ x: c.x, y: c.y }));
+}
+
 function splitCanvasByLine(originalCanvas, screenPoints) {
-  var boundingBox = originalCanvas.getBoundingClientRect();
-  console.log(boundingBox);
-  console.log(originalCanvas, boundingBox, originalCanvas.width);
   const width = originalCanvas.width;
-  const height = boundingBox.height;
-  const top = boundingBox.top;
-  const left = boundingBox.left;
+  const height = originalCanvas.height;
 
-  var points = screenLineToCanvasLine(screenPoints, originalCanvas);
-  const intersections = getLineIntersections(
-    screenPoints,
-    top,
-    left,
-    width,
-    height
-  );
-  console.log(points, intersections);
-  // if (!intersections || intersections.length < 2) return null;
+  const points = screenLineToCanvasLine(screenPoints, originalCanvas);
+  if (points.length < 2) return null;
 
-  // Extend the polyline to include intersection endpoints at edges
-  //const fullPath = [intersections[0], ...points, intersections[1]];
-  const fullPath = [...points];
-  const makeHalfCanvas = (invert = false) => {
+  const startPt = points[0];
+  const endPt = points[points.length - 1];
+  const tStart = edgeParam(startPt, width, height);
+  const tEnd = edgeParam(endPt, width, height);
+  if (tStart === null || tEnd === null) return null;
+
+  const makeHalfCanvas = (clockwise) => {
     const c = document.createElement("canvas");
     c.width = width;
     c.height = height;
 
     const ctx = c.getContext("2d");
     ctx.save();
-
     ctx.beginPath();
-
-    // Start from the first intersection
-    ctx.moveTo(fullPath[0].x, fullPath[0].y);
-    console.log(fullPath);
-    // Draw along the polyline
-    for (let i = 1; i < fullPath.length; i++) {
-      ctx.lineTo(fullPath[i].x, fullPath[i].y);
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+      ctx.lineTo(points[i].x, points[i].y);
     }
-
-    var isBackwards = fullPath[0].x < fullPath[fullPath.length - 1].x ? 0 : 1;
-
-    // Now close the polygon around one side of the canvas
-    if (!invert) {
-      //bottom half
-      if (isBackwards) {
-        ctx.lineTo(0, height);
-        ctx.lineTo(width, height);
-        ctx.lineTo(width, 0);
-      } else {
-        ctx.lineTo(width, height); //bottom right corner
-        ctx.lineTo(0, height); //bottom left corner
-        ctx.lineTo(0, 0); //top left corder
-      }
-    } else {
-      // top half
-      if (isBackwards) {
-        ctx.lineTo(0, height);
-        ctx.lineTo(0, 0);
-        ctx.lineTo(width, 0);
-      } else {
-        ctx.lineTo(width, 0);
-        ctx.lineTo(0, 0);
-        ctx.lineTo(0, height);
-      }
+    // Walk the canvas perimeter from endPt back toward startPt, inserting
+    // only the corners that lie on that arc.
+    const corners = cornersOnArc(tEnd, tStart, clockwise, width, height);
+    for (const corner of corners) {
+      ctx.lineTo(corner.x, corner.y);
     }
-
     ctx.closePath();
     ctx.clip();
-
     ctx.drawImage(originalCanvas, 0, 0);
     ctx.restore();
-    console.log(ctx, c);
-
     return c;
   };
 
   return {
-    halfA: makeHalfCanvas(false),
-    halfB: makeHalfCanvas(true),
+    halfA: makeHalfCanvas(true),
+    halfB: makeHalfCanvas(false),
   };
 }
 

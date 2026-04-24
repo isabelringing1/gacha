@@ -92,31 +92,44 @@ const CardPack = (props) => {
     setLines(newLines);
   };
 
+  const triggerErrorShake = () => {
+    setLines([]);
+    setIsDrawing(false);
+    const cardPack = document.getElementById("card-pack");
+    if (cardPack) {
+      cardPack.classList.remove("error-shake");
+      void cardPack.offsetWidth;
+      cardPack.classList.add("error-shake");
+    }
+  };
+
   const handleMouseUp = (e) => {
     if (!isDrawing) {
       return;
     }
-    console.log(segmentsCanvas(canvasRef.current, lines[0]));
-    if (segmentsCanvas(canvasRef.current, lines[0])) {
-      setIsDrawing(false);
-
-      const result = splitCanvasByLine(canvasRef.current, lines[0]);
-      if (result == null) {
-        return;
-      }
-      openPack(pack);
-      setNumbersRolled(true);
-      result.halfA.className = "card-pack-img half-a";
-      result.halfB.className = "card-pack-img half-b";
-      var drawing = document.getElementById("drawing");
-      drawing.classList.remove("fade-out");
-      drawing.classList.add("fade-out");
-      if (result) {
-        document.getElementById("card-pack").replaceChildren();
-        document.getElementById("card-pack").appendChild(result.halfA);
-        document.getElementById("card-pack").appendChild(result.halfB);
-      }
+    if (!canvasRef.current || !canvasRef.current.isConnected) {
+      return;
     }
+    if (!segmentsCanvas(canvasRef.current, lines[0])) {
+      triggerErrorShake();
+      return;
+    }
+    const result = splitCanvasByLine(canvasRef.current, lines[0]);
+    if (result == null) {
+      triggerErrorShake();
+      return;
+    }
+    setIsDrawing(false);
+    openPack(pack);
+    setNumbersRolled(true);
+    result.halfA.className = "card-pack-img half-a";
+    result.halfB.className = "card-pack-img half-b";
+    var drawing = document.getElementById("drawing");
+    drawing.classList.remove("fade-out");
+    drawing.classList.add("fade-out");
+    document.getElementById("card-pack").replaceChildren();
+    document.getElementById("card-pack").appendChild(result.halfA);
+    document.getElementById("card-pack").appendChild(result.halfB);
   };
 
   return (
