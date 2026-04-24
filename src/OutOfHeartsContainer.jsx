@@ -133,7 +133,7 @@ export default function OutOfHeartsContainer(props) {
                   generateMathProblems();
                 }}
               >
-                Do Some Math Problems{" "}
+                Do Math Problems{" "}
                 <div>(+{EASY_DIAMONDS} &diams;&#xfe0e;)</div>
               </button>
               {(() => {

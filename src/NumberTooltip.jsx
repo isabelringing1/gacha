@@ -112,17 +112,8 @@ export default function NumberTooltip(props) {
         <img className={cnTail} src={tail} />
 
         <div className="number-tooltip-text">
-            <b>Lvl {getLevel(numTimesRolled)}</b>
+            <b>Lvl {getLevel(numTimesRolled)}</b> 
           </div>
-        {isCombat && attackNumber > 0 && (
-          <div className="number-tooltip-text">
-            Attacks for <b>{attackNumber}</b> every {n / 10} seconds
-          </div>
-        )}
-
-        {isCombat && attackNumber <= 0 && (
-          <div className="number-tooltip-text">DEAD</div>
-        )}
 
         {isFactor && (
           <div className="number-tooltip-text" style={{ color: "#89d0f0" }}>
@@ -147,13 +138,18 @@ export default function NumberTooltip(props) {
           </div>
         </div>
 
-        <div className="number-tooltip-text">Rolled {numTimesRolled} time{numTimesRolled == 1 ? "" : "s"}, {getNumToUpgrade(numTimesRolled)} more to upgrade</div>
+        {!isCombat && <div className="number-tooltip-text">Rolled {numTimesRolled} time{numTimesRolled == 1 ? "" : "s"}, {getNumToUpgrade(numTimesRolled)} more to upgrade</div>}
         {isCombat && (
           <div className="number-tooltip-text">
             Crit chance <b style={{ color: getCritChanceColor() }}>{getCritChance()}</b>
           </div>
         )}
 
+        {isCombat && (
+          <div className="">
+            Hits for {n} every <span style={{ color: isFactor ? "#89d0f0" : "black" }}>{getAttackTime().toFixed(2).replace(/([^.])0+$/, "$1")}</span>s
+          </div>
+        )}
 
         {isCombat && (() => {
           var levelInfo = getLevelData(numTimesRolled) || {};
@@ -174,11 +170,6 @@ export default function NumberTooltip(props) {
           );
         })()}
 
-        {isEntrySlot && (
-          <div className="combat-labels">
-            Hits for {n} every {getAttackTime()} seconds
-          </div>
-        )}
       </div>
     </div>
   );

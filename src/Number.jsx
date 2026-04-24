@@ -30,7 +30,6 @@ function Number(props) {
   var opacity = 0.1;
   var numTimesRolled = 0;
   var rarityData = getRarityData(n);
-  var total = 55; // rn this maxes out the levels. subject to change
   var isDead =
     combatState &&
     combatState.numberStates &&
@@ -40,12 +39,13 @@ function Number(props) {
   if (data) {
     numTimesRolled = data;
     var level = getLevel(numTimesRolled);
-    if (inCombatMenu) {
+    opacity = 0.9;
+    /*if (inCombatMenu) {
       opacity = map(level / getMaxLevel(), 0, 1, 0.2, 1);
     }
     else{
       opacity = 0.9;
-    }
+    }*/
   }
   function map(number, inMin, inMax, outMin, outMax) {
     return ((number - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
@@ -59,13 +59,12 @@ function Number(props) {
     containerClass += " number-container-common";
   }
 
-  if (hasBeenRolled) {
-    numberClass += " number-" + rarityData.id;
-  }
-
   if (numTimesRolled == 0) {
     containerClass += " unrolled";
     numberClass += " unrolled";
+  }
+  else{
+    numberClass += " number-" + rarityData.id;
   }
 
   if (isHighlighted) {

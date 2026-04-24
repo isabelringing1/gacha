@@ -2,12 +2,13 @@ import Number from "./Number";
 import { getLevel } from "./Util";
 
 export function StarLevel({ level }) {
-  if (level <= 0) return null;
+  var numStars = level - 1;
+  if (numStars <= 0) return null;
   return (
     <>
-      {Array.from({ length: level }, (_, i) => {
+      {Array.from({ length: numStars }, (_, i) => {
         const step = 30;
-        const startAngle = 90 - ((level - 1) * step) / 2;
+        const startAngle = 90 - ((numStars - 1) * step) / 2;
         const angleDeg = startAngle + i * step;
         const angle = angleDeg * (Math.PI / 180);
         const r = 45;
@@ -56,54 +57,30 @@ export default function NumberGrid({
 }) {
   var rolledSet = new Set(rolls || []);
   return Array.from({ length: 100 }, (_, i) => i + 1).map((n) => {
-    if (inCombatMenu) {
-      var numTimesRolled = numbers[n] || 0;
-      var level = numTimesRolled > 0 ? getLevel(numTimesRolled) : 0;
-      return (
-        <div key={"num-wrapper-" + n} className="combat-menu-number-wrapper">
-          <Number
-            n={n}
-            data={numbers[n]}
-            isHighlighted={highlightedNumber === n || (highlightedNumbers || []).includes(n)}
-            isRolled={rolledNumber === n}
-            isBadged={(badgedNumbers || []).includes(n)}
-            rarityHighlightUnlocked={rarityHighlightUnlocked}
-            selectingIndex={selectingIndex}
-            selectNumber={selectNumber}
-            combatState={combatState}
-            showCombat={showCombat}
-            onDragStateChange={onDragStateChange}
-            inCombatMenu={true}
-            isLocked={(lockedNumbers || []).includes(n)}
-            hasBeenRolled={rolledSet.has(n)}
-            keys={keys}
-            unlockNumber={unlockNumber}
-          />
-          {numTimesRolled > 0 && level > 0 && !(lockedNumbers || []).includes(n) && <StarLevel level={level} />}
-        </div>
-      );
-    }
-
+    var numTimesRolled = numbers[n] || 0;
+    var level = numTimesRolled > 0 ? getLevel(numTimesRolled) : 0;
     return (
-      <Number
-        key={"number-" + n}
-        n={n}
-        data={numbers[n]}
-        isHighlighted={highlightedNumber === n || (highlightedNumbers || []).includes(n)}
-        isRolled={rolledNumber === n}
-        isBadged={false}
-        rarityHighlightUnlocked={rarityHighlightUnlocked}
-        selectingIndex={selectingIndex}
-        selectNumber={selectNumber}
-        combatState={combatState}
-        showCombat={showCombat}
-        onDragStateChange={onDragStateChange}
-        inCombatMenu={false}
-        isLocked={(lockedNumbers || []).includes(n)}
-        hasBeenRolled={rolledSet.has(n)}
-        keys={keys}
-        unlockNumber={unlockNumber}
-      />
+      <div key={"num-wrapper-" + n} className="combat-menu-number-wrapper">
+        <Number
+          n={n}
+          data={numbers[n]}
+          isHighlighted={highlightedNumber === n || (highlightedNumbers || []).includes(n)}
+          isRolled={rolledNumber === n}
+          isBadged={inCombatMenu && (badgedNumbers || []).includes(n)}
+          rarityHighlightUnlocked={rarityHighlightUnlocked}
+          selectingIndex={selectingIndex}
+          selectNumber={selectNumber}
+          combatState={combatState}
+          showCombat={showCombat}
+          onDragStateChange={onDragStateChange}
+          inCombatMenu={inCombatMenu}
+          isLocked={(lockedNumbers || []).includes(n)}
+          hasBeenRolled={rolledSet.has(n)}
+          keys={keys}
+          unlockNumber={unlockNumber}
+        />
+        {numTimesRolled > 0 && level > 0 && !(lockedNumbers || []).includes(n) && <StarLevel level={level} />}
+      </div>
     );
   });
 }

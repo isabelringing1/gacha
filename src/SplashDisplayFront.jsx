@@ -23,7 +23,7 @@ export default function SplashDisplayFront(props) {
   );
   var levelUpText = (
     <span className="level-up-text" key="level-up-text">
-      LVL {newLevel}
+      LEVEL UP
     </span>
   );
   var randomNumberText =

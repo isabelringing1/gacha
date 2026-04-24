@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import NumberTooltip from "./NumberTooltip";
 import { StarLevel } from "./NumberGrid";
-import { getLevel } from "./Util";
+import { getLevel, getRarity } from "./Util";
 
 export default function CombatEntrySlot(props) {
   var { currentEnemy, index, number, onEdit, selectingIndex, numTimesRolled, isDead, inCombatEntry, onDropNumber, isDraggingNumber, duplicateBlocked, setAnySlotHovered } = props;
@@ -85,7 +85,7 @@ export default function CombatEntrySlot(props) {
       )}
       
       {selectingIndex && <div className="combat-slot-hover-view">PICK</div>}
-      {number ? number : ""}
+      {number ? <div className={("combat-number-" + getRarity(number))}>{number}</div> : ""}
       {number && numTimesRolled > 0 && getLevel(numTimesRolled) > 0 && (
         <StarLevel level={getLevel(numTimesRolled)} />
       )}

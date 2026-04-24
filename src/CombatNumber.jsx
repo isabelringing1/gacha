@@ -4,6 +4,7 @@ import CombatButton from "./CombatButton";
 import NumberTooltip from "./NumberTooltip";
 import { AUTO_LEVEL, DIVIDE_LEVEL, FACTOR_TIMING_BOOST } from "./constants.js";
 import shield from "/shield.png";
+import { getRarity } from "./Util";
 
 export default function CombatNumber(props) {
   const {
@@ -214,22 +215,25 @@ export default function CombatNumber(props) {
             setHover(false);
           }}
         >
+          
           <div
             className={
               "combat-number " +
               (combatState.numberStates[number].health == 0 ? " dead" : "") +
-              (isFactor ? " factor" : "")
+              ("combat-number-" + getRarity(number))
             }
             id={"combat-number-" + index}
           >
+            
             {combatState.numberStates[number].health}
+            {isFactor && <div className="combat-number-factor-bg"></div>}
           </div>
           {winState == "combat" && isAuto && (
             <div
               className="combat-number-cooldown"
               style={{
                 opacity: alive && winState == "combat" ? 1 : 0,
-                "--animation-duration": number / (isFactor ? 20 : 10) + "s",
+                "--animation-duration": getCooldownMs() + "ms",
               }}
             ></div>
           )}
@@ -238,7 +242,7 @@ export default function CombatNumber(props) {
               className="combat-number-cooldown combat-number-cooldown-once"
               style={{
                 opacity: alive && winState == "combat" ? 1 : 0,
-                "--animation-duration": number / (isFactor ? 20 : 10) + "s",
+                "--animation-duration": getCooldownMs() + "ms",
               }}
             ></div>
           )}

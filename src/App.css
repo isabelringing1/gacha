@@ -251,7 +251,7 @@ p {
 }
 
 .number-container-rare.highlighted {
-  background-color: #2853c940;
+  background-color: #285cc96b;
 }
 
 .number-container-epic.highlighted {
@@ -271,7 +271,7 @@ p {
 }
 
 .number-rare{
-  -webkit-text-stroke: 0.5vh #2853c940;
+  -webkit-text-stroke: 0.5vh #285cc96b;
   paint-order: stroke fill;
 }
 
@@ -901,7 +901,7 @@ button:disabled {
 
 .combat-tooltip {
   width: 190px;
-  height: 160px;
+  height: 180px;
 }
 
 .number-tooltip-text {
@@ -2056,6 +2056,10 @@ button:disabled {
   margin-top: 2dvh;
 }
 
+.math-problems-reset-timer-container{
+  padding-top: 1dvh;
+}
+
 .hearts-span {
   display: flex;
     justify-content: center;
@@ -2223,7 +2227,7 @@ input[type="number"] {
 }
 
 .history-num.rare {
-  background-color: #2853c940;
+  background-color: #285cc96b;
 }
 
 .history-num.epic {
@@ -3046,12 +3050,32 @@ input[type="number"] {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: white;
   border-radius: 1dvh;
+  z-index: 1;
 }
 
-.combat-number.factor {
-  -webkit-text-stroke: 0.5dvh #c6ecfd;
+.combat-number-factor-bg{
+  z-index: -1;
+  position: absolute;
+  border-radius: 1dvh;
+  width: 6dvh;
+  height: 6dvh;
+  background-color: #c6ecfd;
+  bottom: -0.5dvh;
+}
+
+.combat-number-rare{
+  -webkit-text-stroke: 0.5vh #285cc96b;
+  paint-order: stroke fill;
+}
+
+.combat-number-epic{
+  -webkit-text-stroke: 0.5vh #cb97ff9f;
+  paint-order: stroke fill;
+}
+
+.combat-number-legendary{
+  -webkit-text-stroke: 0.5vh #ffea7091;
   paint-order: stroke fill;
 }
 
@@ -3743,9 +3767,10 @@ input[type="number"] {
 .combat-menu-next-level-text {
   margin-top: 1dvh;
   font-size: 2dvh;
-  padding: 1dvh 2dvh;
-  font-family: NewYork, serif;
+  padding: 1dvh 2dvh 0;
   text-align: center;
+  font-family: NewYork, serif;
+
 }
 
 .combat-menu-unlock-early-button{
