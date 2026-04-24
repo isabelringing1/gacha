@@ -31,7 +31,7 @@ const COMBAT_START_COST = 200;
 const CHALLENGE_COST = 100;
 const PYRAMID_LEVELS = 10;
 const AUTO_LEVEL = 2;
-const DIVIDE_LEVEL = 5;
+const DIVIDE_LEVEL = 4;
 const CRIT_BOOST = 10;
 const FACTOR_TIMING_BOOST = 75; //multiply instead of 100
 

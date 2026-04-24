@@ -255,6 +255,7 @@ export default function Combat(props) {
         });
       }
     }
+    return didCrit;
   }
 
   function onDivide(n) {

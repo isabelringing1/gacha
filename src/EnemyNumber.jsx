@@ -40,7 +40,7 @@ export default function EnemyNumber(props) {
   }
   return (
     <div
-      className={"enemy-number " + (winState == "win" ? " dead" : "")}
+      className={"enemy-number " + (winState == "win" ? " dead " : "")}
       id="enemy-number"
       style={{ opacity: isSetup ? 0 : 1 }}
     >

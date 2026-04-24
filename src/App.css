@@ -3064,6 +3064,30 @@ input[type="number"] {
   bottom: -0.5dvh;
 }
 
+.combat-number-crit {
+  position: absolute;
+  bottom: -2.5dvh;
+  left: 50%;
+  transform: translateX(-50%);
+  color: red;
+  font-weight: bold;
+  font-size: 1.6dvh;
+  pointer-events: none;
+  opacity: 0;
+  white-space: nowrap;
+  -webkit-text-stroke: 0;
+}
+
+.combat-number-crit.crit-active {
+  animation: combat-number-crit-popup 1.2s ease-out forwards;
+}
+
+@keyframes combat-number-crit-popup {
+  0% { opacity: 1; }
+  71% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 .combat-number-rare{
   -webkit-text-stroke: 0.5vh #285cc96b;
   paint-order: stroke fill;
@@ -3088,6 +3112,7 @@ input[type="number"] {
   transform: rotate(45deg);
   box-sizing: border-box;
   bottom: 0;
+  z-index: 1;
 }
 .combat-number-cooldown::before {
   content: "";

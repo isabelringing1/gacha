@@ -134,13 +134,23 @@ export default function CombatNumber(props) {
       return;
     }
     var numberDiv = document.getElementById("combat-number-" + index);
-    onAttack(healthRef.current);
+    var didCrit = onAttack(healthRef.current);
 
     lastAttackTimeRef.current = Date.now();
 
     numberDiv.classList.remove("attack");
     void numberDiv.offsetWidth;
     numberDiv.classList.add("attack");
+
+    if (didCrit) {
+      console.log("crit by ", number);
+      var critDiv = document.getElementById("combat-number-crit-" + index);
+      if (critDiv) {
+        critDiv.classList.remove("crit-active");
+        void critDiv.offsetWidth;
+        critDiv.classList.add("crit-active");
+      }
+    }
   }
 
   function onHeal() {
@@ -215,11 +225,11 @@ export default function CombatNumber(props) {
             setHover(false);
           }}
         >
-          
+           <div className="combat-number-crit" id={"combat-number-crit-" + index}>Crit!</div>
           <div
             className={
               "combat-number " +
-              (combatState.numberStates[number].health == 0 ? " dead" : "") +
+              (combatState.numberStates[number].health == 0 ? " dead " : "") +
               ("combat-number-" + getRarity(number))
             }
             id={"combat-number-" + index}
@@ -227,6 +237,7 @@ export default function CombatNumber(props) {
             
             {combatState.numberStates[number].health}
             {isFactor && <div className="combat-number-factor-bg"></div>}
+           
           </div>
           {winState == "combat" && isAuto && (
             <div
