@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import CombatButton from "./CombatButton";
 import NumberTooltip from "./NumberTooltip";
-import { AUTO_LEVEL, DIVIDE_LEVEL } from "./constants.js";
+import { AUTO_LEVEL, DIVIDE_LEVEL, FACTOR_TIMING_BOOST } from "./constants.js";
 import shield from "/shield.png";
 
 export default function CombatNumber(props) {
@@ -92,7 +92,7 @@ export default function CombatNumber(props) {
 
 
   function getCooldownMs() {
-    return Math.max(100, number * (isFactor ? 75 : 100));
+    return Math.max(100, number * (isFactor ? FACTOR_TIMING_BOOST : 100));
   }
 
   function setAttackInterval() {

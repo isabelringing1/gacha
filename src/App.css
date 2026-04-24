@@ -263,10 +263,25 @@ p {
 }
 
 .number-container.factor {
+  background-color: #c6ecfd;
 }
 
 .number.factor {
-  -webkit-text-stroke: 0.5dvh #c6ecfd;
+  
+}
+
+.number-rare{
+  -webkit-text-stroke: 0.5vh #2853c940;
+  paint-order: stroke fill;
+}
+
+.number-epic{
+  -webkit-text-stroke: 0.5vh #cb97ff9f;
+  paint-order: stroke fill;
+}
+
+.number-legendary{
+  -webkit-text-stroke: 0.5vh #ffea7091;
   paint-order: stroke fill;
 }
 
@@ -857,8 +872,8 @@ button:disabled {
 }
 
 .combat-tooltip {
-  width: 200px;
-  height: 180px;
+  width: 190px;
+  height: 160px;
 }
 
 .number-tooltip-text {
@@ -1411,7 +1426,7 @@ button:disabled {
 
 .level-up-text {
   display: flex;
-  width: 80%;
+  width: 50%;
   font-size: 5dvh;
   padding: 1dvh 0 0 1dvh;
   text-align: center;
@@ -2045,8 +2060,8 @@ button:disabled {
 .math-success-o {
   display: block;
   width: 100%;
-  color: #00aa00;
-  font-size: 40dvh;
+  height: 40dvh;
+  width: 40dvh;
   line-height: 1;
   text-align: center;
   font-weight: bold;
@@ -3055,6 +3070,13 @@ input[type="number"] {
   animation: fillCircle var(--animation-duration) 1 linear forwards;
 }
 
+.combat-labels {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+}
+
 .combat-auto-label {
   height: 3dvh;
   padding: 0.6dvh 0.8dvh;
@@ -3064,7 +3086,13 @@ input[type="number"] {
   justify-content: center;
   align-items: center;
   color: #aaa;
+  background-color: #e7e7e7;
+  border-radius: 1dvh;
   font-family: HelveticaBold;
+}
+
+.label-tooltip {
+  height: 2dvh;
 }
 
 .floating-num {
@@ -3387,7 +3415,7 @@ input[type="number"] {
   bottom: -0.5dvh;
   right: -1dvh;
   z-index: 3;
-  height: 5dvh;
+  height: 5.3dvh;
   width: 12dvh;
   background-color: white;
   margin-top: 0.5dvh;
@@ -3397,9 +3425,19 @@ input[type="number"] {
   border-bottom-left-radius: 0;
 }
 
+.battle-button{
+  padding-bottom: 2dvh;
+}
+
 .home-button-combat-level{
   font-weight: bold;
   font-size: 1.5dvh;
+  position: absolute;
+  bottom: .3dvh;
+  right: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .run-away-button {
@@ -3683,8 +3721,9 @@ input[type="number"] {
 }
 
 .combat-menu-unlock-early-button{
-  height: 7dvh;
+  
 }
+
 .combat-pyramid-container {
   display: flex;
   flex-direction: column;

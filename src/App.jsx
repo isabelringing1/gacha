@@ -127,7 +127,7 @@ function App() {
       active: false,
       currentEnemyValue: enemyValue,
       levelRewards: generateCombatRewards(1, enemyValue),
-      combatTickets: 3,
+      combatTickets: 2,
     };
   });
   const [combatHighScore, setCombatHighScore] = useState(null);
@@ -998,13 +998,16 @@ function App() {
           isNew={numbers[bigNumberQueue[0].n] == null}
           animating={animating}
           isLocked={lockedNumbers.includes(bigNumberQueue[0].n)}
-          isLevelUp={(() => {
+          newLevel={(() => {
             var n = bigNumberQueue[0].n;
             var count = numbers[n];
             if (!count || count < 1) return false;
             var newLevel = getLevel(count + 1);
             var prevLevel = getLevel(count);
-            return newLevel >= 2 && newLevel > prevLevel;
+            if (newLevel < 2 || newLevel <= prevLevel){
+              return -1
+            }
+            return newLevel;
           })()}
         />
       )}
@@ -1057,15 +1060,15 @@ function App() {
 
       {combatUnlocked && !combatState.active && (
         <button
-          className={"home-button" + (!combatButtonSeen ? " can-claim-yellow" : "")}
+          className={"home-button" + (!combatButtonSeen ? " can-claim-yellow" : "") + (!showCombat ? " battle-button" : "")}
           onClick={() => { setCombatButtonSeen(true); setShowCombat(!showCombat); }}
         >
           {showCombat ? "GACHA" : "BATTLE"}
-          {showCombat && (
+          {!showCombat && combatState.combatLevel > 1 && (
             <div className="home-button-combat-level">
               {combatState.nextLevelUnlockTime && now < combatState.nextLevelUnlockTime
                 ? "next in " + Math.ceil((combatState.nextLevelUnlockTime - now) / 60000) + " min"
-                : "Lvl " + combatState.combatLevel}
+                : "LVL " + combatState.combatLevel}
             </div>
           )}
         </button>
@@ -1249,6 +1252,7 @@ function App() {
             {achievementsState != "hidden" && (
               <Achievements
                 numbers={numbers}
+                numPacksOpened={numPacksOpened}
                 claimedAchievements={claimedAchievements}
                 claimAchievement={claimAchievement}
                 achievementsState={achievementsState}
@@ -1317,6 +1321,7 @@ function App() {
         spades={spades}
         setSpades={setSpades}
         numbers={numbers}
+        numPacksOpened={numPacksOpened}
         claimedAchievements={claimedAchievements}
         claimAchievement={claimAchievement}
         achievementsState={achievementsState}

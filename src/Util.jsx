@@ -84,6 +84,29 @@ const roll = (
     }
   }
 
+  var adjusted = { ...dropTable };
+  var totalCount = 0;
+  for (var r in raritiesToNumber) totalCount += raritiesToNumber[r].length;
+
+  if (totalCount > 0) {
+    var presentRarities = Object.keys(raritiesToNumber)
+      .map(function (x) { return parseInt(x); })
+      .sort(function (a, b) { return a - b; });
+    var absorbRarity = presentRarities[0];
+    var excess = 0;
+    for (var pi = 0; pi < presentRarities.length; pi++) {
+      var pr = presentRarities[pi];
+      if (pr === absorbRarity) continue;
+      var trueRandom = (raritiesToNumber[pr].length / totalCount) * 100;
+      var baseChance = adjusted[pr] || 0;
+      if (trueRandom < baseChance) {
+        excess += baseChance - trueRandom;
+        adjusted[pr] = trueRandom;
+      }
+    }
+    adjusted[absorbRarity] = (adjusted[absorbRarity] || 0) + excess;
+  }
+
   var rarities = Object.keys(raritiesToNumber);
   rarities.reverse(); // [3, 2, 1, 0] — rarest first
   var rolledRarity = rarities[rarities.length - 1]; // common as fallback
@@ -91,7 +114,7 @@ const roll = (
   var cumulative = 0;
   for (var i in rarities) {
     var rarity = rarities[i];
-    cumulative += dropTable[rarity];
+    cumulative += adjusted[rarity];
     console.log(
       "rarity roll: roll was " +
         roll +

@@ -33,6 +33,7 @@ const PYRAMID_LEVELS = 10;
 const AUTO_LEVEL = 2;
 const DIVIDE_LEVEL = 5;
 const CRIT_BOOST = 10;
+const FACTOR_TIMING_BOOST = 75; //multiply instead of 100
 
 export {
   REFRESH_TIME,
@@ -54,5 +55,6 @@ export {
   AUTO_LEVEL,
   DIVIDE_LEVEL,
   CRIT_BOOST,
+  FACTOR_TIMING_BOOST,
   isMobile,
 };

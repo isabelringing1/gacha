@@ -1,28 +1,29 @@
 import { factors, getRarity } from "./Util";
 import Markdown from "react-markdown";
 import tail from "/tail.png";
-import { getRarityData, getLevel, getNumToUpgrade } from "./Util";
-import { CRIT_BOOST } from "./constants.js";
+import { getRarityData, getLevel, getNumToUpgrade, getLevelData } from "./Util";
+import { CRIT_BOOST, AUTO_LEVEL, DIVIDE_LEVEL, FACTOR_TIMING_BOOST } from "./constants.js";
 import keyIcon from "/key.png";
 
 export default function NumberTooltip(props) {
-  const { n, numTimesRolled, isMobile, isCombat, attackNumber, isFactor, makeTop, isLocked, canUnlock } = props;
+  const { n, numTimesRolled, isMobile, isCombat, attackNumber, isFactor, makeTop, isLocked, canUnlock, isEntrySlot } = props;
   var cn = "number-tooltip dither-bg";
   var cnTail = "tooltip-tail number-tail";
 
   if (isCombat) {
     cn += " combat-tooltip";
   }
-  
-  if (n <= 20) {
-    cn += " top";
-    cnTail += " tail-top";
-  }
-  if (n % 10 == 1 && isMobile) {
-    cn += " left";
-  }
-  if (n % 10 == 0 && isMobile) {
-    cn += " right";
+  if (!isEntrySlot) { 
+    if (n <= 20) {
+      cn += " top";
+      cnTail += " tail-top";
+    }
+    if (n % 10 == 1 && isMobile) {
+      cn += " left";
+    }
+    if (n % 10 == 0 && isMobile) {
+      cn += " right";
+    }
   }
 
   
@@ -81,6 +82,30 @@ export default function NumberTooltip(props) {
     );
   }
 
+  function getAttackTime() {
+    var ms = Math.max(100, n * (isFactor ? FACTOR_TIMING_BOOST : 100));
+    return ms / 1000;
+  }
+
+  function getCritChanceColor() {
+    var data = getRarityData(n);
+    var chance = data.combat_crit_chance;
+    if (isFactor) {
+      return "#89d0f0";
+    }
+    else if (data.id == "rare") {
+      return "#5882ff";
+    }
+    else if (data.id == "epic") {
+      return "#b31ff7";
+
+    }
+    else if (data.id == "legendary") {
+      return "#e7b500";
+    }
+    return "#353535";
+  }
+
   return (
     <div className={cn} id={"number-tooltip-" + n}>
       <div className="number-tooltip-inner">
@@ -125,7 +150,33 @@ export default function NumberTooltip(props) {
         <div className="number-tooltip-text">Rolled {numTimesRolled} time{numTimesRolled == 1 ? "" : "s"}, {getNumToUpgrade(numTimesRolled)} more to upgrade</div>
         {isCombat && (
           <div className="number-tooltip-text">
-            Crit chance <b style={{ color: isFactor ? "#89d0f0" : "inherit" }}>{getCritChance()}</b>
+            Crit chance <b style={{ color: getCritChanceColor() }}>{getCritChance()}</b>
+          </div>
+        )}
+
+
+        {isCombat && (() => {
+          var levelInfo = getLevelData(numTimesRolled) || {};
+          var lvl = levelInfo.level || 0;
+          var shields = levelInfo.shields || 0;
+          return (
+            <div className="combat-labels">
+              {lvl >= AUTO_LEVEL && (
+                <div className="combat-auto-label label-tooltip">AUTO</div>
+              )}
+              {lvl >= DIVIDE_LEVEL && (
+                <div className="combat-auto-label label-tooltip">DIVIDE</div>
+              )}
+              {shields > 0 && (
+                <div className="combat-auto-label label-tooltip">&hearts;&#xfe0e;x{shields}</div>
+              )}
+            </div>
+          );
+        })()}
+
+        {isEntrySlot && (
+          <div className="combat-labels">
+            Hits for {n} every {getAttackTime()} seconds
           </div>
         )}
       </div>

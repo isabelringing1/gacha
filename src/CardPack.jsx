@@ -6,7 +6,7 @@ import {
 } from "./LineUtil";
 import Drawing from "./Drawing";
 import cardPackImg from "/card_pack.png";
-import cardPackOld from "/80s_big.png";
+import cardPackOld from "/copycat_big.png";
 import { DitherShader } from "./dither-shader";
 import { isMobile } from "./constants.js";
 

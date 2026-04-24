@@ -71,6 +71,7 @@ export default function CombatEntrySlot(props) {
             numTimesRolled={numTimesRolled}
             isFactor={isFactor}
             makeTop={true}
+            isEntrySlot={true}
           />
         </div>,
         document.body

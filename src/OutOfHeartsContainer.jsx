@@ -3,6 +3,7 @@ import Timer from "./Timer";
 import ruled_paper from "/ruled_paper.png";
 import { DitherShader } from "./dither-shader";
 import MathProblem from "./MathProblem";
+import circle from "/circle.png";
 import { EASY_DIAMONDS, HARD_DIAMONDS } from "./constants.js";
 
 export default function OutOfHeartsContainer(props) {
@@ -10,6 +11,7 @@ export default function OutOfHeartsContainer(props) {
   const [showMath, setShowMath] = useState(0); //0, 1, 2
   const [mathProblems, setMathProblems] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [resetTick, setResetTick] = useState(0);
 
   useEffect(() => {
     if (mathProblems.length > 0) {
@@ -134,13 +136,33 @@ export default function OutOfHeartsContainer(props) {
                 Do Some Math Problems{" "}
                 <div>(+{EASY_DIAMONDS} &diams;&#xfe0e;)</div>
               </button>
+              {(() => {
+                var hourStart = parseInt(localStorage.getItem("gacha_math_hour_start") || "0");
+                var completions = parseInt(localStorage.getItem("gacha_math_completions") || "0");
+                var resetTime = hourStart + 3600000;
+                if (completions <= 0 || resetTime <= Date.now()) return null;
+                return (
+                  <div className="math-problems-reset-timer-container">
+                    Math Problems reset in{" "}
+                    <Timer endTime={resetTime} onTimerEnd={() => setResetTick((t) => t + 1)} />
+                  </div>
+                );
+              })()}
+             
             </div>
           </div>
 
           <div className="math-problems">
             {showSuccess && (
               <div className="math-success-overlay">
-                <span className="math-success-o">○</span>
+                <DitherShader
+                  src={circle}
+                  gridSize={2}
+                  ditherMode="bayer"
+                  colorMode="default"
+                  className="math-success-o"
+                  objectFit="contain"
+                />
               </div>
             )}
             <DitherShader

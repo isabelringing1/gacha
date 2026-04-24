@@ -3,21 +3,48 @@ import achievementData from "./json/achievements.json";
 import { UNLOCK_ACHIEVEMENTS_COST } from "./constants.js";
 import { getCurrencyIcon } from "./Util";
 
-function getMultiplesOf(n) {
+function getRowNumbers(rowIndex) {
   var result = [];
-  for (var i = n; i <= 100; i += n) {
-    result.push(String(i));
+  for (var i = 1; i <= 10; i++) {
+    result.push(String((rowIndex - 1) * 10 + i));
   }
   return result;
 }
 
+function getColNumbers(colIndex) {
+  var result = [];
+  for (var i = 0; i < 10; i++) {
+    result.push(String(colIndex + i * 10));
+  }
+  return result;
+}
+
+function countCompleteRows(numbers) {
+  var count = 0;
+  for (var r = 1; r <= 10; r++) {
+    if (getRowNumbers(r).every((m) => numbers[m] !== undefined)) count++;
+  }
+  return count;
+}
+
+function countCompleteCols(numbers) {
+  var count = 0;
+  for (var c = 1; c <= 10; c++) {
+    if (getColNumbers(c).every((m) => numbers[m] !== undefined)) count++;
+  }
+  return count;
+}
+
 export default function Achievements(props) {
-  const { numbers, claimedAchievements, claimAchievement, achievementsState, canUnlockAchievements, unlockAchievements, setHighlightedNumbers } = props;
+  const { numbers, numPacksOpened, claimedAchievements, claimAchievement, achievementsState, canUnlockAchievements, unlockAchievements, setHighlightedNumbers } = props;
   const [fadingOut, setFadingOut] = useState([]);
   const initialClaimed = useRef(claimedAchievements);
 
   var uniqueCount = Object.keys(numbers).length;
   var progress = uniqueCount;
+  var completeRows = countCompleteRows(numbers);
+  var completeCols = countCompleteCols(numbers);
+  var packsOpened = numPacksOpened || 0;
 
   useEffect(() => {
     var progress_div = document.getElementById("achievements-progress-bar-text");
@@ -35,36 +62,51 @@ export default function Achievements(props) {
     }, 1000);
   }
 
-  function getProgress(a) {
-    if (a.type === "multiples") {
-      var multiples = getMultiplesOf(a.multiple);
-      return multiples.filter((m) => numbers[m] !== undefined).length / multiples.length;
-    }
-    return uniqueCount / a.threshold;
+  function getCurrent(a) {
+    if (a.type === "row") return completeRows;
+    if (a.type === "column") return completeCols;
+    if (a.type === "packs") return packsOpened;
+    return uniqueCount;
   }
 
-  // For reach_X: only the first unclaimed one is visible; all beyond it are locked
+  function getTarget(a) {
+    if (a.type === "row" || a.type === "column" || a.type === "packs") return a.count;
+    return a.threshold;
+  }
+
+  function getProgress(a) {
+    return getCurrent(a) / getTarget(a);
+  }
+
+  function isAchieved(a) {
+    return getCurrent(a) >= getTarget(a);
+  }
+
+  // reach_X: only the closest unachieved one is visible; all beyond are locked
   var reachAchievements = achievementData
     .filter((a) => a.id.startsWith("reach_"))
     .sort((a, b) => a.threshold - b.threshold);
-
-  // "Closest" = first reach achievement not yet achieved (progress < 100%)
-  var closestReachIndex = reachAchievements.findIndex(
-    (a) => uniqueCount < a.threshold
-  );
-
-  // All reach achievements beyond the closest are locked
+  var closestReachIndex = reachAchievements.findIndex((a) => uniqueCount < a.threshold);
   var lockedReachIds = new Set(
     closestReachIndex === -1
       ? []
       : reachAchievements.slice(closestReachIndex + 1).map((a) => a.id)
   );
 
+  function isLockedByRequires(a) {
+    if (!a.requires) return false;
+    return !claimedAchievements.includes(a.requires);
+  }
+
+  function isLocked(a) {
+    return lockedReachIds.has(a.id) || isLockedByRequires(a);
+  }
+
   var visibleAchievements = achievementData
     .filter((a) => !fadingOut.includes(a.id) && !initialClaimed.current.includes(a.id))
     .sort((a, b) => {
-      var aLocked = lockedReachIds.has(a.id);
-      var bLocked = lockedReachIds.has(b.id);
+      var aLocked = isLocked(a);
+      var bLocked = isLocked(b);
       if (aLocked !== bLocked) return aLocked ? 1 : -1;
       return getProgress(b) - getProgress(a);
     });
@@ -101,22 +143,16 @@ export default function Achievements(props) {
             </div>
             <div className="achievements-entries">
               {visibleAchievements.map((achievement) => {
-                var isLocked = lockedReachIds.has(achievement.id);
+                var locked = isLocked(achievement);
                 var claimed = claimedAchievements.includes(achievement.id);
-                var achieved, progressText;
-                if (achievement.type === "multiples") {
-                  var multiples = getMultiplesOf(achievement.multiple);
-                  var collected = multiples.filter((m) => numbers[m] !== undefined).length;
-                  var total = multiples.length;
-                  achieved = collected === total;
-                  progressText = " (" + collected + "/" + total + ")";
-                } else {
-                  achieved = uniqueCount >= achievement.threshold;
-                  progressText = "";
+                var achieved = isAchieved(achievement);
+                var progressText = "";
+                if (achievement.type === "row" || achievement.type === "column" || achievement.type === "packs") {
+                  progressText = " (" + Math.min(getCurrent(achievement), getTarget(achievement)) + "/" + getTarget(achievement) + ")";
                 }
                 var fillPercent = Math.min(getProgress(achievement), 1) * 100;
 
-                if (isLocked) {
+                if (locked) {
                   return (
                     <div className="achievement-entry achievement-entry-locked" key={achievement.id}>
                       <div className="achievement-entry-name">LOCKED</div>
@@ -132,16 +168,6 @@ export default function Achievements(props) {
                       (achieved && !claimed ? " can-claim" : "")
                     }
                     key={achievement.id}
-                    onMouseOver={() => {
-                      if (achievement.type === "multiples") {
-                        setHighlightedNumbers(getMultiplesOf(achievement.multiple).map(Number));
-                      }
-                    }}
-                    onMouseOut={() => {
-                      if (achievement.type === "multiples") {
-                        setHighlightedNumbers([]);
-                      }
-                    }}
                   >
                     {!achieved && (
                       <div className="achievement-progress-fill" style={{ width: fillPercent + "%" }} />

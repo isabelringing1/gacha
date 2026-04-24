@@ -56,6 +56,7 @@ export default function MenusContainer(props) {
     spades,
     setSpades,
     numbers,
+    numPacksOpened,
     claimedAchievements,
     claimAchievement,
     achievementsState,
@@ -181,6 +182,7 @@ export default function MenusContainer(props) {
         {achievementsState != "hidden" && isMobile && (
           <Achievements
             numbers={numbers}
+            numPacksOpened={numPacksOpened}
             claimedAchievements={claimedAchievements}
             claimAchievement={claimAchievement}
             achievementsState={achievementsState}

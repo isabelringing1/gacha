@@ -91,13 +91,19 @@ export default function CombatEntry(props) {
           </button>
         )}
 
+        {waiting && (
+          <div className="combat-menu-next-level-text">
+           UNLOCK EARLY 
+          </div>
+        )}
+
           {waiting && (
             <button
               className="combat-menu-start-button combat-menu-unlock-early-button"
               onClick={onUnlockEarly}
               disabled={!canAffordUnlockEarly}
             >
-              UNLOCK EARLY<br/> (&#x2660;&#xfe0e; {unlockEarlyCost})
+              &#x2660;&#xfe0e; {unlockEarlyCost}
             </button>
           )}
 

@@ -9,7 +9,7 @@ import numberData from "./json/numbers.json";
 import rarityJson from "./json/rarity.json";
 
 export default function SplashDisplayFront(props) {
-  const { bigNumberEntry, isNew, animating, isLocked, isLevelUp } = props;
+  const { bigNumberEntry, isNew, animating, isLocked, newLevel } = props;
   var n = bigNumberEntry.n;
   var data = isLocked ? rarityJson["0"] : getRarityData(n);
   var r = isLocked ? "LOCKED" : getRarity(n).toUpperCase();
@@ -23,7 +23,7 @@ export default function SplashDisplayFront(props) {
   );
   var levelUpText = (
     <span className="level-up-text" key="level-up-text">
-      LEVEL UP
+      LVL {newLevel}
     </span>
   );
   var randomNumberText =
@@ -96,7 +96,7 @@ export default function SplashDisplayFront(props) {
           />
         </div>
       )}
-      {isLevelUp && !isLocked && ( 
+      {newLevel > 1 && !isLocked && ( 
         <div className="new-container">
           <DitherShader
             src={newBg}

@@ -52,12 +52,15 @@ function Number(props) {
   }
   var containerClass = "number-container";
   var numberClass = "number";
+  
   if (rarityHighlightUnlocked) {
     containerClass += " number-container-" + rarityData.id;
-    numberClass += " number-" + rarityData.id;
   } else {
     containerClass += " number-container-common";
-    numberClass += " number-common";
+  }
+
+  if (hasBeenRolled) {
+    numberClass += " number-" + rarityData.id;
   }
 
   if (numTimesRolled == 0) {
@@ -110,7 +113,7 @@ function Number(props) {
         zIndex: hover ? 2 : 1,
       }}
     >
-      {hover && (numTimesRolled > 0 || (isLocked && keys >= 1)) && (
+      {hover && (numTimesRolled > 0 || (isLocked && hasBeenRolled)) && (
         <NumberTooltip
           n={n}
           numTimesRolled={numTimesRolled}

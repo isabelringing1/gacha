@@ -18,6 +18,16 @@ import CombatEntry from "./CombatEntry.jsx";
 const failStrings = [ "Your calculations were off...", "Back to the drawing board.", "You'll crack it soon.", "Time to try something new."]
 const winStrings = [ "You're a natural.", "You made that look easy.", "PHEW.", "That was fast."]
 
+const LOCK_WAIT_MINUTES = [1, 3, 5, 10, 15];
+const MAX_LOCK_WAIT_MINUTES = 30;
+
+function getLockDurationMinutes(lockedLevel) {
+  var idx = lockedLevel - 2;
+  if (idx < 0) return 0;
+  if (idx >= LOCK_WAIT_MINUTES.length) return MAX_LOCK_WAIT_MINUTES;
+  return LOCK_WAIT_MINUTES[idx];
+}
+
 export default function Combat(props) {
   const {
     combatState,
@@ -63,8 +73,9 @@ export default function Combat(props) {
   const totalSecRemaining = Math.ceil(msRemaining / 1000);
   const minRemaining = Math.floor(totalSecRemaining / 60);
   const secRemaining = totalSecRemaining % 60;
+  const lockDurationMs = getLockDurationMinutes(combatState?.combatLevel || 1) * 60 * 1000;
   const elapsedMin = waiting
-    ? Math.floor((15 * 60 * 1000 - msRemaining) / 60000)
+    ? Math.floor((lockDurationMs - msRemaining) / 60000)
     : 0;
   const unlockEarlyCost = Math.max(0, 500 - elapsedMin * 30);
   const canAffordUnlockEarly = spades >= unlockEarlyCost;
@@ -393,8 +404,11 @@ export default function Combat(props) {
       newCombatState.combatLevel = nextLevel;
       newCombatState.currentEnemyValue = generateEnemyForLevel(nextLevel);
       newCombatState.levelRewards = generateCombatRewards(Math.min(nextLevel, 10), newCombatState.currentEnemyValue);
-      if (completedLevel > 1) {
-        newCombatState.nextLevelUnlockTime = Date.now() + 15 * 60 * 1000;
+      var waitMin = getLockDurationMinutes(nextLevel);
+      if (waitMin > 0) {
+        newCombatState.nextLevelUnlockTime = Date.now() + waitMin * 60 * 1000;
+      } else {
+        newCombatState.nextLevelUnlockTime = 0;
       }
       newCombatState.active = false;
       // Refresh all number states after battle
