@@ -9,9 +9,10 @@ import cardPackImg from "/card_pack.png";
 import cardPackOld from "/copycat_big.png";
 import { DitherShader } from "./dither-shader";
 import { isMobile } from "./constants.js";
+import numberBg from "/number_bg.png";
 
 const CardPack = (props) => {
-  const { pack, openPack, hidePack, bigNumberQueue } = props;
+  const { pack, openPack, hidePack, bigNumberQueue, showSliceInstructions } = props;
 
   const [isDrawing, setIsDrawing] = useState(false);
   const [lines, setLines] = useState([]);
@@ -144,6 +145,26 @@ const CardPack = (props) => {
       onTouchEnd={handleMouseUp}
     >
       <Drawing lines={lines} />
+
+      {showSliceInstructions && (
+        <div className="slice-instructions">
+          <DitherShader
+            src={numberBg}
+            gridSize={2}
+            ditherMode="bayer"
+            colorMode="colorMode"
+            className="slice-instructions-bg"
+            objectFit="fill"
+            threshold={0}
+            brightness={0.05}
+            children={[
+              <div key="slice-text" className="slice-instructions-text">
+                Slice!
+              </div>,
+            ]}
+          />
+        </div>
+      )}
 
       <div className="card-pack" id="card-pack">
         <canvas

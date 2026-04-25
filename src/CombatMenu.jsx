@@ -13,6 +13,7 @@ export default function CombatMenu(props) {
     setAnySlotHovered,
     currentEnemy,
     belowEntry,
+    isLoading,
   } = props;
 
   var draggingIsDuplicate =
@@ -39,6 +40,7 @@ export default function CombatMenu(props) {
                 selectingIndex={selectingIndex === i}
                 inCombatEntry={true}
                 currentEnemy={currentEnemy}
+                isLoading={isLoading}
                 onDropNumber={selectNumber}
                 isDraggingNumber={isDraggingNumber}
                 duplicateBlocked={draggingIsDuplicate && i !== duplicateSlotIndex}

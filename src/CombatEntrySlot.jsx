@@ -5,12 +5,12 @@ import { StarLevel } from "./NumberGrid";
 import { getLevel, getRarity } from "./Util";
 
 export default function CombatEntrySlot(props) {
-  var { currentEnemy, index, number, onEdit, selectingIndex, numTimesRolled, isDead, inCombatEntry, onDropNumber, isDraggingNumber, duplicateBlocked, setAnySlotHovered } = props;
+  var { currentEnemy, index, number, onEdit, selectingIndex, numTimesRolled, isDead, inCombatEntry, onDropNumber, isDraggingNumber, duplicateBlocked, setAnySlotHovered, isLoading } = props;
 
   var [hover, setHover] = useState(false);
   var [dragOver, setDragOver] = useState(false);
   var slotRef = useRef(null);
-  var isFactor = currentEnemy % number == 0;
+  var isFactor = !isLoading && currentEnemy % number == 0;
 
   function getTooltipPosition() {
     if (!slotRef.current) return { top: 0, left: 0 };

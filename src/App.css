@@ -465,6 +465,50 @@ p {
   image-rendering: pixelated;
 }
 
+.slice-instructions {
+  position: absolute;
+  top: 10dvh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  width: 24dvh;
+  height: 12dvh;
+  pointer-events: none;
+  opacity: 0;
+  animation: slice-instructions-fade-in 0.3s ease-out 0.7s forwards;
+}
+
+@keyframes slice-instructions-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.slice-instructions-bg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slice-instructions-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: NewYork, serif;
+  font-size: 5.5dvh;
+  color: black;
+  z-index: 1;
+  -webkit-text-stroke: 0.2dvh white;
+  paint-order: stroke fill;
+}
+
 .half-b {
   animation: fallOff 0.9s cubic-bezier(0.2, 0.6, 0.3, 1) forwards;
   transform-origin: 100% 10%;

@@ -587,6 +587,7 @@ export default function Combat(props) {
               anySlotHovered={anySlotHovered}
               setAnySlotHovered={setAnySlotHovered}
               currentEnemy={currentEnemy}
+              isLoading={waiting}
             />
           )}
         </>

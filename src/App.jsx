@@ -290,11 +290,23 @@ function App() {
     }
   }, [clubs]);
 
+  const isCombatLoading =
+    showCombat &&
+    !!combatState.nextLevelUnlockTime &&
+    now < combatState.nextLevelUnlockTime;
+
   useEffect(() => {
+    if (
+      combatState.nextLevelUnlockTime &&
+      Date.now() < combatState.nextLevelUnlockTime
+    ) {
+      setBadgedNumbers([]);
+      return;
+    }
     var currentEnemy = getCurrentEnemy();
     var factors = getFactors(currentEnemy);
     setBadgedNumbers(factors);
-  }, [combatState]);
+  }, [combatState, now]);
 
   useEffect(() => {
     saveData();
@@ -496,6 +508,11 @@ function App() {
         setNextDiamondRefreshTime(Date.now() + REFRESH_TIME);
       }
       rolledNumber = roll();
+      if (rolls.length < 2) {
+        while (lockedNumbers.includes(rolledNumber)) {
+          rolledNumber = roll();
+        }
+      }
     }
     showRolledNumber(rolledNumber, false);
   };
@@ -862,7 +879,7 @@ function App() {
   };
 
   const generateEvent = () => {
-    var n = rollEventNumber(numbers);
+    var n = rollEventNumber(numbers, lockedNumbers);
     var rarity = getRarity(n);
     var addedChance = 10;
     if (rarity == "epic") {
@@ -1065,6 +1082,7 @@ function App() {
           openPack={openPack}
           hidePack={hidePack}
           bigNumberQueue={bigNumberQueue}
+          showSliceInstructions={numPacksOpened === 0}
         />
       )}
       {hoveredPack && (
@@ -1103,7 +1121,7 @@ function App() {
             subtext =
               "next in " +
               Math.ceil((combatState.nextLevelUnlockTime - now) / 60000) +
-              " min";
+              "m";
           } else if (!combatButtonSeen) {
             isYellow = true;
           } else if (combatState.combatLevel > lastBattledLevel) {
@@ -1240,6 +1258,7 @@ function App() {
               showCombat={showCombat}
               onDragStateChange={setIsDraggingNumber}
               inCombatMenu={showCombat}
+              isCombatLoading={isCombatLoading}
               lockedNumbers={lockedNumbers}
               keys={keys}
               unlockNumber={unlockNumber}

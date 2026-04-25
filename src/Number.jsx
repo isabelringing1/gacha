@@ -19,6 +19,7 @@ function Number(props) {
     showCombat,
     onDragStateChange,
     inCombatMenu,
+    isCombatLoading,
     isLocked,
     hasBeenRolled,
     keys,
@@ -117,7 +118,7 @@ function Number(props) {
           n={n}
           numTimesRolled={numTimesRolled}
           isCombat={showCombat}
-          isFactor={isBadged}
+          isFactor={isBadged && !isCombatLoading}
           isLocked={isLocked}
           canUnlock={isLocked && keys >= 1}
         />

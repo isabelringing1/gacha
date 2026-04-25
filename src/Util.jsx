@@ -429,12 +429,13 @@ function getPayout(bet, option, stake) {
   return (stake / chances) * 100;
 }
 
-function rollEventNumber(numbers) {
+function rollEventNumber(numbers, lockedNumbers) {
+  var locked = lockedNumbers || [];
   var unrolled = [];
   var defaultPool = [];
   for (var i = 1; i <= 100; i++) {
     var rarity = data.drop_rates[i];
-    if (rarity > 0) {
+    if (rarity > 0 && !locked.includes(i)) {
       if (!numbers[i]) {
         unrolled.push(i);
       }
@@ -579,11 +580,19 @@ function getCombatLevelData(combatLevel) {
 }
 
 function getCombatLevelMin(combatLevel) {
-  return (combatLevel - 1) * 300;
+  if (combatLevel < 7) {
+    return (combatLevel - 1) * 300;
+  }
+  // From level 7 on, each level's min is double the previous level's min.
+  // Level 6 min = 1500 → level 7 min = 3000, level 8 min = 6000, etc.
+  return 1500 * Math.pow(2, combatLevel - 6);
 }
 
 function getCombatLevelMax(combatLevel) {
-  return (combatLevel - 1) * 300 + 200;
+  if (combatLevel < 7) {
+    return (combatLevel - 1) * 300 + 200;
+  }
+  return Math.floor(getCombatLevelMin(combatLevel) * 1.2);
 }
 
 function generateEnemyForLevel(combatLevel) {

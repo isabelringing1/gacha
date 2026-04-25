@@ -161,10 +161,17 @@ function splitCanvasByLine(originalCanvas, screenPoints) {
     return c;
   };
 
-  return {
-    halfA: makeHalfCanvas(true),
-    halfB: makeHalfCanvas(false),
-  };
+  const cwCanvas = makeHalfCanvas(true);
+  const ccwCanvas = makeHalfCanvas(false);
+
+  // The half above the cut (the one touching the top edge) should fall;
+  // the half below stays. Corners with y === 0 are top corners.
+  const cwCorners = cornersOnArc(tEnd, tStart, true, width, height);
+  const cwHasTop = cwCorners.some((c) => c.y === 0);
+
+  return cwHasTop
+    ? { halfA: ccwCanvas, halfB: cwCanvas }
+    : { halfA: cwCanvas, halfB: ccwCanvas };
 }
 
 export { splitCanvasByLine, segmentsCanvas, screenLineToCanvasLine };

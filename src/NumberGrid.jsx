@@ -50,6 +50,7 @@ export default function NumberGrid({
   showCombat,
   onDragStateChange,
   inCombatMenu,
+  isCombatLoading,
   lockedNumbers,
   keys,
   unlockNumber,
@@ -66,7 +67,7 @@ export default function NumberGrid({
           data={numbers[n]}
           isHighlighted={highlightedNumber === n || (highlightedNumbers || []).includes(n)}
           isRolled={rolledNumber === n}
-          isBadged={inCombatMenu && (badgedNumbers || []).includes(n)}
+          isBadged={inCombatMenu && !isCombatLoading && (badgedNumbers || []).includes(n)}
           rarityHighlightUnlocked={rarityHighlightUnlocked}
           selectingIndex={selectingIndex}
           selectNumber={selectNumber}
@@ -74,6 +75,7 @@ export default function NumberGrid({
           showCombat={showCombat}
           onDragStateChange={onDragStateChange}
           inCombatMenu={inCombatMenu}
+          isCombatLoading={isCombatLoading}
           isLocked={(lockedNumbers || []).includes(n)}
           hasBeenRolled={rolledSet.has(n)}
           keys={keys}
