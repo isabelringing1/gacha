@@ -1,23 +1,34 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { getCurrencyIcon } from "./Util";
 import ticket from "/ticket.png";
 
 export default function CombatShopEntry(props) {
-  const { shopEntry, buyCombatShopItem, currency, index } = props;
+  const { shopEntry, buyCombatShopItem, currency, index, hearts, maxHearts } = props;
   const [count, setCount] = useState(1);
   const holdTimerRef = useRef(null);
   const didHoldRef = useRef(false);
 
+  const isHeartsEntry = shopEntry.reward === "hearts";
+  const heartCapacity = isHeartsEntry ? Math.max(0, (maxHearts || 0) - (hearts || 0)) : Infinity;
+  const atHeartCap = isHeartsEntry && heartCapacity <= 0;
+
+  useEffect(() => {
+    if (isHeartsEntry && count > heartCapacity) {
+      setCount(Math.max(1, heartCapacity));
+    }
+  }, [hearts, maxHearts]);
+
   const totalCost = shopEntry.cost * count;
 
   function canBuy() {
-    return currency >= totalCost;
+    if (atHeartCap) return false;
+    return currency >= totalCost && count <= heartCapacity;
   }
 
   // Max amount we can increment by (capped at 5 by affordability)
   function maxIncrement() {
     for (let i = 5; i >= 1; i--) {
-      if (currency >= shopEntry.cost * (count + i)) return i;
+      if (currency >= shopEntry.cost * (count + i) && count + i <= heartCapacity) return i;
     }
     return 0;
   }
@@ -28,11 +39,12 @@ export default function CombatShopEntry(props) {
   }
 
   function changeCount(delta) {
-    setCount((prev) => Math.max(1, prev + delta));
+    setCount((prev) => Math.min(heartCapacity === Infinity ? Infinity : heartCapacity, Math.max(1, prev + delta)));
   }
 
   function maxAffordable() {
-    return Math.floor(currency / shopEntry.cost);
+    var byCost = Math.floor(currency / shopEntry.cost);
+    return Math.min(byCost, heartCapacity);
   }
 
   function startHold(onHeld) {

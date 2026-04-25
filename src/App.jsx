@@ -50,6 +50,7 @@ import {
   REFRESH_TIME,
   REFRESH_ENTRY_BASE_COST,
   BASE_MAX_DIAMONDS,
+  BASE_MAX_HEARTS,
   PACK_LIFETIME,
   NUM_TABS,
   UNLOCK_PACK_SHOP_COST,
@@ -69,6 +70,7 @@ function App() {
   const [rolledNumber, setRolledNumber] = useState(-1);
   const [diamonds, setDiamonds] = useState(BASE_MAX_DIAMONDS);
   const [hearts, setHearts] = useState(0);
+  const [maxHearts, setMaxHearts] = useState(BASE_MAX_HEARTS);
   const [nextDiamondRefreshTime, setNextDiamondRefreshTime] = useState(null);
   const [showingRoll, setShowingRoll] = useState(-1);
   const [bigNumberQueue, setBigNumberQueue] = useState([]);
@@ -95,7 +97,7 @@ function App() {
   const [sportsbookEntries, setSportsbookEntries] = useState([null, null]);
 
   const [charmShopState, setCharmShopState] = useState("hidden");
-  const [charmShopEntries, setCharmShopEntries] = useState([0, 0]);
+  const [charmShopEntries, setCharmShopEntries] = useState([0, 0, 0]);
   const [purchasedCharms, setPurchasedCharms] = useState([]);
   const [claimedAchievements, setClaimedAchievements] = useState([]);
   const [achievementsState, setAchievementsState] = useState("hidden");
@@ -145,6 +147,7 @@ function App() {
   const [startTime, setStartTime] = useState(null);
   const [pendingWinPopup, setPendingWinPopup] = useState(false);
   const [combatButtonSeen, setCombatButtonSeen] = useState(false);
+  const [lastBattledLevel, setLastBattledLevel] = useState(0);
   const [diamondsUnlocked, setDiamondsUnlocked] = useState(false);
   const [battleShopState, setBattleShopState] = useState("unlocked");
   const winBattleRef = useRef(null);
@@ -301,6 +304,7 @@ function App() {
     timeMultiplier,
     diamonds,
     hearts,
+    maxHearts,
     spades,
     clubs,
     maxDiamonds,
@@ -319,6 +323,8 @@ function App() {
     achievementsState,
     diamondsUnlocked,
     hasShownWinPopup,
+    combatButtonSeen,
+    lastBattledLevel,
   ]);
 
   function saveData() {
@@ -326,6 +332,7 @@ function App() {
       numbers: numbers,
       rolls: rolls,
       hearts: hearts,
+      maxHearts: maxHearts,
       nextHeartRefreshTime: nextDiamondRefreshTime,
       sportsbookState: sportsbookState,
       sportsbookEntries: sportsbookEntries,
@@ -334,7 +341,7 @@ function App() {
       cardShopEntries: cardShopEntries,
       diamonds: diamonds,
       timeMultiplier: timeMultiplier,
-      maxHearts: maxDiamonds,
+      maxDiamonds: maxDiamonds,
       charmShopState: charmShopState,
       charmShopEntries: charmShopEntries,
       purchasedCharms: purchasedCharms,
@@ -362,6 +369,8 @@ function App() {
       startTime: startTime,
       hasShownWinPopup: hasShownWinPopup,
       lockedNumbers: lockedNumbers,
+      combatButtonSeen: combatButtonSeen,
+      lastBattledLevel: lastBattledLevel,
     };
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
@@ -381,10 +390,13 @@ function App() {
         setCardShopEntries(saveData.cardShopEntries);
         setDiamonds(saveData.diamonds);
         setHearts(saveData.hearts);
+        setMaxHearts(saveData.maxHearts != null ? saveData.maxHearts : BASE_MAX_HEARTS);
         setTimeMultiplier(saveData.timeMultiplier);
-        setMaxDiamonds(saveData.maxHearts);
+        setMaxDiamonds(saveData.maxDiamonds);
         setCharmShopState(saveData.charmShopState);
-        setCharmShopEntries(saveData.charmShopEntries);
+        var loadedCharmEntries = saveData.charmShopEntries || [];
+        while (loadedCharmEntries.length < 3) loadedCharmEntries.push(0);
+        setCharmShopEntries(loadedCharmEntries);
         setPurchasedCharms(saveData.purchasedCharms);
         if (isMobile) {
           setMobileMenuIndex(saveData.mobileMenuIndex);
@@ -424,14 +436,20 @@ function App() {
         setStartTime(saveData.startTime || null);
         setHasShownWinPopup(saveData.hasShownWinPopup || false);
         if (saveData.lockedNumbers) setLockedNumbers(saveData.lockedNumbers);
+        setCombatButtonSeen(saveData.combatButtonSeen || false);
+        setLastBattledLevel(
+          saveData.lastBattledLevel != null
+            ? saveData.lastBattledLevel
+            : (saveData.combatState && saveData.combatState.combatLevel) || 0
+        );
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
           var numDiamondsGained = 0;
-          while (t <= 0 && diamonds + numDiamondsGained < maxDiamonds) {
+          while (t <= 0 && diamonds + numDiamondsGained < saveData.maxDiamonds) {
             numDiamondsGained++;
             t += REFRESH_TIME;
           }
-          var newDiamonds = diamonds + numDiamondsGained;
+          var newDiamonds = diamonds + saveData.maxDiamonds;
           setDiamonds(newDiamonds);
           if (newDiamonds < maxDiamonds) {
             setNextDiamondRefreshTime(Date.now() + t);
@@ -632,7 +650,7 @@ function App() {
     }
     setCharmShopState("unlocked");
     setSpades(spades - UNLOCK_CHARM_SHOP_COST);
-    generateCharmShopEntry([0, 1], purchasedCharms);
+    generateCharmShopEntry([0, 1, 2], purchasedCharms);
   };
 
   const canUnlockSportsbook = () => {
@@ -778,11 +796,18 @@ function App() {
   };
 
   const buyCombatShopItem = (shopEntry, index, count = 1) => {
+    if (shopEntry.reward === "hearts") {
+      var capacity = Math.max(0, maxHearts - hearts);
+      var actualCount = Math.min(count, capacity);
+      if (actualCount <= 0) return;
+      if (shopEntry.currency === "spades") {
+        setSpades(spades - shopEntry.cost * actualCount);
+      }
+      setHearts(hearts + actualCount);
+      return;
+    }
     if (shopEntry.currency === "spades") {
       setSpades(spades - shopEntry.cost * count);
-    }
-    if (shopEntry.reward === "hearts") {
-      setHearts(hearts + count);
     }
     if (shopEntry.reward === "combatTickets") {
       setCombatState((prev) => ({
@@ -797,10 +822,14 @@ function App() {
 
     if (shopEntry.consumable) {
       var newPurchasedCharms = [...purchasedCharms, shopEntry.id];
-      generateCharmShopEntry([index], newPurchasedCharms);
+      var indicesToRegen = [index];
+      if (shopEntry.id === "speed-up-6" || shopEntry.id === "diamond-upgrade-5") {
+        if (!indicesToRegen.includes(2)) indicesToRegen.push(2);
+      }
+      generateCharmShopEntry(indicesToRegen, newPurchasedCharms);
       setPurchasedCharms(newPurchasedCharms);
     }
-    
+
     if (shopEntry.category == "speed-up") {
       setTimeMultiplier(shopEntry.new_time_multiplier);
     } else if (shopEntry.category == "diamond-upgrade") {
@@ -808,10 +837,12 @@ function App() {
       setDiamonds(diamonds + shopEntry.diamond_upgrade);
     } else if (shopEntry.category == "rarity-highlight") {
       setRarityHighlightUnlocked(true);
+    } else if (shopEntry.category == "max-hearts-increase") {
+      setMaxHearts(maxHearts + shopEntry.heart_upgrade);
     } else if (shopEntry.category == "hearts") {
-      setHearts(hearts + shopEntry.amount);
+      setHearts(Math.min(maxHearts, hearts + shopEntry.amount));
     }
-    
+
   };
 
   const generateCharmShopEntry = (indices = [0], newPurchasedCharms) => {
@@ -908,7 +939,7 @@ function App() {
         setDiamonds(diamonds + amt);
       }
       if (id == "hearts") {
-        setHearts(hearts + amt);
+        setHearts(Math.min(maxHearts, hearts + amt));
       }
       if (id == "spades") {
         setSpades(spades + amt);
@@ -1058,21 +1089,53 @@ function App() {
       </div>
       {false && !isMobile && !showCombat && <History rolls={rolls} />}
 
-      {combatUnlocked && !combatState.active && (
-        <button
-          className={"home-button" + (!combatButtonSeen ? " can-claim-yellow" : "") + (!showCombat ? " battle-button" : "")}
-          onClick={() => { setCombatButtonSeen(true); setShowCombat(!showCombat); }}
-        >
-          {showCombat ? "GACHA" : "BATTLE"}
-          {!showCombat && combatState.combatLevel > 1 && (
-            <div className="home-button-combat-level">
-              {combatState.nextLevelUnlockTime && now < combatState.nextLevelUnlockTime
-                ? "next in " + Math.ceil((combatState.nextLevelUnlockTime - now) / 60000) + " min"
-                : "LVL " + combatState.combatLevel}
-            </div>
-          )}
-        </button>
-      )}
+      {combatUnlocked && !combatState.active && (() => {
+        const showingBattle = !showCombat;
+        const waitingForUnlock =
+          combatState.nextLevelUnlockTime && now < combatState.nextLevelUnlockTime;
+
+        let label = showingBattle ? "BATTLE" : "GACHA";
+        let subtext = null;
+        let isYellow = false;
+
+        if (showingBattle) {
+          if (waitingForUnlock) {
+            subtext =
+              "next in " +
+              Math.ceil((combatState.nextLevelUnlockTime - now) / 60000) +
+              " min";
+          } else if (!combatButtonSeen) {
+            isYellow = true;
+          } else if (combatState.combatLevel > lastBattledLevel) {
+            label = "LVL " + combatState.combatLevel;
+            isYellow = true;
+          }
+        }
+
+        const hasSubtext = subtext !== null;
+
+        return (
+          <button
+            className={
+              "home-button" +
+              (isYellow ? " can-claim-yellow" : "") +
+              (showingBattle && hasSubtext ? " battle-button" : "")
+            }
+            onClick={() => {
+              setCombatButtonSeen(true);
+              if (showingBattle && !waitingForUnlock) {
+                setLastBattledLevel(combatState.combatLevel);
+              }
+              setShowCombat(!showCombat);
+            }}
+          >
+            {label}
+            {hasSubtext && (
+              <div className="home-button-combat-level">{subtext}</div>
+            )}
+          </button>
+        );
+      })()}
 
       {/*<button
         className="about-button"
@@ -1087,6 +1150,7 @@ function App() {
       {showCombat && (
         <Combat
           hearts={hearts}
+          maxHearts={maxHearts}
           setHearts={setHearts}
           combatState={combatState}
           setShowCombat={setShowCombat}
@@ -1235,7 +1299,7 @@ function App() {
               </div>
               
               <div id="hearts-container" style={{ opacity: heartsUnlocked ? 1 : 0 }}>
-                &hearts;&#xfe0e; {hearts.toLocaleString()}
+                &hearts;&#xfe0e; {hearts.toLocaleString()}/{maxHearts.toLocaleString()}
               </div>
               <div id="keys-container" style={{ opacity: keysUnlocked && keys > 0 ? 1 : 0 }}>
                 <img src={keyIcon} alt="key" className="key-icon" /> {keys.toLocaleString()}

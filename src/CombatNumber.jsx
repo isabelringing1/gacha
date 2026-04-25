@@ -93,7 +93,11 @@ export default function CombatNumber(props) {
 
 
   function getCooldownMs() {
-    return Math.max(100, number * (isFactor ? FACTOR_TIMING_BOOST : 100));
+    return Math.max(50, number * (isFactor ? FACTOR_TIMING_BOOST : 100));
+  }
+
+  function getDivideCooldownMs() {
+    return getCooldownMs() * 3;
   }
 
   function setAttackInterval() {
@@ -229,8 +233,7 @@ export default function CombatNumber(props) {
           <div
             className={
               "combat-number " +
-              (combatState.numberStates[number].health == 0 ? " dead " : "") +
-              ("combat-number-" + getRarity(number))
+              (combatState.numberStates[number].health == 0 ? " dead " : "combat-number-" + getRarity(number))
             }
             id={"combat-number-" + index}
           >
@@ -326,8 +329,8 @@ export default function CombatNumber(props) {
             {canDivide && (
               <CombatButton
                 id="divide"
-                text="Divide"
-                cooldown={5 + number / 2}
+                text="DIVIDE"
+                cooldown={getDivideCooldownMs() / 1000}
                 startActive={false}
                 clickAction={onDivide}
                 isDisabled={!alive}

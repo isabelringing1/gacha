@@ -143,7 +143,7 @@ export default function OutOfHeartsContainer(props) {
                 if (completions <= 0 || resetTime <= Date.now()) return null;
                 return (
                   <div className="math-problems-reset-timer-container">
-                    Math Problems reset in{" "}
+                    Resets in{" "}
                     <Timer endTime={resetTime} onTimerEnd={() => setResetTick((t) => t + 1)} />
                   </div>
                 );

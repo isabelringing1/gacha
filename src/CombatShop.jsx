@@ -3,7 +3,7 @@ import combatData from "./json/combat.json";
 import { UNLOCK_BATTLE_SHOP_COST } from "./constants.js";
 
 export default function CombatShop(props) {
-  const { spades, buyCombatShopItem, battleShopState, canUnlockBattleShop, unlockBattleShop, clubs } = props;
+  const { spades, buyCombatShopItem, battleShopState, canUnlockBattleShop, unlockBattleShop, clubs, hearts, maxHearts } = props;
 
   return (
     <div className="combat-shop-container">
@@ -26,6 +26,8 @@ export default function CombatShop(props) {
                 shopEntry={entry}
                 buyCombatShopItem={buyCombatShopItem}
                 currency={spades}
+                hearts={hearts}
+                maxHearts={maxHearts}
               />
             ))}
           </div>

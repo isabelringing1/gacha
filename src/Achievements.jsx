@@ -45,11 +45,15 @@ export default function Achievements(props) {
   var completeRows = countCompleteRows(numbers);
   var completeCols = countCompleteCols(numbers);
   var packsOpened = numPacksOpened || 0;
+  var numbersCount = useRef(numbers.length);
 
   useEffect(() => {
     var progress_div = document.getElementById("achievements-progress-bar-text");
     if (!progress_div) return;
-    progress_div.classList.add("pulse");
+    if (numbers.length > numbersCount.current) {  
+      progress_div.classList.add("pulse");
+      numbersCount.current = numbers.length;
+    }
     setTimeout(() => {
       progress_div.classList.remove("pulse");
     }, 1000);

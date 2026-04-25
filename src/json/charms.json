@@ -39,7 +39,7 @@
         "cost": 40,
         "new_time_multiplier": 0.4,
         "consumable": true,
-        "art": "./clover.png"
+        "art": "./oranges.png"
       },
       {
         "id": "speed-up-5",
@@ -49,7 +49,7 @@
         "cost": 50,
         "new_time_multiplier": 0.25,
         "consumable": true,
-        "art": "./clover.png"
+        "art": "./dice.png"
       },
       {
         "id": "speed-up-6",
@@ -115,6 +115,6 @@
         "art": "./star.png"
       }
     ]
-   
+
   ]
 }

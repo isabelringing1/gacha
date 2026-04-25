@@ -6,6 +6,9 @@ const NUM_TABS = 5;
 const REFRESH_TIME = 60000;
 const BASE_MAX_DIAMONDS = 10;
 
+// Hearts
+const BASE_MAX_HEARTS = 5;
+
 // Pack Shop
 const UNLOCK_PACK_SHOP_COST = 100;
 const UNLOCK_ENTRY_COST = 200;
@@ -38,6 +41,7 @@ const FACTOR_TIMING_BOOST = 75; //multiply instead of 100
 export {
   REFRESH_TIME,
   BASE_MAX_DIAMONDS,
+  BASE_MAX_HEARTS,
   UNLOCK_ENTRY_COST,
   REFRESH_ENTRY_BASE_COST,
   EASY_DIAMONDS,

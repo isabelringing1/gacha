@@ -1,7 +1,7 @@
 import { factors, getRarity } from "./Util";
 import Markdown from "react-markdown";
 import tail from "/tail.png";
-import { getRarityData, getLevel, getNumToUpgrade, getLevelData } from "./Util";
+import { getRarityData, getLevel, getNumToUpgrade, getLevelData, getLevelProgress } from "./Util";
 import { CRIT_BOOST, AUTO_LEVEL, DIVIDE_LEVEL, FACTOR_TIMING_BOOST } from "./constants.js";
 import keyIcon from "/key.png";
 
@@ -83,7 +83,7 @@ export default function NumberTooltip(props) {
   }
 
   function getAttackTime() {
-    var ms = Math.max(100, n * (isFactor ? FACTOR_TIMING_BOOST : 100));
+    var ms = Math.max(50, n * (isFactor ? FACTOR_TIMING_BOOST : 100));
     return ms / 1000;
   }
 
@@ -111,16 +111,6 @@ export default function NumberTooltip(props) {
       <div className="number-tooltip-inner">
         <img className={cnTail} src={tail} />
 
-        <div className="number-tooltip-text">
-            <b>Lvl {getLevel(numTimesRolled)}</b> 
-          </div>
-
-        {isFactor && (
-          <div className="number-tooltip-text" style={{ color: "#89d0f0" }}>
-            <b>FACTOR</b>
-          </div>
-        )}
-
         <div
           style={{
             display: "flex",
@@ -138,7 +128,41 @@ export default function NumberTooltip(props) {
           </div>
         </div>
 
-        {!isCombat && <div className="number-tooltip-text">Rolled {numTimesRolled} time{numTimesRolled == 1 ? "" : "s"}, {getNumToUpgrade(numTimesRolled)} more to upgrade</div>}
+        <div className="number-tooltip-text">
+            <b>Lvl {getLevel(numTimesRolled)}</b> 
+          </div>
+
+        {isFactor && (
+          <div className="number-tooltip-text" style={{ color: "#89d0f0" }}>
+            <b>FACTOR</b>
+          </div>
+        )}
+
+        
+        {!isCombat && (() => {
+          var progress = getLevelProgress(numTimesRolled);
+          var span = Math.max(1, progress.max - progress.min);
+          var pct = progress.isMax
+            ? 100
+            : Math.max(0, Math.min(100, ((progress.current - progress.min) / span) * 100));
+          var remaining = getNumToUpgrade(numTimesRolled);
+          return (
+            <>
+              <div className="level-progress-row">
+                <span className="level-progress-bound">{progress.min}</span>
+                <div className="level-progress-bar">
+                  <div className="level-progress-fill" style={{ width: pct + "%" }} />
+                </div>
+                <span className="level-progress-bound">{progress.max}</span>
+              </div>
+              {!progress.isMax && (
+                <div className="level-progress-caption">
+                  {remaining} more to level up!
+                </div>
+              )}
+            </>
+          );
+        })()}
         {isCombat && (
           <div className="number-tooltip-text">
             Crit chance <b style={{ color: getCritChanceColor() }}>{getCritChance()}</b>

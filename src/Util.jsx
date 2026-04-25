@@ -295,8 +295,69 @@ const rollForPack = () => {
   return rolledPack;
 };
 
+const MAX_HEARTS_SLOT_INDEX = 2;
+
+function toRoman(num) {
+  if (num <= 0 || !isFinite(num)) return String(num);
+  var romans = [
+    ["M", 1000], ["CM", 900], ["D", 500], ["CD", 400],
+    ["C", 100], ["XC", 90], ["L", 50], ["XL", 40],
+    ["X", 10], ["IX", 9], ["V", 5], ["IV", 4], ["I", 1],
+  ];
+  var n = Math.floor(num);
+  var result = "";
+  for (var i = 0; i < romans.length; i++) {
+    while (n >= romans[i][1]) {
+      result += romans[i][0];
+      n -= romans[i][1];
+    }
+  }
+  return result;
+}
+
+function getMaxHeartsCost(n) {
+  return 15 + (5 * n * (n + 1)) / 2;
+}
+
+function getMaxHeartsCharm(n) {
+  return {
+    id: "max-hearts-increase-" + n,
+    category: "max-hearts-increase",
+    name: "Heart Container " + toRoman(n),
+    desc: "+5 Max \u2665\uFE0E",
+    cost: getMaxHeartsCost(n),
+    heart_upgrade: 5,
+    consumable: true,
+    art: "./heart-container.png",
+  };
+}
+
+function getNextMaxHeartsIndex(purchasedCharms) {
+  var maxIdx = 0;
+  for (var i = 0; i < purchasedCharms.length; i++) {
+    var m = /^max-hearts-increase-(\d+)$/.exec(purchasedCharms[i]);
+    if (m) {
+      var idx = parseInt(m[1], 10);
+      if (idx > maxIdx) maxIdx = idx;
+    }
+  }
+  return maxIdx + 1;
+}
+
+function isMaxHeartsUnlocked(purchasedCharms) {
+  return (
+    purchasedCharms.includes("speed-up-6") ||
+    purchasedCharms.includes("diamond-upgrade-5")
+  );
+}
+
 function getNextCharm(index, purchasedCharms) {
+  if (index === MAX_HEARTS_SLOT_INDEX) {
+    if (!isMaxHeartsUnlocked(purchasedCharms)) return null;
+    return getMaxHeartsCharm(getNextMaxHeartsIndex(purchasedCharms));
+  }
   var path = charmData.paths[index];
+  if (!path) return null;
   for (var i = 0; i < path.length; i++) {
     if (!purchasedCharms.includes(path[i].id)) {
       return path[i];
@@ -306,6 +367,11 @@ function getNextCharm(index, purchasedCharms) {
 }
 
 function getCharmById(id) {
+  if (!id) return null;
+  var match = /^max-hearts-increase-(\d+)$/.exec(id);
+  if (match) {
+    return getMaxHeartsCharm(parseInt(match[1], 10));
+  }
   for (var j = 0; j < charmData.paths.length; j++) {
     var path = charmData.paths[j];
     for (var i = 0; i < path.length; i++) {
@@ -620,6 +686,16 @@ function getNumToUpgrade(numTimesRolled) {
   return nextLevel.rolls - numTimesRolled;
 }
 
+function getLevelProgress(numTimesRolled) {
+  var rolls = numTimesRolled || 0;
+  var level = getLevel(rolls);
+  var current = levelData[level];
+  var next = levelData[level + 1];
+  var min = current ? current.rolls : 0;
+  var max = next ? next.rolls : rolls;
+  return { min: min, max: max, current: rolls, isMax: !next };
+}
+
 export {
   useInterval,
   msToTime,
@@ -653,4 +729,5 @@ export {
   getFactors,
   rollFudged,
   getNumToUpgrade,
+  getLevelProgress,
 };

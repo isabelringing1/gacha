@@ -53,6 +53,7 @@ export default function Combat(props) {
     unlockBattleShop,
     clubs,
     hearts,
+    maxHearts,
     setHearts,
     winBattleRef,
     onBattleStart,
@@ -77,7 +78,7 @@ export default function Combat(props) {
   const elapsedMin = waiting
     ? Math.floor((lockDurationMs - msRemaining) / 60000)
     : 0;
-  const unlockEarlyCost = Math.max(0, 500 - elapsedMin * 30);
+  const unlockEarlyCost = Math.max(200, 500 - elapsedMin * 30);
   const canAffordUnlockEarly = spades >= unlockEarlyCost;
 
   function onUnlockEarly() {
@@ -541,6 +542,8 @@ export default function Combat(props) {
               canUnlockBattleShop={canUnlockBattleShop}
               unlockBattleShop={unlockBattleShop}
               clubs={clubs}
+              hearts={hearts}
+              maxHearts={maxHearts}
             />
           )}
           <CombatEntry
