@@ -114,6 +114,15 @@
         "consumable": true,
         "art": "./star.png"
       }
+    ],
+      {
+        "id": "ten-pull",
+        "category": "ten-pull",
+        "name": "Ten Pull",
+        "desc": "Roll 10 #s at once",
+        "cost": 100,
+        "consumable": true,
+      }
     ]
 
   ]

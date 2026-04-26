@@ -97,8 +97,11 @@ function App() {
   const [sportsbookEntries, setSportsbookEntries] = useState([null, null]);
 
   const [charmShopState, setCharmShopState] = useState("hidden");
-  const [charmShopEntries, setCharmShopEntries] = useState([0, 0, 0]);
+  const [charmShopEntries, setCharmShopEntries] = useState([0, 0, 0, 0]);
   const [purchasedCharms, setPurchasedCharms] = useState([]);
+  const [tenPullUnlocked, setTenPullUnlocked] = useState(false);
+  const [multiRollHighlights, setMultiRollHighlights] = useState([]);
+  const [multiRolledNumbers, setMultiRolledNumbers] = useState([]);
   const [claimedAchievements, setClaimedAchievements] = useState([]);
   const [achievementsState, setAchievementsState] = useState("hidden");
   const [animating, setAnimating] = useState(false);
@@ -337,6 +340,7 @@ function App() {
     hasShownWinPopup,
     combatButtonSeen,
     lastBattledLevel,
+    tenPullUnlocked,
   ]);
 
   function saveData() {
@@ -383,6 +387,7 @@ function App() {
       lockedNumbers: lockedNumbers,
       combatButtonSeen: combatButtonSeen,
       lastBattledLevel: lastBattledLevel,
+      tenPullUnlocked: tenPullUnlocked,
     };
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
@@ -407,7 +412,7 @@ function App() {
         setMaxDiamonds(saveData.maxDiamonds);
         setCharmShopState(saveData.charmShopState);
         var loadedCharmEntries = saveData.charmShopEntries || [];
-        while (loadedCharmEntries.length < 3) loadedCharmEntries.push(0);
+        while (loadedCharmEntries.length < 4) loadedCharmEntries.push(0);
         setCharmShopEntries(loadedCharmEntries);
         setPurchasedCharms(saveData.purchasedCharms);
         if (isMobile) {
@@ -453,6 +458,9 @@ function App() {
           saveData.lastBattledLevel != null
             ? saveData.lastBattledLevel
             : (saveData.combatState && saveData.combatState.combatLevel) || 0
+        );
+        setTenPullUnlocked(
+          saveData.tenPullUnlocked || (saveData.purchasedCharms || []).includes("ten-pull")
         );
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (t <= 0) {
@@ -515,6 +523,95 @@ function App() {
       }
     }
     showRolledNumber(rolledNumber, false);
+  };
+
+  const isRollTenButtonDisabled = () => {
+    return (
+      showingRoll != -1 ||
+      diamonds < 10 ||
+      animating ||
+      bigNumberQueue.length > 0 ||
+      multiRollHighlights.length > 0 ||
+      multiRolledNumbers.length > 0
+    );
+  };
+
+  const rollTen = () => {
+    if (isRollTenButtonDisabled()) return;
+    if (!startTime) setStartTime(Date.now());
+    setNumRollButtonClicks(numRollButtonClicks + 1);
+    if (!diamondsUnlocked) setDiamondsUnlocked(true);
+    setDiamonds(diamonds - 10);
+    if (!nextDiamondRefreshTime) {
+      setNextDiamondRefreshTime(Date.now() + REFRESH_TIME);
+    }
+
+    var rolledNumbers = [];
+    for (var i = 0; i < 10; i++) {
+      rolledNumbers.push(roll());
+    }
+
+    setShowingRoll(0); // block other rolls during animation
+
+    var T = 1500 * timeMultiplier; // total animation duration: all 10 rolls resolve at T
+    var minDelay = 5 * timeMultiplier;
+    var maxDelay = 300 * timeMultiplier;
+
+    var currentCells = new Array(10).fill(null);
+    var finishedCount = 0;
+
+    var updateHighlights = () => {
+      var set = new Set();
+      for (var k = 0; k < 10; k++) {
+        if (currentCells[k] != null) set.add(currentCells[k]);
+      }
+      setMultiRollHighlights(Array.from(set));
+    };
+
+    rolledNumbers.forEach((r, rollIdx) => {
+      var total = r;
+      if (r <= 30) total += 100;
+
+      // Pre-compute cumulative eased delays for this roll, then scale so the
+      // final tick lands at exactly T (so all 10 rolls resolve simultaneously).
+      var rawDelays = [];
+      var rawSum = 0;
+      for (var i = 1; i <= total; i++) {
+        var progress = i / total;
+        var d = minDelay + (maxDelay - minDelay) * Math.pow(progress, 8);
+        rawSum += d;
+        rawDelays.push(rawSum);
+      }
+      var scale = rawSum > 0 ? T / rawSum : 1;
+
+      for (var step = 1; step <= total; step++) {
+        ((stepCaptured) => {
+          var scheduledTime = rawDelays[stepCaptured - 1] * scale;
+          setTimeout(() => {
+            var cell = ((stepCaptured - 1) % 100) + 1;
+            currentCells[rollIdx] = cell;
+            updateHighlights();
+
+            if (stepCaptured === total) {
+              finishedCount++;
+              if (finishedCount === 10) {
+                // Hold highlights briefly, then settle to rolled numbers, then queue big numbers
+                setTimeout(() => {
+                  setMultiRollHighlights([]);
+                  setMultiRolledNumbers(rolledNumbers);
+                  setTimeout(() => {
+                    setMultiRolledNumbers([]);
+                    setShowingRoll(-1);
+                    var newBigNumbers = rolledNumbers.map((n) => ({ n: n, fromPack: true }));
+                    setBigNumberQueue((prev) => [...prev, ...newBigNumbers]);
+                  }, 300 * timeMultiplier);
+                }, 400 * timeMultiplier);
+              }
+            }
+          }, scheduledTime);
+        })(step);
+      }
+    });
   };
 
   const showRolledNumber = (n, fromPack) => {
@@ -667,7 +764,7 @@ function App() {
     }
     setCharmShopState("unlocked");
     setSpades(spades - UNLOCK_CHARM_SHOP_COST);
-    generateCharmShopEntry([0, 1, 2], purchasedCharms);
+    generateCharmShopEntry([0, 1, 2, 3], purchasedCharms);
   };
 
   const canUnlockSportsbook = () => {
@@ -842,6 +939,7 @@ function App() {
       var indicesToRegen = [index];
       if (shopEntry.id === "speed-up-6" || shopEntry.id === "diamond-upgrade-5") {
         if (!indicesToRegen.includes(2)) indicesToRegen.push(2);
+        if (!indicesToRegen.includes(3)) indicesToRegen.push(3);
       }
       generateCharmShopEntry(indicesToRegen, newPurchasedCharms);
       setPurchasedCharms(newPurchasedCharms);
@@ -858,6 +956,8 @@ function App() {
       setMaxHearts(maxHearts + shopEntry.heart_upgrade);
     } else if (shopEntry.category == "hearts") {
       setHearts(Math.min(maxHearts, hearts + shopEntry.amount));
+    } else if (shopEntry.category == "ten-pull") {
+      setTenPullUnlocked(true);
     }
 
   };
@@ -1251,6 +1351,8 @@ function App() {
               numbers={numbers}
               highlightedNumber={highlightedNumber}
               highlightedNumbers={highlightedNumbers}
+              multiRollHighlights={multiRollHighlights}
+              multiRolledNumbers={multiRolledNumbers}
               rolledNumber={rolledNumber}
               badgedNumbers={badgedNumbers}
               rarityHighlightUnlocked={rarityHighlightUnlocked}
@@ -1399,6 +1501,9 @@ function App() {
         buyCharm={buyCharm}
         setHoveredPack={setHoveredPack}
         isRollButtonDisabled={isRollButtonDisabled}
+        rollTen={rollTen}
+        isRollTenButtonDisabled={isRollTenButtonDisabled}
+        tenPullUnlocked={tenPullUnlocked}
         lastPackOpened={lastPackOpened}
         showCombat={showCombat}
         clubs={clubs}

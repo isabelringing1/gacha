@@ -1131,6 +1131,25 @@ button:disabled {
   opacity: 0.5;
 }
 
+#roll-ten-button {
+  margin-top: 0.4dvh;
+  margin-bottom: 1dvh;
+  font-size: 1.6dvh;
+  padding: 1.4dvh 2dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-left: none;
+}
+
+#roll-ten-button:hover:not([disabled]) {
+  margin-top: 0.5dvh;
+}
+
+#roll-ten-button:disabled {
+  opacity: 0.5;
+}
+
 .big-number-container {
   position: absolute;
   width: 100vw;

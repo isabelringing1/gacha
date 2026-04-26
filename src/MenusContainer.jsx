@@ -49,6 +49,9 @@ export default function MenusContainer(props) {
     buyCharm,
     setHoveredPack,
     isRollButtonDisabled,
+    rollTen,
+    isRollTenButtonDisabled,
+    tenPullUnlocked,
     lastPackOpened,
     showCombat,
     clubs,
@@ -124,6 +127,15 @@ export default function MenusContainer(props) {
             >
               {diamondsUnlocked ? <>Roll (&diams;&#xfe0e;1)</> : "Roll"}
             </button>
+            {tenPullUnlocked && (
+              <button
+                id="roll-ten-button"
+                disabled={isRollTenButtonDisabled && isRollTenButtonDisabled()}
+                onClick={rollTen}
+              >
+                Roll 10 (&diams;&#xfe0e;10)
+              </button>
+            )}
             {diamonds <= 0 && (
               <button
                 id="out-of-hearts-button"

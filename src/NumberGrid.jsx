@@ -41,6 +41,8 @@ export default function NumberGrid({
   numbers,
   highlightedNumber,
   highlightedNumbers,
+  multiRollHighlights,
+  multiRolledNumbers,
   rolledNumber,
   badgedNumbers,
   rarityHighlightUnlocked,
@@ -65,8 +67,8 @@ export default function NumberGrid({
         <Number
           n={n}
           data={numbers[n]}
-          isHighlighted={highlightedNumber === n || (highlightedNumbers || []).includes(n)}
-          isRolled={rolledNumber === n}
+          isHighlighted={highlightedNumber === n || (highlightedNumbers || []).includes(n) || (multiRollHighlights || []).includes(n)}
+          isRolled={rolledNumber === n || (multiRolledNumbers || []).includes(n)}
           isBadged={inCombatMenu && !isCombatLoading && (badgedNumbers || []).includes(n)}
           rarityHighlightUnlocked={rarityHighlightUnlocked}
           selectingIndex={selectingIndex}

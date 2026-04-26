@@ -351,12 +351,26 @@ function isMaxHeartsUnlocked(purchasedCharms) {
   );
 }
 
-function getNextCharm(index, purchasedCharms) {
-  if (index === MAX_HEARTS_SLOT_INDEX) {
-    if (!isMaxHeartsUnlocked(purchasedCharms)) return null;
-    return getMaxHeartsCharm(getNextMaxHeartsIndex(purchasedCharms));
+const TEN_PULL_SLOT_INDEX = 3;
+
+function isTenPullUnlocked(purchasedCharms) {
+  return (
+    purchasedCharms.includes("speed-up-6") &&
+    purchasedCharms.includes("diamond-upgrade-5")
+  );
+}
+
+function findPathByCategory(category) {
+  for (var p = 0; p < charmData.paths.length; p++) {
+    var path = charmData.paths[p];
+    if (path && path.length > 0 && path[0].category === category) {
+      return path;
+    }
   }
-  var path = charmData.paths[index];
+  return null;
+}
+
+function nextUnpurchasedInPath(path, purchasedCharms) {
   if (!path) return null;
   for (var i = 0; i < path.length; i++) {
     if (!purchasedCharms.includes(path[i].id)) {
@@ -364,6 +378,20 @@ function getNextCharm(index, purchasedCharms) {
     }
   }
   return null;
+}
+
+function getNextCharm(index, purchasedCharms) {
+  if (index === MAX_HEARTS_SLOT_INDEX) {
+    if (!isMaxHeartsUnlocked(purchasedCharms)) return null;
+    return getMaxHeartsCharm(getNextMaxHeartsIndex(purchasedCharms));
+  }
+  if (index === TEN_PULL_SLOT_INDEX) {
+    if (!isTenPullUnlocked(purchasedCharms)) return null;
+    return nextUnpurchasedInPath(findPathByCategory("ten-pull"), purchasedCharms);
+  }
+  var path = charmData.paths[index];
+  if (!path) return null;
+  return nextUnpurchasedInPath(path, purchasedCharms);
 }
 
 function getCharmById(id) {
@@ -374,6 +402,7 @@ function getCharmById(id) {
   }
   for (var j = 0; j < charmData.paths.length; j++) {
     var path = charmData.paths[j];
+    if (!path) continue;
     for (var i = 0; i < path.length; i++) {
       if (path[i].id == id) {
         return path[i];
