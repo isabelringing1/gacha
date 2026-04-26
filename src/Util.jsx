@@ -324,9 +324,9 @@ function getMaxHeartsCharm(n) {
     id: "max-hearts-increase-" + n,
     category: "max-hearts-increase",
     name: "Heart Container " + toRoman(n),
-    desc: "+5 Max \u2665\uFE0E",
+    desc: "+1 Max \u2665\uFE0E",
     cost: getMaxHeartsCost(n),
-    heart_upgrade: 5,
+    heart_upgrade: 1,
     consumable: true,
     art: "./heart-container.png",
   };

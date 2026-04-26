@@ -30,7 +30,7 @@
   {
     "level": 4,
     "rolls": 10,
-    "shields": 2,
+    "shields": 1,
     "critBoost": 15,
     "canBlock": true
   },
@@ -44,7 +44,7 @@
   {
     "level": 6,
     "rolls": 21,
-    "shields": 3,
+    "shields": 2,
     "critBoost": 25,
     "canBlock": true
   },
@@ -58,7 +58,7 @@
   {
     "level": 8,
     "rolls": 36,
-    "shields": 4,
+    "shields": 3,
     "critBoost": 35,
     "canBlock": true
   },
@@ -72,7 +72,7 @@
   {
     "level": 10,
     "rolls": 55,
-    "shields": 5,
+    "shields": 4,
     "critBoost": 45,
     "canBlock": true
   }

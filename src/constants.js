@@ -7,7 +7,7 @@ const REFRESH_TIME = 60000;
 const BASE_MAX_DIAMONDS = 10;
 
 // Hearts
-const BASE_MAX_HEARTS = 5;
+const BASE_MAX_HEARTS = 3;
 
 // Pack Shop
 const UNLOCK_PACK_SHOP_COST = 100;

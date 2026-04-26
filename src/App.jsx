@@ -944,6 +944,7 @@ function App() {
   }
 
   function unlockNumber(n) {
+    if (showingRoll != -1) return;
     if (keys <= 0) return;
     if (!lockedNumbers.includes(n)) return;
     setKeys(keys - 1);
@@ -1139,6 +1140,7 @@ function App() {
               (isYellow ? " can-claim-yellow" : "") +
               (showingBattle && hasSubtext ? " battle-button" : "")
             }
+            disabled={showingRoll != -1}
             onClick={() => {
               setCombatButtonSeen(true);
               if (showingBattle && !waitingForUnlock) {

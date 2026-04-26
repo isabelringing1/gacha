@@ -175,7 +175,24 @@ export default function CombatNumber(props) {
     });
   }
 
+  function canDivideNow() {
+    if (!alive) return false;
+    var shieldsLeft = combatState.numberStates[number]?.shields || 0;
+    return shieldsLeft > 0 || hearts > 0;
+  }
+
   function onDivide() {
+    if (!canDivideNow()) return;
+    var shieldsLeft = combatState.numberStates[number]?.shields || 0;
+    if (shieldsLeft > 0) {
+      setCombatState((prev) => {
+        var next = { ...prev };
+        next.numberStates[number].shields -= 1;
+        return next;
+      });
+    } else {
+      setHearts(hearts - 1);
+    }
     onNumberDivide(number);
   }
 
@@ -329,11 +346,11 @@ export default function CombatNumber(props) {
             {canDivide && (
               <CombatButton
                 id="divide"
-                text="DIVIDE"
+                text={"DIVIDE (1\u2665\uFE0E)"}
                 cooldown={getDivideCooldownMs() / 1000}
                 startActive={false}
                 clickAction={onDivide}
-                isDisabled={!alive}
+                isDisabled={!canDivideNow()}
               />
             )}
           </div>
