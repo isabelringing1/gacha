@@ -14,7 +14,7 @@ export default function NumberTooltip(props) {
     cn += " combat-tooltip";
   }
   if (!isEntrySlot) { 
-    if (n <= 20) {
+    if (n <= 30) {
       cn += " top";
       cnTail += " tail-top";
     }

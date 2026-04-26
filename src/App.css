@@ -924,8 +924,10 @@ button:disabled {
 }
 
 .number-tooltip {
-  width: 180px;
-  height: 150px;
+  width: max-content;
+  min-width: 18dvh;
+  max-width: 26dvh;
+  height: auto;
 
   border-radius: 2dvh;
   background-color: white;
@@ -939,13 +941,13 @@ button:disabled {
   align-items: center;
   margin-bottom: 27dvh;
   text-align: center;
-  
+
   filter: drop-shadow(0 0.2dvh 0.4dvh rgba(0, 0, 0, 0.2));
 }
 
 .combat-tooltip {
-  width: 230px;
-  height: 190px;
+  min-width: 22dvh;
+  max-width: 30dvh;
 }
 
 .number-tooltip-text {
@@ -966,6 +968,9 @@ button:disabled {
   border-radius: 2dvh;
   z-index: 3;
   position: relative;
+  padding: 1.4dvh 1dvh;
+  box-sizing: border-box;
+  gap: 0.4dvh;
 }
 
 #menu-tooltip {
@@ -1005,25 +1010,25 @@ button:disabled {
 }
 
 .tooltip-tail {
-  width: 30px;
+  width: 3dvh;
   position: absolute;
-  bottom: -28px;
+  bottom: -2.6dvh;
 }
 
 .combat-tooltip-tail {
   rotate: 0deg !important;
   bottom: auto;
-  top: -28px;
+  top: -2.6dvh;
 }
 
 .combat-tooltip-tail-top{
   rotate: 180deg !important;
-  bottom: -28px;
+  bottom: -2.6dvh;
 }
 
 .menu-tooltip-tail {
   bottom: auto;
-  top: -28px;
+  top: -2.6dvh;
 }
 
 .menus-tail-bottom {
@@ -1037,7 +1042,7 @@ button:disabled {
 
 .tail-top {
   bottom: auto;
-  top: -28px;
+  top: -2.6dvh;
   rotate: 0deg;
 }
 
@@ -2904,20 +2909,22 @@ input[type="number"] {
 }
 
 .cloud-1 {
+  position: absolute;
   width: 28dvh;
   height: 18dvh;
-  
-  bottom: -7dvh;
-  right: -110%;
+  bottom: -4dvh;
+  right: -10dvh;
+  z-index: 1;
   animation: cloud-1 34s infinite ease-in-out;
-  
 }
 
 .cloud-2 {
+  position: absolute;
   width: 22dvh;
   height: 13dvh;
-  left: -70%;
-  bottom: -6dvh;
+  left: -8dvh;
+  bottom: -3dvh;
+  z-index: 1;
   animation: cloud-2 34s infinite ease-in-out;
 }
 
@@ -3425,25 +3432,25 @@ input[type="number"] {
 
 @keyframes cloud-1 {
   0% {
-    right: -110%;
+    right: -7dvh;
   }
   50% {
-    right: -140%;
+    right: -2dvh;
   }
   100%{
-    right: -110%;
+    right: -7dvh;
   }
 }
 
 @keyframes cloud-2 {
   0% {
-    left: -100%;
+    left: -5dvh;
   }
   50% {
-    left: -150%;
+    left: 0dvh;
   }
   100%{
-    left: -100%;
+    left: -5dvh;
   }
 }
 
@@ -4109,7 +4116,9 @@ input[type="number"] {
   }
 
   .number-tooltip {
-    width: 30vw;
+    min-width: 30vw;
+    max-width: 50vw;
+    width: max-content;
 
     border-radius: 3vw;
     margin-bottom: 30vw;

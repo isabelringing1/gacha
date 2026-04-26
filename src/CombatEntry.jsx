@@ -46,21 +46,21 @@ export default function CombatEntry(props) {
               threshold={0}
               contrast={1.1}
             />
+            <DitherShader
+              src={cloud1}
+              gridSize={2}
+              ditherMode="bayer"
+              className="floating-num-cloud cloud-1"
+              objectFit="contain"
+            />
+            <DitherShader
+              src={cloud2}
+              gridSize={2}
+              ditherMode="bayer"
+              className="floating-num-cloud cloud-2"
+              objectFit="contain"
+            />
             <div className="floating-num">
-              <DitherShader
-                src={cloud1}
-                gridSize={2}
-                ditherMode="bayer"
-                className="floating-num-cloud cloud-1"
-                objectFit="contain"
-              />
-              <DitherShader
-                src={cloud2}
-                gridSize={2}
-                ditherMode="bayer"
-                className="floating-num-cloud cloud-2"
-                objectFit="contain"
-              />
               {waiting ? (
                 <>
                   <div id={"floating-num-0"} key={"floating-num-0"}>?</div>
