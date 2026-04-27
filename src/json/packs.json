@@ -159,7 +159,7 @@
       "name": "Evens Pack",
       "multiple": 2,
       "art": "./evens.png",
-      "big_art": "./odds_big.png",
+      "big_art": "./evens_big.png",
       "color_mode": "original",
       "custom_palette": ["#575757", "#cbcbcbff", "#ffffffff"],
       "rarity": 0,

@@ -13,6 +13,7 @@ import {
   generateCombatRewards,
   getFactors,
   getLevel,
+  getLevelData,
 } from "./Util";
 import { UNLOCK_ENTRY_COST } from "./constants.js";
 import ticket from "/ticket.png";
@@ -132,7 +133,7 @@ function App() {
       active: false,
       currentEnemyValue: enemyValue,
       levelRewards: generateCombatRewards(1, enemyValue),
-      combatTickets: 2,
+      combatTickets: 3,
     };
   });
   const [combatHighScore, setCombatHighScore] = useState(null);
@@ -292,6 +293,17 @@ function App() {
       setClubsUnlocked(true);
     }
   }, [clubs]);
+
+  useEffect(() => {
+    if (heartsUnlocked) return;
+    for (var n in numbers) {
+      var ld = getLevelData(numbers[n]);
+      if (ld && ld.shields > 0) {
+        setHeartsUnlocked(true);
+        break;
+      }
+    }
+  }, [numbers, heartsUnlocked]);
 
   const isCombatLoading =
     showCombat &&
@@ -863,7 +875,7 @@ function App() {
     var newPackShopEntriesUnlocked = [...packShopEntriesUnlocked];
     newPackShopEntriesUnlocked[i] = true;
     setPackShopEntriesUnlocked(newPackShopEntriesUnlocked);
-    generatePackShopEntry();
+    generatePackShopEntry(1, [i]);
     setSpades(spades - UNLOCK_ENTRY_COST);
   };
 
@@ -1240,7 +1252,7 @@ function App() {
               (isYellow ? " can-claim-yellow" : "") +
               (showingBattle && hasSubtext ? " battle-button" : "")
             }
-            disabled={showingRoll != -1}
+            disabled={showingRoll != -1 && !waitingForUnlock}
             onClick={() => {
               setCombatButtonSeen(true);
               if (showingBattle && !waitingForUnlock) {
@@ -1297,6 +1309,7 @@ function App() {
           winBattleRef={winBattleRef}
           onBattleStart={() => setNumBattles((n) => n + 1)}
           setHeartsUnlocked={setHeartsUnlocked}
+          heartsUnlocked={heartsUnlocked}
         />
       )}
 
@@ -1330,6 +1343,7 @@ function App() {
                 setHoveredPack={setHoveredPack}
                 hoveredPack={hoveredPack}
                 lastPackOpened={lastPackOpened}
+                numPacksOpened={numPacksOpened}
               />
             )}
             {currentEvent && !currentEvent.isNew && (

@@ -97,7 +97,7 @@ export default function CombatNumber(props) {
   }
 
   function getDivideCooldownMs() {
-    return getCooldownMs() * 3;
+    return getCooldownMs() * 4;
   }
 
   function setAttackInterval() {

@@ -609,8 +609,11 @@ function getCombatLevelData(combatLevel) {
 }
 
 function getCombatLevelMin(combatLevel) {
+  if (combatLevel == 2){
+    return 250;
+  }
   if (combatLevel < 7) {
-    return (combatLevel - 1) * 300;
+    return (combatLevel - 1) * 400;
   }
   // From level 7 on, each level's min is double the previous level's min.
   // Level 6 min = 1500 → level 7 min = 3000, level 8 min = 6000, etc.
@@ -618,8 +621,11 @@ function getCombatLevelMin(combatLevel) {
 }
 
 function getCombatLevelMax(combatLevel) {
+  if (combatLevel == 2){
+    return 350;
+  }
   if (combatLevel < 7) {
-    return (combatLevel - 1) * 300 + 200;
+    return (combatLevel - 1) * 400 + 200;
   }
   return Math.floor(getCombatLevelMin(combatLevel) * 1.2);
 }

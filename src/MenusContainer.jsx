@@ -179,6 +179,7 @@ export default function MenusContainer(props) {
             refreshPackShopEntry={refreshPackShopEntry}
             setHoveredPack={setHoveredPack}
             lastPackOpened={lastPackOpened}
+            numPacksOpened={numPacksOpened}
           />
         )}
         {charmShopState != "hidden" && isMobile && (

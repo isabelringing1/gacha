@@ -2,6 +2,7 @@ import { useState } from "react";
 import { DitherShader } from "./dither-shader";
 import cardPackOld from "/card_pack_old.png";
 import priceTag from "/price_tag.png";
+import priceTagYellow from "/price_tag_yellow.png";
 import Timer from "./Timer.jsx";
 import trash from "/trash.png";
 import trash_highlight from "/trash_hover.png";
@@ -20,6 +21,7 @@ export default function PackShopEntry(props) {
     setHoveredPack,
     lastPackOpened,
     hoveredPack,
+    numPacksOpened,
   } = props;
 
   const [trashHovered, setTrashHovered] = useState(false);
@@ -123,6 +125,16 @@ export default function PackShopEntry(props) {
                 threshold={0}
                 className={"price-tag"}
               />
+              {numPacksOpened === 0 && canBuy() && (
+                <DitherShader
+                  src={priceTagYellow}
+                  gridSize={2}
+                  ditherMode="bayer"
+                  colorMode={"original"}
+                  threshold={0}
+                  className={"price-tag price-tag-yellow-pulse"}
+                />
+              )}
               <button
                 onClick={() => onBuyPressed(shopEntry)}
                 className="pack-shop-entry-buy-button"

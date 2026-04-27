@@ -15,8 +15,8 @@ import CombatMenu from "./CombatMenu.jsx";
 import CombatShop from "./CombatShop.jsx";
 import CombatEntry from "./CombatEntry.jsx";
 
-const failStrings = [ "Your calculations were off...", "Back to the drawing board.", "You'll crack it soon.", "Time to try something new."]
-const winStrings = [ "You're a natural.", "You made that look easy.", "PHEW.", "That was fast."]
+const failStrings = [ "Back to the drawing board.", "When in doubt, roll more numbers", "Time to try something new."]
+const winStrings = [ "You're a natural.", "You made that look easy.", "PHEW."]
 
 const LOCK_WAIT_MINUTES = [1, 3, 5, 10, 15];
 const MAX_LOCK_WAIT_MINUTES = 30;
@@ -58,6 +58,7 @@ export default function Combat(props) {
     winBattleRef,
     onBattleStart,
     setHeartsUnlocked,
+    heartsUnlocked,
   } = props;
   const [enemyState, setEnemyState] = useState(null);
   const [winState, setWinState] = useState("menu");
@@ -155,7 +156,6 @@ export default function Combat(props) {
     if (setIsCombatActive) setIsCombatActive(winState !== "menu");
     if (winState == "win") {
       setWinString(getRandomWinString());
-      setHeartsUnlocked(true);
       {
         var rewards = combatState.levelRewards || {};
         setLevelRewards(rewards);
@@ -515,7 +515,7 @@ export default function Combat(props) {
 
   function getRandomWinString() {
     if (!combatState || combatState.combatLevel === 1) {
-      return "That's how you do it."
+      return "Nice!\n\nEnemies won't always be so apathetic.\nWhen in doubt, roll more numbers."
     }
     return winStrings[Math.floor(Math.random() * winStrings.length)];
   }
@@ -544,6 +544,7 @@ export default function Combat(props) {
               clubs={clubs}
               hearts={hearts}
               maxHearts={maxHearts}
+              heartsUnlocked={heartsUnlocked}
             />
           )}
           <CombatEntry
@@ -638,6 +639,7 @@ export default function Combat(props) {
               winStateRef={winStateRef}
               isSetup={showReequip}
               attributes={(getCombatLevelData(combatState.combatLevel) || {}).attributes || []}
+              attackIntervalBase={(getCombatLevelData(combatState.combatLevel) || {}).attack_interval || 2000}
             />
             <div className="enemy-text-container">
               {records.map((r, i) => {

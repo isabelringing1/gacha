@@ -4,7 +4,7 @@ import shadow from "/shadow.png";
 import { DitherShader } from "./dither-shader";
 
 export default function EnemyNumber(props) {
-  const { isSetup, enemyRef, onAttack, winState, winStateRef, attributes = [] } = props;
+  const { isSetup, enemyRef, onAttack, winState, winStateRef, attributes = [], attackIntervalBase = 2000 } = props;
 
   var timeoutRef = useRef(null);
 
@@ -36,7 +36,7 @@ export default function EnemyNumber(props) {
   }
 
   function getRandomAttackInterval() {
-    return 2000 + Math.random() * 500;
+    return attackIntervalBase + Math.random() * 500;
   }
   return (
     <div

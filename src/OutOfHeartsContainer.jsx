@@ -120,9 +120,7 @@ export default function OutOfHeartsContainer(props) {
                   Next &diams;&#xfe0e; in{" "}
                   <Timer
                     endTime={nextDiamondRefreshTime}
-                    onTimerEnd={() => {
-                      setShowOutOfDiamonds(false);
-                    }}
+                    onTimerEnd={() => {}}
                   />
                 </div>
               )}
@@ -143,7 +141,7 @@ export default function OutOfHeartsContainer(props) {
                 if (completions <= 0 || resetTime <= Date.now()) return null;
                 return (
                   <div className="math-problems-reset-timer-container">
-                    Resets in{" "}
+                    Difficulty resets in{" "}
                     <Timer endTime={resetTime} onTimerEnd={() => setResetTick((t) => t + 1)} />
                   </div>
                 );

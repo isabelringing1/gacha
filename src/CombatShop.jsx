@@ -3,11 +3,15 @@ import combatData from "./json/combat.json";
 import { UNLOCK_BATTLE_SHOP_COST } from "./constants.js";
 
 export default function CombatShop(props) {
-  const { spades, buyCombatShopItem, battleShopState, canUnlockBattleShop, unlockBattleShop, clubs, hearts, maxHearts } = props;
+  const { spades, buyCombatShopItem, battleShopState, canUnlockBattleShop, unlockBattleShop, clubs, hearts, maxHearts, heartsUnlocked } = props;
+
+  const visibleEntries = combatData.shop.filter(
+    (entry) => heartsUnlocked || entry.reward !== "hearts"
+  );
 
   return (
-    <div className="combat-shop-container">
-      <div className="combat-shop dither-bg">
+    <div className={"combat-shop-container" + (heartsUnlocked ? "" : " combat-shop-container-compact")}>
+      <div className={"combat-shop dither-bg" + (heartsUnlocked ? "" : " combat-shop-compact")}>
         <div className="title">BATTLE SHOP</div>
         {battleShopState === "locked" && (
           <div className="pack-shop-locked">
@@ -19,10 +23,10 @@ export default function CombatShop(props) {
         )}
         {battleShopState === "unlocked" && (
           <div className="combat-shop-entries">
-            {combatData.shop.map((entry, i) => (
+            {visibleEntries.map((entry, i) => (
               <CombatShopEntry
                 index={i}
-                key={"combat-shop-entry-" + i}
+                key={"combat-shop-entry-" + entry.reward}
                 shopEntry={entry}
                 buyCombatShopItem={buyCombatShopItem}
                 currency={spades}

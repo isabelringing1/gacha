@@ -27,6 +27,7 @@ export default function PackShop(props) {
     setHoveredPack,
     hoveredPack,
     lastPackOpened,
+    numPacksOpened,
   } = props;
 
   const [, setTick] = useState(0);
@@ -100,6 +101,7 @@ export default function PackShop(props) {
                     setHoveredPack={setHoveredPack}
                     hoveredPack={hoveredPack}
                     lastPackOpened={lastPackOpened}
+                    numPacksOpened={numPacksOpened}
                   />
                 )
               ) : (

@@ -15,16 +15,18 @@
         "clubs": 15,
         "keys": 1
       },
-      "attack_length": 1.9
+      "attack_length": 1.9,
+      "attack_interval": 5000
     },
     {
       "level": 3,
       "rewards": {
         "spades": 100,
         "clubs": 20,
-        "diamonds": 10
+        "diamonds": 5
       },
-      "attack_length": 1.7
+      "attack_length": 1.7,
+      "attack_interval": 4600
     },
     {
       "level": 4,
@@ -33,16 +35,18 @@
         "clubs": 25,
         "keys": 1
       },
-      "attack_length": 1.4
+      "attack_length": 1.4,
+      "attack_interval": 4200
     },
     {
       "level": 5,
       "rewards": {
         "spades": 150,
         "clubs": 30,
-        "diamonds": 15
+        "diamonds": 10
       },
-      "attack_length": 1.2
+      "attack_length": 1.2,
+      "attack_interval": 3800
     },
     {
       "level": 6,
@@ -51,16 +55,18 @@
         "clubs": 35,
         "keys": 1
       },
-      "attack_length": 1.0
+      "attack_length": 1.0,
+      "attack_interval": 3400
     },
     {
       "level": 7,
       "rewards": {
         "spades": 200,
         "clubs": 40,
-        "diamonds": 20
+        "diamonds": 15
       },
-      "attack_length": 1.0
+      "attack_length": 1.0,
+      "attack_interval": 3000
     },
     {
       "level": 8,
@@ -69,16 +75,18 @@
         "clubs": 50,
         "keys": 1
       },
-      "attack_length": 0.9
+      "attack_length": 0.9,
+      "attack_interval": 2600
     },
     {
       "level": 9,
       "rewards": {
         "spades": 300,
         "clubs": 60,
-        "diamonds": 25
+        "diamonds": 20
       },
-      "attack_length": 0.8
+      "attack_length": 0.8,
+      "attack_interval": 2200
     },
     {
       "level": 10,
@@ -87,7 +95,8 @@
         "clubs": 70,
         "keys": 1
       },
-      "attack_length": 0.7
+      "attack_length": 0.7,
+      "attack_interval": 1800
     }
   ],
   "shop": [
