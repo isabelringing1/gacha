@@ -9,6 +9,7 @@ import cardPackImg from "/card_pack.png";
 import cardPackOld from "/copycat_big.png";
 import { DitherShader } from "./dither-shader";
 import { isMobile } from "./constants.js";
+import numberBg from "/number_bg.png";
 
 const CardPack = (props) => {
   const { pack, openPack, hidePack, bigNumberQueue } = props;
@@ -16,6 +17,7 @@ const CardPack = (props) => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [lines, setLines] = useState([]);
   const [numbersRolled, setNumbersRolled] = useState(false);
+  const [showSliceInstructions, setShowSliceInstructions] = useState(false);
 
   const drawAreaRef = useRef(null);
   const canvasRef = useRef(null);
@@ -37,6 +39,11 @@ const CardPack = (props) => {
       hidePack();
     }
   }, [bigNumberQueue]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowSliceInstructions(true), 5000);
+    return () => clearTimeout(t);
+  }, []);
 
   const relativeCoordinatesForEvent = (mouseEvent) => {
     var x = mouseEvent.clientX;
@@ -95,6 +102,7 @@ const CardPack = (props) => {
   const triggerErrorShake = () => {
     setLines([]);
     setIsDrawing(false);
+    setShowSliceInstructions(true);
     const cardPack = document.getElementById("card-pack");
     if (cardPack) {
       cardPack.classList.remove("error-shake");
@@ -120,6 +128,7 @@ const CardPack = (props) => {
       return;
     }
     setIsDrawing(false);
+    setShowSliceInstructions(false);
     openPack(pack);
     setNumbersRolled(true);
     result.halfA.className = "card-pack-img half-a";
@@ -144,6 +153,26 @@ const CardPack = (props) => {
       onTouchEnd={handleMouseUp}
     >
       <Drawing lines={lines} />
+
+      {showSliceInstructions && (
+        <div className="slice-instructions">
+          <DitherShader
+            src={numberBg}
+            gridSize={2}
+            ditherMode="bayer"
+            colorMode="colorMode"
+            className="slice-instructions-bg"
+            objectFit="fill"
+            threshold={0}
+            brightness={0.05}
+            children={[
+              <div key="slice-text" className="slice-instructions-text">
+                Click and drag to open
+              </div>,
+            ]}
+          />
+        </div>
+      )}
 
       <div className="card-pack" id="card-pack">
         <div className="slice-line" />
