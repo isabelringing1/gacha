@@ -4,7 +4,7 @@ import CombatButton from "./CombatButton";
 import NumberTooltip from "./NumberTooltip";
 import { AUTO_LEVEL, DIVIDE_LEVEL, FACTOR_TIMING_BOOST } from "./constants.js";
 import shield from "/shield.png";
-import { getRarity } from "./Util";
+import { getRarity, getCombatLevelData } from "./Util";
 
 export default function CombatNumber(props) {
   const {
@@ -206,13 +206,14 @@ export default function CombatNumber(props) {
       return newCombatState;
     });
 
+    var blockLength = getCombatLevelData(combatState.combatLevel).block_length || 500;
     setTimeout(() => {
       setCombatState((prevCombatState) => {
         var newCombatState = { ...prevCombatState };
         newCombatState.numberStates[number].block = false;
         return newCombatState;
       });
-    }, 500);
+    }, blockLength);
   }
 
   function canHeal() {

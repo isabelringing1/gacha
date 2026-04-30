@@ -15,7 +15,7 @@ import CombatMenu from "./CombatMenu.jsx";
 import CombatShop from "./CombatShop.jsx";
 import CombatEntry from "./CombatEntry.jsx";
 
-const failStrings = [ "Back to the drawing board.", "When in doubt, roll more numbers", "Time to try something new."]
+const failStrings = [ "Back to the drawing board.", "When in doubt, roll more numbers.", "Time to try something new."]
 const winStrings = [ "You're a natural.", "You made that look easy.", "PHEW."]
 
 const LOCK_WAIT_MINUTES = [1, 3, 5, 10, 15];

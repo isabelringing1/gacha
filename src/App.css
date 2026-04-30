@@ -479,8 +479,8 @@ p {
 .slice-line {
   position: absolute;
   top: 10.8%;
-  left: -10%;
-  width: 120%;
+  left: -15%;
+  width: 130%;
   height: 0;
   border-top: .7dvh dashed rgb(0, 0, 0, 0.5);
   pointer-events: none;
