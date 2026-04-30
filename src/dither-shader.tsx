@@ -38,6 +38,10 @@ interface DitherShaderProps {
   animated?: boolean;
   /** Animation speed (lower = slower) */
   animationSpeed?: number;
+  /** If set, draws an outline (matching the rendered alpha shape, not a rect) in this color */
+  outlineColor?: string;
+  /** Outline thickness in pixels (default 3) */
+  outlineWidth?: number;
   /** Additional CSS classes for the container (use this to set size via Tailwind) */
   className?: string;
   style?: Object;
@@ -112,6 +116,8 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
   threshold = 0.5,
   animated = false,
   animationSpeed = 0.02,
+  outlineColor,
+  outlineWidth = 3,
   className,
   style,
   children,
@@ -462,7 +468,17 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
       <canvas
         ref={canvasRef}
         className="absolute inset-0 h-full w-full"
-        style={{ imageRendering: "pixelated" }}
+        style={{
+          imageRendering: "pixelated",
+          filter: outlineColor
+            ? Array.from({ length: 8 }, (_, i) => {
+                const angle = (i * Math.PI) / 4;
+                const dx = Math.round(Math.cos(angle) * outlineWidth);
+                const dy = Math.round(Math.sin(angle) * outlineWidth);
+                return `drop-shadow(${dx}px ${dy}px 0 ${outlineColor})`;
+              }).join(" ")
+            : undefined,
+        }}
         aria-label="Dithered image"
         role="img"
       />

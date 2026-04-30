@@ -15,7 +15,7 @@ export default function MathProblem(props) {
 
   return (
     <div className={"problem " + stateCn} id={"math-problem-" + i}>
-      {problem.numbers[0] + sign + problem.numbers[1]} ={" "}
+      {problem.numbers[0]} <span style={{ fontSize: "2dvh", fontFamily: "Helvetica", marginBottom: "0.5dvh" }}>{sign}</span> {problem.numbers[1]} ={" "}
       <input
         type="number"
         className={"math-input" + stateCn}

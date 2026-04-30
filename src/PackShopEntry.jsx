@@ -85,10 +85,16 @@ export default function PackShopEntry(props) {
   }
 
   function onBuyPressed(e) {
+    if (!canBuy()) {
+      return;
+    }
     setHoveredPack(null);
     buyPack(e);
   }
 
+  const rarityOutlineColors = ["#93939380", "#5882ff80", "#b31ff780", "#e7b50080"];
+  const outlineColor = rarityOutlineColors[pack.rarity] ?? "#939393";
+  
   return (
     <div
       className="pack-shop-entry"
@@ -98,7 +104,7 @@ export default function PackShopEntry(props) {
       onTouchEnd={onTouchEnd}
       onTouchCancel={onTouchEnd}
     >
-      <div className="pack-shop-entry-img-container">
+      <div className="pack-shop-entry-img-container"  onClick={() => onBuyPressed(shopEntry)}>
         <DitherShader
           src={pack.art}
           gridSize={2}
@@ -108,9 +114,12 @@ export default function PackShopEntry(props) {
           customPalette={pack.custom_palette}
           className={"pack-shop-entry-img"}
           objectFit="fill"
+          outlineColor={outlineColor}
+          outlineWidth={2}
           style={{
             width: getCardPackImgWidth() + "px",
             height: getCardPackImgHeight() + "px",
+            opacity: canBuy() ? 1 : 0.5,
           }}
           children={[
             <div
@@ -136,7 +145,7 @@ export default function PackShopEntry(props) {
                 />
               )}
               <button
-                onClick={() => onBuyPressed(shopEntry)}
+               
                 className="pack-shop-entry-buy-button"
                 disabled={!canBuy()}
               >

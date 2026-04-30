@@ -273,16 +273,20 @@ const getRarityData = (n) => {
 const factors = (number) =>
   [...Array(number + 1).keys()].filter((i) => number % i === 0);
 
-const rollForPack = () => {
-  var rarityRoll = Math.random() * 100;
+const rollForPack = (forceRarity) => {
   var rarity = 0;
 
-  var runningTotal = 0;
-  for (const [r, chance] of Object.entries(packData.chances)) {
-    runningTotal += chance;
-    if (rarityRoll < runningTotal) {
-      rarity = parseInt(r);
-      break;
+  if (forceRarity != null) {
+    rarity = forceRarity;
+  } else {
+    var rarityRoll = Math.random() * 100;
+    var runningTotal = 0;
+    for (const [r, chance] of Object.entries(packData.chances)) {
+      runningTotal += chance;
+      if (rarityRoll < runningTotal) {
+        rarity = parseInt(r);
+        break;
+      }
     }
   }
 

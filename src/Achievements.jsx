@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import achievementData from "./json/achievements.json";
 import { UNLOCK_ACHIEVEMENTS_COST } from "./constants.js";
-import { getCurrencyIcon } from "./Util";
+import { getCurrencyIcon, getLevel } from "./Util";
 
 function getRowNumbers(rowIndex) {
   var result = [];
@@ -66,15 +66,25 @@ export default function Achievements(props) {
     }, 1000);
   }
 
+  function countNumbersAtLevel(targetLevel) {
+    var count = 0;
+    for (var i = 1; i <= 100; i++) {
+      var rolls = numbers[i];
+      if (rolls !== undefined && getLevel(rolls) >= targetLevel) count++;
+    }
+    return count;
+  }
+
   function getCurrent(a) {
     if (a.type === "row") return completeRows;
     if (a.type === "column") return completeCols;
     if (a.type === "packs") return packsOpened;
+    if (a.type === "level") return countNumbersAtLevel(a.target_level);
     return uniqueCount;
   }
 
   function getTarget(a) {
-    if (a.type === "row" || a.type === "column" || a.type === "packs") return a.count;
+    if (a.type === "row" || a.type === "column" || a.type === "packs" || a.type === "level") return a.count;
     return a.threshold;
   }
 
@@ -151,7 +161,7 @@ export default function Achievements(props) {
                 var claimed = claimedAchievements.includes(achievement.id);
                 var achieved = isAchieved(achievement);
                 var progressText = "";
-                if (achievement.type === "row" || achievement.type === "column" || achievement.type === "packs") {
+                if (achievement.type === "row" || achievement.type === "column" || achievement.type === "packs" || achievement.type === "level") {
                   progressText = " (" + Math.min(getCurrent(achievement), getTarget(achievement)) + "/" + getTarget(achievement) + ")";
                 }
                 var fillPercent = Math.min(getProgress(achievement), 1) * 100;

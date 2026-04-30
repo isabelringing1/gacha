@@ -115,6 +115,7 @@
         "art": "./star.png"
       }
     ],
+    [
       {
         "id": "ten-pull",
         "category": "ten-pull",
@@ -122,6 +123,7 @@
         "desc": "Roll 10 #s at once",
         "cost": 100,
         "consumable": true,
+        "art": "./10_pull.png"
       }
     ]
 

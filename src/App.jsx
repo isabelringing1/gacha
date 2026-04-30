@@ -37,6 +37,7 @@ import EventBanner from "./EventBanner.jsx";
 import Event from "./Event.jsx";
 import History from "./History.jsx";
 import Combat from "./Combat.jsx";
+import AboutCombat from "./AboutCombat.jsx";
 import Achievements from "./Achievements.jsx";
 import WinPopup from "./WinPopup.jsx";
 import packData from "./json/packs.json";
@@ -151,6 +152,7 @@ function App() {
   const [startTime, setStartTime] = useState(null);
   const [pendingWinPopup, setPendingWinPopup] = useState(false);
   const [combatButtonSeen, setCombatButtonSeen] = useState(false);
+  const [outOfDiamondsSeen, setOutOfDiamondsSeen] = useState(false);
   const [lastBattledLevel, setLastBattledLevel] = useState(0);
   const [diamondsUnlocked, setDiamondsUnlocked] = useState(false);
   const [battleShopState, setBattleShopState] = useState("unlocked");
@@ -351,6 +353,7 @@ function App() {
     diamondsUnlocked,
     hasShownWinPopup,
     combatButtonSeen,
+    outOfDiamondsSeen,
     lastBattledLevel,
     tenPullUnlocked,
   ]);
@@ -398,6 +401,7 @@ function App() {
       hasShownWinPopup: hasShownWinPopup,
       lockedNumbers: lockedNumbers,
       combatButtonSeen: combatButtonSeen,
+      outOfDiamondsSeen: outOfDiamondsSeen,
       lastBattledLevel: lastBattledLevel,
       tenPullUnlocked: tenPullUnlocked,
     };
@@ -466,6 +470,7 @@ function App() {
         setHasShownWinPopup(saveData.hasShownWinPopup || false);
         if (saveData.lockedNumbers) setLockedNumbers(saveData.lockedNumbers);
         setCombatButtonSeen(saveData.combatButtonSeen || false);
+        setOutOfDiamondsSeen(saveData.outOfDiamondsSeen || false);
         setLastBattledLevel(
           saveData.lastBattledLevel != null
             ? saveData.lastBattledLevel
@@ -672,7 +677,7 @@ function App() {
     }
   };
 
-  const generatePackShopEntry = (amount = 1, slots = [-1]) => {
+  const generatePackShopEntry = (amount = 1, slots = [-1], rarities = []) => {
     var firstNullIndex = 0;
     var newShopEntries = [...cardShopEntries];
     for (var j = 0; j < amount; j++) {
@@ -690,13 +695,14 @@ function App() {
       if (firstNullIndex == newShopEntries.length) {
         return;
       }
-      var pack = rollForPack();
+      var forcedRarity = rarities[j];
+      var pack = rollForPack(forcedRarity);
       var existingIds = new Set(newShopEntries.filter(Boolean).map((e) => e.id));
       while (
         (pack.id == "copycat" && !lastPackOpened) ||
         existingIds.has(pack.id)
       ) {
-        pack = rollForPack();
+        pack = rollForPack(forcedRarity);
       }
       var newEntry = {
         id: pack.id,
@@ -751,7 +757,7 @@ function App() {
     }
     setPackShopState("unlocked");
     setSpades(spades - UNLOCK_PACK_SHOP_COST);
-    generatePackShopEntry(2);
+    generatePackShopEntry(2, [-1], [0]);
   };
 
   const canUnlockAchievements = () => {
@@ -1195,7 +1201,6 @@ function App() {
           openPack={openPack}
           hidePack={hidePack}
           bigNumberQueue={bigNumberQueue}
-          showSliceInstructions={numPacksOpened === 0}
         />
       )}
       {hoveredPack && (
@@ -1279,6 +1284,7 @@ function App() {
         ABOUT
       </button>*/}
 
+      {showCombat && <AboutCombat />}
       {showCombat && (
         <Combat
           hearts={hearts}
@@ -1503,6 +1509,8 @@ function App() {
         refreshDiamonds={refreshDiamonds}
         trySwipe={trySwipe}
         setShowOutOfDiamonds={setShowOutOfDiamonds}
+        outOfDiamondsSeen={outOfDiamondsSeen}
+        setOutOfDiamondsSeen={setOutOfDiamondsSeen}
         rolls={rolls}
         currentPack={currentPack}
         buyPack={buyPack}

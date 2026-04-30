@@ -37,6 +37,8 @@ export default function MenusContainer(props) {
     refreshDiamonds,
     trySwipe,
     setShowOutOfDiamonds,
+    outOfDiamondsSeen,
+    setOutOfDiamondsSeen,
     rolls,
     currentPack,
     buyPack,
@@ -139,7 +141,11 @@ export default function MenusContainer(props) {
             {diamonds <= 0 && (
               <button
                 id="out-of-hearts-button"
-                onClick={() => setShowOutOfDiamonds(true)}
+                className={!outOfDiamondsSeen ? "can-claim-yellow" : undefined}
+                onClick={() => {
+                  setShowOutOfDiamonds(true);
+                  setOutOfDiamondsSeen(true);
+                }}
               >
                 Get More &diams;&#xfe0e;
               </button>

@@ -514,9 +514,7 @@ export default function Combat(props) {
   }
 
   function getRandomWinString() {
-    if (!combatState || combatState.combatLevel === 1) {
-      return "Nice!\n\nEnemies won't always be so apathetic.\nWhen in doubt, roll more numbers."
-    }
+    
     return winStrings[Math.floor(Math.random() * winStrings.length)];
   }
 
@@ -601,7 +599,7 @@ export default function Combat(props) {
           <div className="title">YOU WON</div>
           <div className="combat-outcome-popup-body">
             <div className="combat-outcome-popup-text">
-              {winString}
+              {!combatState || combatState.combatLevel === 1 ? <>Nice! But enemies won't always be so apathetic...</> : winString}
             </div>
             <div className="combat-outcome-popup-text"><b>REWARDS:</b></div>
             <div className="combat-entry-rewards">
