@@ -179,7 +179,7 @@ export default function Achievements(props) {
                     className={
                       "achievement-entry" +
                       (claimed ? " achievement-entry-fading" : "") +
-                      (achieved && !claimed ? " can-claim" : "")
+                      (achieved && !claimed ? " can-claim-yellow" : "")
                     }
                     key={achievement.id}
                   >

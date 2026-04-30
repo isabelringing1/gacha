@@ -59,6 +59,7 @@ export default function Combat(props) {
     onBattleStart,
     setHeartsUnlocked,
     heartsUnlocked,
+    ticketBoughtSeen,
   } = props;
   const [enemyState, setEnemyState] = useState(null);
   const [winState, setWinState] = useState("menu");
@@ -543,6 +544,8 @@ export default function Combat(props) {
               hearts={hearts}
               maxHearts={maxHearts}
               heartsUnlocked={heartsUnlocked}
+              combatTickets={combatState.combatTickets || 0}
+              ticketBoughtSeen={ticketBoughtSeen}
             />
           )}
           <CombatEntry
@@ -727,7 +730,10 @@ export default function Combat(props) {
             </div>
           </div>
 
-          {winState == "combat" && (
+          {winState == "combat" &&
+            (combatState.team || []).some(
+              (n) => n != null && (combatState.numberStates?.[n]?.shields ?? 0) > 0
+            ) && (
           <div id="hearts-container" className="hearts-container">
                 &hearts;&#xfe0e; {hearts.toLocaleString()}
               </div>

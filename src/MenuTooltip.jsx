@@ -6,7 +6,7 @@ import tail from "/tail.png";
 import packData from "./json/packs.json";
 
 export default function MenuTooltip(props) {
-  var { cardPack, mousePos, lastPackOpened } = props;
+  var { cardPack, mousePos, lastPackOpened, canBuy } = props;
   var cn = "menu-tooltip dither-bg";
 
   return (
@@ -54,6 +54,11 @@ export default function MenuTooltip(props) {
             >
               {getPackRarity(cardPack)}
             </div>
+            {!canBuy && (
+              <div className="menu-tooltip-text">
+               You can't buy this right now.
+              </div>
+            )}
           </div>
         )}
       </div>

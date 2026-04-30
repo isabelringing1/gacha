@@ -37,8 +37,12 @@ body {
 }
 
 @keyframes lock-pulse {
-  0%, 100% { opacity: 0.1; }
-  50% { opacity: 0.4; }
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 body {
@@ -972,8 +976,9 @@ button:disabled {
 }
 
 .menu-tooltip-content {
-  width: 100%;
+  width: 90%;
   height: 100%;
+  padding-bottom: 1dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -991,9 +996,9 @@ button:disabled {
 }
 
 .menu-tooltip-text.rarity-tooltip-text {
-  margin-bottom: 1dvh;
   width: fit-content;
   padding: 0.2dvh 1dvh;
+  margin-top: 0.5dvh;
 }
 
 .tooltip-tail {

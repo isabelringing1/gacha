@@ -3,7 +3,7 @@ import { getCurrencyIcon } from "./Util";
 import ticket from "/ticket.png";
 
 export default function CombatShopEntry(props) {
-  const { shopEntry, buyCombatShopItem, currency, index, hearts, maxHearts } = props;
+  const { shopEntry, buyCombatShopItem, currency, index, hearts, maxHearts, combatTickets, ticketBoughtSeen } = props;
   const [count, setCount] = useState(1);
   const holdTimerRef = useRef(null);
   const didHoldRef = useRef(false);
@@ -120,7 +120,14 @@ export default function CombatShopEntry(props) {
               buyCombatShopItem(shopEntry, index, count);
               setCount(1);
             }}
-            className="combat-shop-entry-buy-button"
+            className={
+              "combat-shop-entry-buy-button" +
+              (shopEntry.reward === "combatTickets" &&
+              (combatTickets || 0) <= 0 &&
+              !ticketBoughtSeen
+                ? " can-claim-yellow"
+                : "")
+            }
             disabled={!canBuy()}
           >
             {getCurrencyIcon(shopEntry.currency)} {totalCost.toLocaleString()}

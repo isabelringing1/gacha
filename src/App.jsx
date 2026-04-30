@@ -153,6 +153,7 @@ function App() {
   const [pendingWinPopup, setPendingWinPopup] = useState(false);
   const [combatButtonSeen, setCombatButtonSeen] = useState(false);
   const [outOfDiamondsSeen, setOutOfDiamondsSeen] = useState(false);
+  const [ticketBoughtSeen, setTicketBoughtSeen] = useState(false);
   const [lastBattledLevel, setLastBattledLevel] = useState(0);
   const [diamondsUnlocked, setDiamondsUnlocked] = useState(false);
   const [battleShopState, setBattleShopState] = useState("unlocked");
@@ -354,6 +355,7 @@ function App() {
     hasShownWinPopup,
     combatButtonSeen,
     outOfDiamondsSeen,
+    ticketBoughtSeen,
     lastBattledLevel,
     tenPullUnlocked,
   ]);
@@ -402,6 +404,7 @@ function App() {
       lockedNumbers: lockedNumbers,
       combatButtonSeen: combatButtonSeen,
       outOfDiamondsSeen: outOfDiamondsSeen,
+      ticketBoughtSeen: ticketBoughtSeen,
       lastBattledLevel: lastBattledLevel,
       tenPullUnlocked: tenPullUnlocked,
     };
@@ -471,6 +474,7 @@ function App() {
         if (saveData.lockedNumbers) setLockedNumbers(saveData.lockedNumbers);
         setCombatButtonSeen(saveData.combatButtonSeen || false);
         setOutOfDiamondsSeen(saveData.outOfDiamondsSeen || false);
+        setTicketBoughtSeen(saveData.ticketBoughtSeen || false);
         setLastBattledLevel(
           saveData.lastBattledLevel != null
             ? saveData.lastBattledLevel
@@ -946,6 +950,7 @@ function App() {
         ...prev,
         combatTickets: (prev.combatTickets || 0) + count,
       }));
+      setTicketBoughtSeen(true);
     }
   };
 
@@ -1110,6 +1115,10 @@ function App() {
     return combatState.currentEnemyValue;
   }
 
+  function canBuyPack(pack) {
+    return spades - getPackCost(pack) >= 0;
+  }
+
   return (
     <div
       id="content"
@@ -1208,6 +1217,7 @@ function App() {
           cardPack={hoveredPack}
           mousePos={mousePos}
           lastPackOpened={lastPackOpened}
+          canBuy={canBuyPack(hoveredPack)}
         />
       )}
       {currentEvent && currentEvent.isNew && bigNumberQueue.length == 0 && (
@@ -1284,7 +1294,7 @@ function App() {
         ABOUT
       </button>*/}
 
-      {showCombat && <AboutCombat />}
+      {showCombat && !isCombatActive && combatState.combatLevel !== 1 && <AboutCombat />}
       {showCombat && (
         <Combat
           hearts={hearts}
@@ -1316,6 +1326,7 @@ function App() {
           onBattleStart={() => setNumBattles((n) => n + 1)}
           setHeartsUnlocked={setHeartsUnlocked}
           heartsUnlocked={heartsUnlocked}
+          ticketBoughtSeen={ticketBoughtSeen}
         />
       )}
 
@@ -1430,7 +1441,7 @@ function App() {
               <div id="clubs-container" style={{ opacity: clubsUnlocked ? 1 : 0 }}>
                 &#x2663;&#xfe0e; {clubs.toLocaleString()}
               </div>
-              {showCombat && combatState.combatTickets > 0 && (
+              {showCombat && (
                 <div id="tickets-container">
                   <img src={ticket} alt="ticket" className="ticket-icon" /> {combatState.combatTickets.toLocaleString()}
                 </div>

@@ -3,7 +3,7 @@ import combatData from "./json/combat.json";
 import { UNLOCK_BATTLE_SHOP_COST } from "./constants.js";
 
 export default function CombatShop(props) {
-  const { spades, buyCombatShopItem, battleShopState, canUnlockBattleShop, unlockBattleShop, clubs, hearts, maxHearts, heartsUnlocked } = props;
+  const { spades, buyCombatShopItem, battleShopState, canUnlockBattleShop, unlockBattleShop, clubs, hearts, maxHearts, heartsUnlocked, combatTickets, ticketBoughtSeen } = props;
 
   const visibleEntries = combatData.shop.filter(
     (entry) => heartsUnlocked || entry.reward !== "hearts"
@@ -32,6 +32,8 @@ export default function CombatShop(props) {
                 currency={spades}
                 hearts={hearts}
                 maxHearts={maxHearts}
+                combatTickets={combatTickets}
+                ticketBoughtSeen={ticketBoughtSeen}
               />
             ))}
           </div>
