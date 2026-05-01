@@ -115,14 +115,6 @@ const roll = (
   for (var i in rarities) {
     var rarity = rarities[i];
     cumulative += adjusted[rarity];
-    console.log(
-      "rarity roll: roll was " +
-        roll +
-        ", cumulative threshold is " +
-        cumulative +
-        " for rarity " +
-        rarity,
-    );
     if (roll < cumulative) {
       rolledRarity = rarity;
       break;
@@ -151,7 +143,6 @@ const rollMultiple = (
     var newRoll = roll(multiple, min, max, modulo, remainder, pool);
     rolls.push(newRoll);
   }
-  console.log(rolls);
   return rolls;
 };
 
@@ -182,7 +173,6 @@ const rollEvent = (event) => {
 
   // replace number's normal rarity with special rarity
   dropRates[n] = 4;
-  //console.log(n, dropRates);
   return roll(1, 0, 0, 0, 0, [], dropTable, dropRates);
 };
 
@@ -495,7 +485,6 @@ function chance3SumGreaterThan(goal = 100) {
       raritiesToNumber[rarity] = [n];
     }
   }
-  console.log(raritiesToNumber);
 
   var probabilites = {
     0: data.chance[0] / raritiesToNumber[0].length / 100,
@@ -539,7 +528,6 @@ function getLevel(numRolls) {
       return levelData[i].level - 1;
     }
   }
-  console.log("ERROR: can't get for rolls " + numRolls);
 }
 
 function getMaxLevel() {

@@ -80,7 +80,6 @@ export default function CombatNumber(props) {
         intervalRef.current = null;
       }
       if (timeoutRef.current) {
-        console.log("clearing timeout ", number);
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
       }
@@ -112,9 +111,7 @@ export default function CombatNumber(props) {
   function startCooldownTimer() {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
-      console.log("clearing timeout in startCooldownTimer ", number);
     }
-    console.log("starting cooldown timer ", number);
     timeoutRef.current = setTimeout(() => {
       setCooldownRunning(false);
       setAttackReady(true);
@@ -147,7 +144,6 @@ export default function CombatNumber(props) {
     numberDiv.classList.add("attack");
 
     if (didCrit) {
-      console.log("crit by ", number);
       var critDiv = document.getElementById("combat-number-crit-" + index);
       if (critDiv) {
         critDiv.classList.remove("crit-active");

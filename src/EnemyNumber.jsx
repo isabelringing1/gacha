@@ -14,14 +14,12 @@ export default function EnemyNumber(props) {
     }
 
     if (winState == "combat" && !attributes.includes("no_damage")) {
-      console.log("Combat, setting attack");
       timeoutRef.current = setTimeout(() => {
         onEnemyAttack();
       }, getRandomAttackInterval());
     }
 
     if (winState != "combat" && timeoutRef.current) {
-      console.log("clearing attack");
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }

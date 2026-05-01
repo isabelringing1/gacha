@@ -73,7 +73,6 @@ const Debug = (props) => {
     setNumbers(newNumbers);
     setRolls([...rolled, ...rolls]);
     setSpades(spades + spadeGain);
-    console.log(newNumbers);
   }
 
   return (
@@ -84,7 +83,7 @@ const Debug = (props) => {
           <button
             className="debug-button"
             onClick={() => {
-              console.log(chance3SumGreaterThan(chances3Ref.current.value));
+              chance3SumGreaterThan(chances3Ref.current.value);
             }}
           >
             Calculate sum grt. x
@@ -277,16 +276,12 @@ const Debug = (props) => {
             className="debug-button"
             onClick={() => {
               const canvasParent = document.getElementsByClassName("test")[0];
-              console.log(canvasParent.children[0]);
               if (canvasParent.children[0]) {
                 const name = canvasFilenameRef.current.value || "test";
                 const link = document.createElement("a");
                 link.download = `${name}.png`;
                 link.href = canvasParent.children[0].toDataURL("image/png");
                 link.click();
-              }
-              else{
-                console.log("No canvas found");
               }
             }}
           >

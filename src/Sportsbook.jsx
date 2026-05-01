@@ -35,16 +35,13 @@ export default function Sportsbook(props) {
           newEntry.rolls.push(rolls[0]);
           var bet = getBet(newEntry.id);
           if (newEntry.rolls.length >= bet.rolls) {
-            console.log("bet done ", bet);
             newEntry.active = false;
             newEntry.finished = true;
             if (meetsCondition(bet.id, newEntry.option, newEntry.rolls)) {
               setDiamonds(diamonds + newEntry.payout);
               newEntry.wonBet = true;
-              console.log("bet won");
             } else {
               newEntry.wonBet = false;
-              console.log("bet lost");
             }
           }
           newSportsbookEntries[i] = newEntry;
@@ -56,7 +53,6 @@ export default function Sportsbook(props) {
 
   const meetsCondition = (betId, option, rolls) => {
     if (betId == "next-roll-odd") {
-      console.log(rolls, option, rolls[0] % 2);
       return rolls[0] % 2 == (option == 0 ? 1 : 0);
     }
     if (betId == "next-three-rolls") {

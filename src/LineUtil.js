@@ -19,7 +19,6 @@ function getLineIntersections(points, top, left, width, height) {
   ];
 
   const intersections = [];
-  console.log(rectEdges, points);
   for (let i = 0; i < points.length - 1; i++) {
     const p1 = points[i];
     const p2 = points[i + 1];

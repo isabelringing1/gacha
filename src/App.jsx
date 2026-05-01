@@ -186,13 +186,11 @@ function App() {
 
   const onSpacePressed = (e) => {
     if (e.key == " " && !isRollButtonDisabled()) {
-      console.log("rolling");
       rollNumber();
     }
   };
 
   useEffect(() => {
-    console.log(bigNumberQueue);
     if (rolls.length >= 25 && !combatUnlocked) {
       setCombatUnlocked(true);
       setCombatState((oldCombatState) => {
@@ -522,10 +520,6 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    console.log("Combat state: ", combatState);
-  }, [combatState]);
-
   const rollNumber = (e, cheatNumber = -1) => {
     if (!startTime) setStartTime(Date.now());
     setNumRollButtonClicks(numRollButtonClicks + 1);
@@ -733,10 +727,8 @@ function App() {
         creation: Date.now(),
         rolls: [],
       };
-      console.log(newEntry);
       newSportsbookEntries[slots[i]] = newEntry;
     }
-    console.log(newSportsbookEntries);
     setSportsbookEntries(newSportsbookEntries);
   };
 
@@ -860,7 +852,6 @@ function App() {
   };
 
   const refreshPackShopEntry = (index) => {
-    console.log("here", index);
     const entry = cardShopEntries[index];
     generatePackShopEntry(1, [index]);
     setSpades(spades - getRefreshEntryCost(entry));
@@ -991,18 +982,15 @@ function App() {
   };
 
   const generateCharmShopEntry = (indices = [0], newPurchasedCharms) => {
-    console.log("generating ", indices);
     var newCharmShopEntries = [...charmShopEntries];
     for (var i = 0; i < indices.length; i++) {
       var index = indices[i];
       newCharmShopEntries[index] = null;
       var nextCharm = getNextCharm(index, newPurchasedCharms);
-      console.log(nextCharm);
       if (nextCharm) {
         newCharmShopEntries[index] = nextCharm.id;
       }
     }
-    console.log(newCharmShopEntries);
     setCharmShopEntries(newCharmShopEntries);
   };
 
@@ -1041,7 +1029,6 @@ function App() {
       return;
     }
     if (Math.random() * 5 < 100) {
-      console.log("Event procced, generating");
       generateEvent();
     }
   };
@@ -1079,7 +1066,6 @@ function App() {
     setLockedNumbers(lockedNumbers.filter((num) => num !== n));
 
     var stashed = lockedRollCounts[n] || 0;
-    console.log("stashed", stashed, lockedRollCounts);
     if (stashed > 0) {
       setNumbers((prev) => ({ ...prev, [n]: stashed }));
       setSpades((prev) => prev + n * stashed);

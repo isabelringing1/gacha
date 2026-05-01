@@ -48,14 +48,12 @@ const CardPack = (props) => {
   const relativeCoordinatesForEvent = (mouseEvent) => {
     var x = mouseEvent.clientX;
     var y = mouseEvent.clientY;
-    console.log(document.height);
     if (mouseEvent.touches) {
       x = mouseEvent.touches[0].clientX;
       y = mouseEvent.touches[0].clientY;
     }
 
     const boundingRect = drawAreaRef.current.getBoundingClientRect();
-    console.log(x - boundingRect.left, y - boundingRect.top);
     return {
       x: x - boundingRect.left,
       y: y - boundingRect.top,

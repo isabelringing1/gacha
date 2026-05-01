@@ -27,7 +27,6 @@ const Bet = (props) => {
       setConfirmedBet(-1);
     }
     setBetButtonPressed(betEntry.option ?? -1);
-    console.log("bet entry updated, ", betEntry);
 
     if (betEntry.finished) {
       setBetResult(betEntry.wonBet ? "YOU WON!" : "YOU LOST!");

@@ -18,7 +18,7 @@ import CombatEntry from "./CombatEntry.jsx";
 const failStrings = [ "Back to the drawing board.", "When in doubt, roll more numbers.", "Time to try something new."]
 const winStrings = [ "You're a natural.", "You made that look easy.", "PHEW."]
 
-const LOCK_WAIT_MINUTES = [1, 3, 5, 10, 15];
+const LOCK_WAIT_MINUTES = [1, 2, 3, 5, 7, 10, 15, 20, 25];
 const MAX_LOCK_WAIT_MINUTES = 30;
 
 function getLockDurationMinutes(lockedLevel) {
@@ -122,7 +122,6 @@ export default function Combat(props) {
     }, 100); // sync rate
 
     if (combatState) {
-      console.log(combatState.team);
       var newCombatState = { ...combatState };
       for (var i = 1; i <= 100; i++) {
         var level = getLevelData(numbers[i]);
@@ -233,7 +232,6 @@ export default function Combat(props) {
   }, [combatState]);
 
   function onAttack(n) {
-    console.log("attack " + n);
     var didCrit = rollForCrit(n);
     var damage = didCrit ? n * 2 : n;
     var actualDamage = damage > enemyRef.current ? enemyRef.current : damage;
@@ -246,7 +244,6 @@ export default function Combat(props) {
     } else {
       showEnemyDamage();
       if (didCrit) {
-        console.log(n + " crit!");
         showCrit();
         setRecords((prevRecords) => {
           return ["c" + n, ...prevRecords];
@@ -286,7 +283,6 @@ export default function Combat(props) {
       possibleIndices[Math.floor(Math.random() * possibleIndices.length)];
 
     var attackLength = (getCombatLevelData(combatState.combatLevel) || {}).attack_length || 0.8;
-    console.log(attackLength);
     attackLength *= 1000; //ms
     
     var currTimestamp = Date.now();
@@ -307,7 +303,6 @@ export default function Combat(props) {
       var shields = combatState.numberStates[number]?.shields ?? 0;
       var isBlocked = combatState.numberStates[number]?.block ?? false;
 
-      console.log("is blocked?", isBlocked);
       var hitDiv;
       if (isBlocked) {
         hitDiv = document.getElementById("armor-" + rollIndex);
@@ -325,8 +320,6 @@ export default function Combat(props) {
       setTimeout(() => {
         hitDiv.classList.remove("damage");
       }, cooldownTiming);
-
-      console.log("Checking");
 
       setCombatState((oldCombatState) => {
         var newCombatState = { ...oldCombatState };
@@ -449,7 +442,6 @@ export default function Combat(props) {
           team: [null, null, null],
         };
       }
-      console.log(newCombatState.numberStates);
 
       return newCombatState;
     });
@@ -478,7 +470,6 @@ export default function Combat(props) {
   }
 
   function onChallenge() {
-    console.log(combatState);
     if (!combatState) return;
     if (waiting) return;
     if (combatState.combatLevel > 1 && !combatState.currentEnemyValue) return;

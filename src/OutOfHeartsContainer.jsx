@@ -33,9 +33,7 @@ export default function OutOfHeartsContainer(props) {
       localStorage.setItem("gacha_math_hour_start", now.toString());
       localStorage.setItem("gacha_math_completions", "0");
       completions = 0;
-      console.log("reset completions");
     }
-    console.log("completions: ", completions);
     const nextCount = completions + 1;
     const numProblems = nextCount <= 1 ? 3 : 6;
     const maxDigits = nextCount <= 2 ? 15 : 15 + (nextCount - 2) * 15;
@@ -84,7 +82,6 @@ export default function OutOfHeartsContainer(props) {
       setDiamonds(diamonds + (showMath == 2 ? HARD_DIAMONDS : EASY_DIAMONDS));
       const prev = parseInt(localStorage.getItem("gacha_math_completions") || "0");
       localStorage.setItem("gacha_math_completions", (prev + 1).toString());
-      console.log("completions: ", prev + 1);
       setShowSuccess(true);
       setTimeout(() => {
         var container = document.getElementsByClassName("out-of-hearts-outer")[0];

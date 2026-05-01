@@ -28,7 +28,6 @@ export default function WinPopup(props) {
 
   function onShareStats() {
     var t = getElapsedText(true);
-    console.log(t);
     var text = "I got all the numbers in " + t + ".";
     navigator.share({
       text: text,

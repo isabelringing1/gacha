@@ -61,8 +61,6 @@ export default function CombatMap(props) {
       onStep(tile);
     }
 
-    console.log(coordToIndex(), tile);
-
     if (tile == "S") {
       setShowShop(true);
       var newN = "Stumbled upon a merchant.";
