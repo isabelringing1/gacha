@@ -168,6 +168,7 @@ function App() {
     }
     return locked;
   });
+  const [lockedRollCounts, setLockedRollCounts] = useState({});
 
   useEffect(() => {
     loadData();
@@ -191,6 +192,7 @@ function App() {
   };
 
   useEffect(() => {
+    console.log(bigNumberQueue);
     if (rolls.length >= 25 && !combatUnlocked) {
       setCombatUnlocked(true);
       setCombatState((oldCombatState) => {
@@ -358,6 +360,7 @@ function App() {
     ticketBoughtSeen,
     lastBattledLevel,
     tenPullUnlocked,
+    lockedRollCounts,
   ]);
 
   function saveData() {
@@ -402,6 +405,7 @@ function App() {
       startTime: startTime,
       hasShownWinPopup: hasShownWinPopup,
       lockedNumbers: lockedNumbers,
+      lockedRollCounts: lockedRollCounts,
       combatButtonSeen: combatButtonSeen,
       outOfDiamondsSeen: outOfDiamondsSeen,
       ticketBoughtSeen: ticketBoughtSeen,
@@ -472,6 +476,7 @@ function App() {
         setStartTime(saveData.startTime || null);
         setHasShownWinPopup(saveData.hasShownWinPopup || false);
         if (saveData.lockedNumbers) setLockedNumbers(saveData.lockedNumbers);
+        setLockedRollCounts(saveData.lockedRollCounts || {});
         setCombatButtonSeen(saveData.combatButtonSeen || false);
         setOutOfDiamondsSeen(saveData.outOfDiamondsSeen || false);
         setTicketBoughtSeen(saveData.ticketBoughtSeen || false);
@@ -673,7 +678,7 @@ function App() {
                 n: n,
                 fromPack: fromPack,
               };
-              setBigNumberQueue([...bigNumberQueue, nextBigNumber]);
+              setBigNumberQueue((prev) => [...prev, nextBigNumber]);
             }, 300 * timeMultiplier);
           }, 500 * timeMultiplier);
         }
@@ -917,7 +922,7 @@ function App() {
     setLastPackOpened(pack.id);
 
     setTimeout(() => {
-      setBigNumberQueue([...bigNumberQueue, ...newBigNumbers]);
+      setBigNumberQueue((prev) => [...prev, ...newBigNumbers]);
     }, 1000);
   };
 
@@ -1072,6 +1077,19 @@ function App() {
     if (!lockedNumbers.includes(n)) return;
     setKeys(keys - 1);
     setLockedNumbers(lockedNumbers.filter((num) => num !== n));
+
+    var stashed = lockedRollCounts[n] || 0;
+    console.log("stashed", stashed, lockedRollCounts);
+    if (stashed > 0) {
+      setNumbers((prev) => ({ ...prev, [n]: stashed }));
+      setSpades((prev) => prev + n * stashed);
+      setLockedRollCounts((prev) => {
+        var next = { ...prev };
+        delete next[n];
+        return next;
+      });
+      setBigNumberQueue((prev) => [...prev, { n: n, restored: true }]);
+    }
   }
 
   function claimRewards(rewards) {
@@ -1159,6 +1177,7 @@ function App() {
         setCombatUnlocked={setCombatUnlocked}
         setKeys={setKeys}
         winBattleRef={winBattleRef}
+        lockedNumbers={lockedNumbers}
       />
       {showOutOfDiamonds && (
         <OutOfHeartsContainer
@@ -1170,6 +1189,7 @@ function App() {
       )}
       {bigNumberQueue.length > 0 && (
         <SplashDisplayFront
+          key={"front-" + bigNumberQueue.length + "-" + bigNumberQueue[0].n}
           bigNumberEntry={bigNumberQueue[0]}
           isNew={numbers[bigNumberQueue[0].n] == null}
           animating={animating}
@@ -1189,6 +1209,7 @@ function App() {
       )}
       {bigNumberQueue.length > 0 && (
         <SplashDisplayBack
+          key={"back-" + bigNumberQueue.length + "-" + bigNumberQueue[0].n}
           bigNumberEntry={bigNumberQueue[0]}
           numbers={numbers}
           setNumbers={setNumbers}
@@ -1202,6 +1223,8 @@ function App() {
           setRolls={setRolls}
           checkForEvent={checkForEvent}
           isLocked={lockedNumbers.includes(bigNumberQueue[0].n)}
+          lockedRollCounts={lockedRollCounts}
+          setLockedRollCounts={setLockedRollCounts}
         />
       )}
       {currentPack && (
@@ -1398,6 +1421,7 @@ function App() {
               keys={keys}
               unlockNumber={unlockNumber}
               rolls={rolls}
+              lockedRollCounts={lockedRollCounts}
             />
           </div>
           {isMobile && (

@@ -147,7 +147,7 @@ export default function MenusContainer(props) {
                   setOutOfDiamondsSeen(true);
                 }}
               >
-                Get More &diams;&#xfe0e;
+                Earn More &diams;&#xfe0e;
               </button>
             )}
           </span>

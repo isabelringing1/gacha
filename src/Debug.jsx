@@ -30,6 +30,7 @@ const Debug = (props) => {
     setCombatUnlocked,
     setKeys,
     winBattleRef,
+    lockedNumbers,
   } = props;
   const [showDebug, setShowDebug] = useState(false);
   const heartsInputRef = useRef(null);
@@ -60,15 +61,18 @@ const Debug = (props) => {
   }, []);
 
   function simulateRolls(numRolls) {
-    var newRolls = rollMultiple(numRolls);
+    var lockedSet = new Set(lockedNumbers || []);
+    var rolled = rollMultiple(numRolls).filter((n) => !lockedSet.has(n));
     var newNumbers = { ...numbers };
-    for (var i = 0; i < newRolls.length; i++) {
-      var n = newRolls[i];
+    var spadeGain = 0;
+    for (var i = 0; i < rolled.length; i++) {
+      var n = rolled[i];
       newNumbers[n] = newNumbers[n] ? newNumbers[n] + 1 : 1;
+      spadeGain += n;
     }
     setNumbers(newNumbers);
-    setRolls([...newRolls, ...rolls]);
-    setSpades(spades + newRolls.reduce((acc, curr) => acc + curr, 0));
+    setRolls([...rolled, ...rolls]);
+    setSpades(spades + spadeGain);
     console.log(newNumbers);
   }
 

@@ -33,7 +33,7 @@ body {
 }
 
 .number-locked-icon.lock-pulse {
-  animation: lock-pulse 2s ease-in-out infinite;
+  animation: lock-pulse 2s ease-in-out infinite, lock-jump 0.8s ease-in-out infinite;
 }
 
 @keyframes lock-pulse {
@@ -42,6 +42,15 @@ body {
   }
   50% {
     opacity: 1;
+  }
+}
+
+@keyframes lock-jump {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15%);
   }
 }
 

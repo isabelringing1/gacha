@@ -20,6 +20,8 @@ export default function SplashDisplayBack(props) {
     setRolls,
     checkForEvent,
     isLocked,
+    lockedRollCounts,
+    setLockedRollCounts,
   } = props;
 
   const [cn, setCn] = useState("big-number-container");
@@ -41,17 +43,23 @@ export default function SplashDisplayBack(props) {
       number.classList.add("pulse-delay");
     }
     setTimeout(() => {
-      setBigNumberQueue(bigNumberQueue.slice(1));
+      setBigNumberQueue((prev) => prev.slice(1));
       setAnimating(false);
       setCn("big-number-container");
 
-      if (!isLocked) {
-        var newNumbers = { ...numbers };
-        newNumbers[n] = newNumbers[n] ? newNumbers[n] + 1 : 1;
-        setNumbers(newNumbers);
-        setSpades(spades + n);
+      if (isLocked) {
+        setLockedRollCounts((prev) => ({
+          ...(prev || {}),
+          [n]: ((prev || {})[n] || 0) + 1,
+        }));
+      } else if (!bigNumberEntry.restored) {
+        setNumbers((prev) => ({
+          ...prev,
+          [n]: prev[n] ? prev[n] + 1 : 1,
+        }));
+        setSpades((prev) => prev + n);
+        setRolls((prev) => [n, ...prev]);
       }
-      setRolls([n, ...rolls]);
       checkForEvent();
     }, 700);
   }
