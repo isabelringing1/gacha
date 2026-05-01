@@ -487,15 +487,15 @@ function App() {
           saveData.tenPullUnlocked || (saveData.purchasedCharms || []).includes("ten-pull")
         );
         var t = saveData.nextHeartRefreshTime - Date.now();
-        if (t <= 0) {
+        if (saveData.nextHeartRefreshTime && t <= 0) {
           var numDiamondsGained = 0;
-          while (t <= 0 && diamonds + numDiamondsGained < saveData.maxDiamonds) {
+          while (t <= 0 && saveData.diamonds + numDiamondsGained < saveData.maxDiamonds) {
             numDiamondsGained++;
             t += REFRESH_TIME;
           }
-          var newDiamonds = diamonds + saveData.maxDiamonds;
+          var newDiamonds = Math.min(saveData.maxDiamonds, saveData.diamonds + numDiamondsGained);
           setDiamonds(newDiamonds);
-          if (newDiamonds < maxDiamonds) {
+          if (newDiamonds < saveData.maxDiamonds) {
             setNextDiamondRefreshTime(Date.now() + t);
           } else {
             setNextDiamondRefreshTime(null);

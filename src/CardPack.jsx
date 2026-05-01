@@ -152,7 +152,7 @@ const CardPack = (props) => {
     >
       <Drawing lines={lines} />
 
-      {showSliceInstructions && (
+      {showSliceInstructions && !numbersRolled && (
         <div className="slice-instructions">
           <DitherShader
             src={numberBg}
