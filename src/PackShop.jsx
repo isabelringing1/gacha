@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import PackShopEntry from "./PackShopEntry";
 import Timer from "./Timer";
 import { UNLOCK_ENTRY_COST, UNLOCK_PACK_SHOP_COST } from "./constants.js";
@@ -29,12 +28,6 @@ export default function PackShop(props) {
     lastPackOpened,
     numPacksOpened,
   } = props;
-
-  const [, setTick] = useState(0);
-  useEffect(() => {
-    const interval = setInterval(() => setTick((t) => t + 1), 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   const canUnlockShopEntry = () => {
     return spades >= UNLOCK_ENTRY_COST;
