@@ -1443,6 +1443,52 @@ button:disabled {
   mix-blend-mode: multiply;
 }
 
+.ray-box {
+  position: absolute;
+  margin: auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 70px;
+  height: 70px;
+  pointer-events: none;
+  animation: ray-anim 120s linear infinite;
+  -webkit-animation: ray-anim 120s linear infinite;
+  scale: 3;
+}
+
+.ray {
+  margin-left: 10px;
+  border-radius: 80% 80% 0 0;
+  position: absolute;
+  opacity: 0;
+}
+
+.ray-epic{
+  background: linear-gradient(to top, #d979ff34 0%, #d979ff 40%, #d979ff00 100%);
+  background: -webkit-linear-gradient(top, #d979ff34 0%, #d979ff 40%, #d979ff00 100%);
+  opacity: 0.2;
+}
+
+.ray-legendary{
+  background: linear-gradient(to top, #fff87923 0%, #fff879 40%, #fff87900 100%);
+  background: -webkit-linear-gradient(top, #fff8791b 0%, #fff879 40%, #fff87900 100%);
+  opacity: 0.4;
+}
+
+
+@keyframes ray-anim {
+  0% {
+    transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+  }
+}
+
 .splash-bg-event {
   position: absolute;
   display: flex;

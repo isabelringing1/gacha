@@ -5,6 +5,35 @@ import rarityJson from "./json/rarity.json";
 
 import { DitherShader } from "./dither-shader";
 
+function Ray({ height, width, rotate, top, left, rarity }) {
+  return (
+    <div
+      className={"ray ray-" + rarity}
+      style={{
+        height: `${height}px`,
+        width: `${width}px`,
+        transform: `rotate(${rotate}deg)`,
+        WebkitTransform: `rotate(${rotate}deg)`,
+        top: `${top}px`,
+        left: `${left}px`,
+      }}
+    />
+  );
+}
+
+const RAYS = [
+  { height: 170, width: 30, rotate: 180, top: -175, left: 15 },
+  { height: 100, width: 8, rotate: 220, top: -90, left: 75, only_legendary: true },
+  { height: 170, width: 50, rotate: 250, top: -80, left: 100 },
+  { height: 120, width: 14, rotate: 305, top: 30, left: 100, only_legendary: true },
+  { height: 140, width: 30, rotate: -15, top: 60, left: 40 },
+  { height: 90, width: 50, rotate: 30, top: 60, left: -40 },
+  { height: 140, width: 8, rotate: 70, top: -15, left: -40, only_legendary: true },
+  { height: 120, width: 30, rotate: 100, top: -45, left: -90 },
+  { height: 80, width: 10, rotate: 120, top: -65, left: -60, only_legendary: true },
+  { height: 190, width: 23, rotate: 150, top: -185, left: -60 },
+];
+
 export default function SplashDisplayBack(props) {
   const {
     bigNumberEntry,
@@ -112,6 +141,14 @@ export default function SplashDisplayBack(props) {
           className={"splash-bg " + data.bg_type}
           objectFit="contain"
         />
+
+        <div className="ray-box">
+          {RAYS.map((ray, i) => (
+            (data.id !== "legendary" && ray.only_legendary) ? null : (
+              <Ray key={"ray-" + i} {...ray} rarity={data.id} />
+            )
+          ))}
+        </div>
 
         {twinkleArray.map((twinkle, i) => twinkle)}
       </div>
