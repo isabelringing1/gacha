@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useCallback, useState } from "react";
+import React, { useEffect, useRef, useCallback, useState, useMemo } from "react";
 import { cn } from "./utils";
 
 type DitheringMode = "bayer" | "halftone" | "noise" | "crosshatch";
@@ -138,9 +138,13 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
     height: number;
   }>({ width: 0, height: 0 });
 
-  const parsedPrimaryColor = parseColor(primaryColor);
-  const parsedSecondaryColor = parseColor(secondaryColor);
-  const parsedCustomPalette = customPalette.map(parseColor);
+  const parsedPrimaryColor = useMemo(() => parseColor(primaryColor), [primaryColor]);
+  const parsedSecondaryColor = useMemo(() => parseColor(secondaryColor), [secondaryColor]);
+  const customPaletteKey = customPalette.join("|");
+  const parsedCustomPalette = useMemo(
+    () => customPalette.map(parseColor),
+    [customPaletteKey],
+  );
 
   const applyDithering = useCallback(
     (
