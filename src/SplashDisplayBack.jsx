@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getRarityData } from "./Util";
+import { getRarityData, spawnDoober } from "./Util";
 import Twinkle from "./Twinkle";
 import rarityJson from "./json/rarity.json";
 
@@ -66,12 +66,9 @@ export default function SplashDisplayBack(props) {
     setAnimating(true);
     setCn("big-number-container zoom-out");
 
-    var number = document.getElementById("number-container-" + n);
-    if (number) {
-      number.classList.remove("pulse-delay");
-      number.classList.add("pulse-delay");
-    }
-    setTimeout(() => {
+    var earnsSpades = !isLocked && !bigNumberEntry.restored;
+
+    var finalize = () => {
       setBigNumberQueue((prev) => prev.slice(1));
       setAnimating(false);
       setCn("big-number-container");
@@ -86,11 +83,36 @@ export default function SplashDisplayBack(props) {
           ...prev,
           [n]: prev[n] ? prev[n] + 1 : 1,
         }));
-        setSpades((prev) => prev + n);
         setRolls((prev) => [n, ...prev]);
       }
       checkForEvent();
-    }, 700);
+    };
+
+    // Wait for splash zoom-out (500ms) so the number is visible underneath.
+    setTimeout(() => {
+      if (!earnsSpades) {
+        finalize();
+        return;
+      }
+      var numberEl = document.getElementById("number-container-" + n);
+      var spadesEl = document.getElementById("spades-container");
+      // Pulse the source number first to draw attention before the doober flies out.
+      if (numberEl) {
+        numberEl.classList.remove("pulse");
+        void numberEl.offsetWidth;
+        numberEl.classList.add("pulse");
+      }
+      spawnDoober({
+        from: numberEl,
+        to: spadesEl,
+        label: "♠︎",
+        onLand: () => {
+          // Increment spades on landing — existing useEffect on `spades` pulses #spades-container.
+          setSpades((prev) => prev + n);
+          finalize();
+        },
+      });
+    }, 500);
   }
 
   useEffect(() => {

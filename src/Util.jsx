@@ -722,6 +722,47 @@ function getNumToUpgrade(numTimesRolled) {
   return nextLevel.rolls - numTimesRolled;
 }
 
+function spawnDoober({ from, to, label, onLand, duration = 230 }) {
+  if (!from || !to) {
+    if (onLand) onLand();
+    return;
+  }
+  var fromRect = from.getBoundingClientRect();
+  var toRect = to.getBoundingClientRect();
+  var sx = fromRect.left + fromRect.width / 2;
+  var sy = fromRect.top + fromRect.height / 2;
+  var tx = toRect.left + toRect.width / 2;
+  var ty = toRect.top + toRect.height / 2;
+
+  var doober = document.createElement("div");
+  doober.className = "doober";
+  doober.textContent = label;
+  doober.style.left = sx + "px";
+  doober.style.top = sy + "px";
+  document.body.appendChild(doober);
+
+  var dx = tx - sx;
+  var dy = ty - sy;
+
+  var anim = doober.animate(
+    [
+      { transform: "translate(-50%, -50%)", opacity: 1, offset: 0 },
+      {
+        transform:
+          "translate(calc(-50% + " + dx + "px), calc(-50% + " + dy + "px))",
+        opacity: 1,
+        offset: 1,
+      },
+    ],
+    { duration: duration, easing: "ease-in", fill: "forwards" },
+  );
+
+  anim.onfinish = function () {
+    doober.remove();
+    if (onLand) onLand();
+  };
+}
+
 function getLevelProgress(numTimesRolled) {
   var rolls = numTimesRolled || 0;
   var level = getLevel(rolls);
@@ -766,4 +807,5 @@ export {
   rollFudged,
   getNumToUpgrade,
   getLevelProgress,
+  spawnDoober,
 };

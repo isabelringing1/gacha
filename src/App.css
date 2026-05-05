@@ -4599,6 +4599,17 @@ input[type="number"] {
   margin: 0 auto;
 }
 
+.doober {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  font-size: 2.33dvh;
+  color: black;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  will-change: transform, opacity;
+}
+
 .pack-timer{
   font-family: NewYork, serif;
   font-size: 3dvh;
