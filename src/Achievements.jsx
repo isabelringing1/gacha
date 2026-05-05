@@ -198,9 +198,7 @@ export default function Achievements(props) {
                       disabled={!achieved || claimed}
                       onClick={() => handleClaim(achievement)}
                     >
-                      {claimed
-                        ? "Claimed"
-                        : getCurrencyIcon(achievement.currency) + " " + achievement.reward_amount}
+                      {getCurrencyIcon(achievement.currency) + " " + achievement.reward_amount}
                     </button>
                   </div>
                 );

@@ -99,6 +99,11 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
+const HALFTONE_COS = Math.cos(Math.PI / 4);
+const HALFTONE_SIN = Math.sin(Math.PI / 4);
+const QUANT_LEVELS = 4;
+const QUANT_STEP = 255 / QUANT_LEVELS;
+
 export const DitherShader: React.FC<DitherShaderProps> = ({
   src,
   gridSize = 4,
@@ -128,6 +133,7 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
   const timeRef = useRef<number>(0);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const imageDataRef = useRef<ImageData | null>(null);
+  const offscreenRef = useRef<HTMLCanvasElement | null>(null);
   const dimensionsRef = useRef<{ width: number; height: number }>({
     width: 0,
     height: 0,
@@ -171,14 +177,6 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
       const canvas = canvasRef.current;
       if (!canvas || !imageDataRef.current) return;
 
-      // Clear with background
-      if (backgroundColor !== "transparent") {
-        ctx.fillStyle = backgroundColor;
-        ctx.fillRect(0, 0, displayWidth, displayHeight);
-      } else {
-        ctx.clearRect(0, 0, displayWidth, displayHeight);
-      }
-
       const sourceData = imageDataRef.current.data;
       const sourceWidth = imageDataRef.current.width;
       const sourceHeight = imageDataRef.current.height;
@@ -188,135 +186,207 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
       const bayerMatrix = gridSize <= 4 ? BAYER_MATRIX_4x4 : BAYER_MATRIX_8x8;
       const matrixScale = matrixSize === 4 ? 16 : 64;
 
-      // Process pixels
-      for (let y = 0; y < displayHeight; y += effectivePixelSize) {
-        for (let x = 0; x < displayWidth; x += effectivePixelSize) {
-          // Map display coordinates to source image coordinates
-          const srcX = Math.floor((x / displayWidth) * sourceWidth);
-          const srcY = Math.floor((y / displayHeight) * sourceHeight);
-          const srcIdx = (srcY * sourceWidth + srcX) * 4;
+      // Build output ImageData and write RGBA bytes directly (much faster than fillStyle/fillRect per pixel)
+      const outImageData = ctx.createImageData(displayWidth, displayHeight);
+      const outData = outImageData.data;
 
-          let r = sourceData[srcIdx] || 0;
-          let g = sourceData[srcIdx + 1] || 0;
-          let b = sourceData[srcIdx + 2] || 0;
-          const a = sourceData[srcIdx + 3] || 0;
-
-          if (a < 10) continue; // Skip fully transparent pixels
-
-          // Apply brightness and contrast
-          r = clamp((r - 128) * contrast + 128 + brightness * 255, 0, 255);
-          g = clamp((g - 128) * contrast + 128 + brightness * 255, 0, 255);
-          b = clamp((b - 128) * contrast + 128 + brightness * 255, 0, 255);
-
-          // Calculate luminance
-          const luminance = getLuminance(r, g, b) / 255;
-
-          // Get dither threshold based on mode
-          let ditherThreshold: number;
-          const matrixX = Math.floor(x / gridSize) % matrixSize;
-          const matrixY = Math.floor(y / gridSize) % matrixSize;
-
-          switch (ditherMode) {
-            case "bayer":
-              ditherThreshold = bayerMatrix[matrixY][matrixX] / matrixScale;
-              break;
-            case "halftone": {
-              const angle = Math.PI / 4;
-              const scale = gridSize * 2;
-              const rotX = x * Math.cos(angle) + y * Math.sin(angle);
-              const rotY = -x * Math.sin(angle) + y * Math.cos(angle);
-              const pattern =
-                (Math.sin(rotX / scale) + Math.sin(rotY / scale) + 2) / 4;
-              ditherThreshold = pattern;
-              break;
-            }
-            case "noise": {
-              const noiseVal =
-                Math.sin(x * 12.9898 + y * 78.233 + time * 100) * 43758.5453;
-              ditherThreshold = noiseVal - Math.floor(noiseVal);
-              break;
-            }
-            case "crosshatch": {
-              const line1 = (x + y) % (gridSize * 2) < gridSize ? 1 : 0;
-              const line2 =
-                (x - y + gridSize * 4) % (gridSize * 2) < gridSize ? 1 : 0;
-              ditherThreshold = (line1 + line2) / 2;
-              break;
-            }
-            default:
-              ditherThreshold = bayerMatrix[matrixY][matrixX] / matrixScale;
-          }
-
-          // Adjust threshold with user setting
-          ditherThreshold = ditherThreshold * (1 - threshold) + threshold * 0.5;
-
-          // Determine output color based on color mode
-          let outputColor: [number, number, number];
-
-          switch (colorMode) {
-            case "grayscale": {
-              const shouldBeDark = luminance < ditherThreshold;
-              outputColor = shouldBeDark ? [0, 0, 0] : [255, 255, 255];
-              break;
-            }
-            case "duotone": {
-              const shouldBeDark = luminance < ditherThreshold;
-              outputColor = shouldBeDark
-                ? parsedPrimaryColor
-                : parsedSecondaryColor;
-              break;
-            }
-            case "custom": {
-              if (parsedCustomPalette.length === 2) {
-                const shouldBeDark = luminance < ditherThreshold;
-                outputColor = shouldBeDark
-                  ? parsedCustomPalette[0]
-                  : parsedCustomPalette[1];
-              } else {
-                // Quantize to closest palette color with dithering
-                const adjustedLuminance =
-                  luminance + (ditherThreshold - 0.5) * 0.5;
-                const paletteIndex = Math.floor(
-                  clamp(adjustedLuminance, 0, 1) *
-                    (parsedCustomPalette.length - 1),
-                );
-                outputColor = parsedCustomPalette[paletteIndex];
-              }
-              break;
-            }
-            case "original":
-            default: {
-              // Apply dithering while preserving colors
-              const ditherAmount = ditherThreshold - 0.5;
-              const adjustedR = clamp(r + ditherAmount * 64, 0, 255);
-              const adjustedG = clamp(g + ditherAmount * 64, 0, 255);
-              const adjustedB = clamp(b + ditherAmount * 64, 0, 255);
-
-              // Quantize to fewer levels for dithered look
-              const levels = 4;
-              outputColor = [
-                Math.round(adjustedR / (255 / levels)) * (255 / levels),
-                Math.round(adjustedG / (255 / levels)) * (255 / levels),
-                Math.round(adjustedB / (255 / levels)) * (255 / levels),
-              ];
-              break;
-            }
-          }
-
-          // Apply inversion
-          if (invert) {
-            outputColor = [
-              255 - outputColor[0],
-              255 - outputColor[1],
-              255 - outputColor[2],
-            ];
-          }
-
-          // Draw the pixel
-          ctx.fillStyle = `rgb(${outputColor[0]}, ${outputColor[1]}, ${outputColor[2]})`;
-          ctx.fillRect(x, y, effectivePixelSize, effectivePixelSize);
+      // Pre-fill background if non-transparent
+      let bgR = 0,
+        bgG = 0,
+        bgB = 0,
+        bgA = 0;
+      if (backgroundColor !== "transparent") {
+        const parsedBg = parseColor(backgroundColor);
+        bgR = parsedBg[0];
+        bgG = parsedBg[1];
+        bgB = parsedBg[2];
+        bgA = 255;
+        for (let i = 0; i < outData.length; i += 4) {
+          outData[i] = bgR;
+          outData[i + 1] = bgG;
+          outData[i + 2] = bgB;
+          outData[i + 3] = bgA;
         }
       }
+
+      // Hoist constants out of the inner loop
+      const oneMinusThreshold = 1 - threshold;
+      const halfThreshold = threshold * 0.5;
+      const brightness255 = brightness * 255;
+      const skipBC = brightness === 0 && contrast === 1;
+      const customLen = parsedCustomPalette.length;
+      const customLenMinus1 = customLen - 1;
+      const halftoneScale = gridSize * 2;
+      const crosshatchPeriod = gridSize * 2;
+      const crosshatchOffset = gridSize * 4;
+      const widthRatio = sourceWidth / displayWidth;
+      const heightRatio = sourceHeight / displayHeight;
+      const isOriginal = colorMode === "original";
+      const isGrayscale = colorMode === "grayscale";
+      const isDuotone = colorMode === "duotone";
+      const isCustom = colorMode === "custom";
+      const isBayer = ditherMode === "bayer";
+      const isHalftone = ditherMode === "halftone";
+      const isNoise = ditherMode === "noise";
+      const isCrosshatch = ditherMode === "crosshatch";
+      const noiseTimeOffset = time * 100;
+      const primary0 = parsedPrimaryColor[0];
+      const primary1 = parsedPrimaryColor[1];
+      const primary2 = parsedPrimaryColor[2];
+      const secondary0 = parsedSecondaryColor[0];
+      const secondary1 = parsedSecondaryColor[1];
+      const secondary2 = parsedSecondaryColor[2];
+
+      // Process pixels
+      for (let y = 0; y < displayHeight; y += effectivePixelSize) {
+        const srcY = (y * heightRatio) | 0;
+        const matrixY = ((y / gridSize) | 0) % matrixSize;
+        const bayerRow = bayerMatrix[matrixY];
+        const blockH = effectivePixelSize < displayHeight - y ? effectivePixelSize : displayHeight - y;
+
+        for (let x = 0; x < displayWidth; x += effectivePixelSize) {
+          const srcX = (x * widthRatio) | 0;
+          const srcIdx = (srcY * sourceWidth + srcX) << 2;
+
+          const a = sourceData[srcIdx + 3];
+          if (a < 10) continue;
+
+          let r = sourceData[srcIdx];
+          let g = sourceData[srcIdx + 1];
+          let b = sourceData[srcIdx + 2];
+
+          if (!skipBC) {
+            r = (r - 128) * contrast + 128 + brightness255;
+            g = (g - 128) * contrast + 128 + brightness255;
+            b = (b - 128) * contrast + 128 + brightness255;
+            if (r < 0) r = 0;
+            else if (r > 255) r = 255;
+            if (g < 0) g = 0;
+            else if (g > 255) g = 255;
+            if (b < 0) b = 0;
+            else if (b > 255) b = 255;
+          }
+
+          const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+          let ditherThreshold: number;
+          if (isBayer) {
+            const matrixX = ((x / gridSize) | 0) % matrixSize;
+            ditherThreshold = bayerRow[matrixX] / matrixScale;
+          } else if (isHalftone) {
+            const rotX = x * HALFTONE_COS + y * HALFTONE_SIN;
+            const rotY = -x * HALFTONE_SIN + y * HALFTONE_COS;
+            ditherThreshold =
+              (Math.sin(rotX / halftoneScale) +
+                Math.sin(rotY / halftoneScale) +
+                2) /
+              4;
+          } else if (isNoise) {
+            const noiseVal =
+              Math.sin(x * 12.9898 + y * 78.233 + noiseTimeOffset) *
+              43758.5453;
+            ditherThreshold = noiseVal - Math.floor(noiseVal);
+          } else if (isCrosshatch) {
+            const line1 = (x + y) % crosshatchPeriod < gridSize ? 1 : 0;
+            const line2 =
+              (x - y + crosshatchOffset) % crosshatchPeriod < gridSize ? 1 : 0;
+            ditherThreshold = (line1 + line2) / 2;
+          } else {
+            const matrixX = ((x / gridSize) | 0) % matrixSize;
+            ditherThreshold = bayerRow[matrixX] / matrixScale;
+          }
+
+          ditherThreshold = ditherThreshold * oneMinusThreshold + halfThreshold;
+
+          let outR: number, outG: number, outB: number;
+
+          if (isOriginal) {
+            const ditherAmount = ditherThreshold - 0.5;
+            let aR = r + ditherAmount * 64;
+            let aG = g + ditherAmount * 64;
+            let aB = b + ditherAmount * 64;
+            if (aR < 0) aR = 0;
+            else if (aR > 255) aR = 255;
+            if (aG < 0) aG = 0;
+            else if (aG > 255) aG = 255;
+            if (aB < 0) aB = 0;
+            else if (aB > 255) aB = 255;
+            outR = Math.round(aR / QUANT_STEP) * QUANT_STEP;
+            outG = Math.round(aG / QUANT_STEP) * QUANT_STEP;
+            outB = Math.round(aB / QUANT_STEP) * QUANT_STEP;
+          } else if (isGrayscale) {
+            const v = luminance < ditherThreshold ? 0 : 255;
+            outR = v;
+            outG = v;
+            outB = v;
+          } else if (isDuotone) {
+            if (luminance < ditherThreshold) {
+              outR = primary0;
+              outG = primary1;
+              outB = primary2;
+            } else {
+              outR = secondary0;
+              outG = secondary1;
+              outB = secondary2;
+            }
+          } else if (isCustom) {
+            if (customLen === 2) {
+              const c =
+                luminance < ditherThreshold
+                  ? parsedCustomPalette[0]
+                  : parsedCustomPalette[1];
+              outR = c[0];
+              outG = c[1];
+              outB = c[2];
+            } else {
+              let adjustedLuminance =
+                luminance + (ditherThreshold - 0.5) * 0.5;
+              if (adjustedLuminance < 0) adjustedLuminance = 0;
+              else if (adjustedLuminance > 1) adjustedLuminance = 1;
+              const idx = (adjustedLuminance * customLenMinus1) | 0;
+              const c = parsedCustomPalette[idx];
+              outR = c[0];
+              outG = c[1];
+              outB = c[2];
+            }
+          } else {
+            const ditherAmount = ditherThreshold - 0.5;
+            let aR = r + ditherAmount * 64;
+            let aG = g + ditherAmount * 64;
+            let aB = b + ditherAmount * 64;
+            if (aR < 0) aR = 0;
+            else if (aR > 255) aR = 255;
+            if (aG < 0) aG = 0;
+            else if (aG > 255) aG = 255;
+            if (aB < 0) aB = 0;
+            else if (aB > 255) aB = 255;
+            outR = Math.round(aR / QUANT_STEP) * QUANT_STEP;
+            outG = Math.round(aG / QUANT_STEP) * QUANT_STEP;
+            outB = Math.round(aB / QUANT_STEP) * QUANT_STEP;
+          }
+
+          if (invert) {
+            outR = 255 - outR;
+            outG = 255 - outG;
+            outB = 255 - outB;
+          }
+
+          // Write the block of pixels into the output buffer
+          const blockW = effectivePixelSize < displayWidth - x ? effectivePixelSize : displayWidth - x;
+          for (let by = 0; by < blockH; by++) {
+            let idx = ((y + by) * displayWidth + x) << 2;
+            for (let bx = 0; bx < blockW; bx++) {
+              outData[idx] = outR;
+              outData[idx + 1] = outG;
+              outData[idx + 2] = outB;
+              outData[idx + 3] = 255;
+              idx += 4;
+            }
+          }
+        }
+      }
+
+      ctx.putImageData(outImageData, 0, 0);
     },
     [
       gridSize,
@@ -365,20 +435,23 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
 
     const processImage = (img: HTMLImageElement) => {
       if (isCancelled) return;
-      const dpr = 1;
-      const displayWidth = dimensions.width;
-      const displayHeight = dimensions.height;
+      // Dimensions from ResizeObserver can be fractional; floor so canvas size,
+      // ImageData stride, and the dither loop indexing all agree.
+      const displayWidth = Math.floor(dimensions.width);
+      const displayHeight = Math.floor(dimensions.height);
+      if (displayWidth === 0 || displayHeight === 0) return;
 
-      canvas.width = Math.floor(displayWidth * dpr);
-      canvas.height = Math.floor(displayHeight * dpr);
+      canvas.width = displayWidth;
+      canvas.height = displayHeight;
 
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
-      ctx.resetTransform();
-      ctx.scale(dpr, dpr);
 
-      // Create offscreen canvas to get image data
-      const offscreen = document.createElement("canvas");
+      // Reuse a single offscreen canvas across renders rather than allocating each time.
+      if (!offscreenRef.current) {
+        offscreenRef.current = document.createElement("canvas");
+      }
+      const offscreen = offscreenRef.current;
       const iw = displayWidth;
       const ih = displayHeight;
 
@@ -408,10 +481,12 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
         dx = Math.floor((displayWidth - dw) / 2);
         dy = Math.floor((displayHeight - dh) / 2);
       }
-      offscreen.width = displayWidth;
-      offscreen.height = displayHeight;
+      // Resizing a canvas (even to the same size) clears it; only reset when needed.
+      if (offscreen.width !== displayWidth) offscreen.width = displayWidth;
+      if (offscreen.height !== displayHeight) offscreen.height = displayHeight;
       const offCtx = offscreen.getContext("2d");
       if (!offCtx) return;
+      offCtx.clearRect(0, 0, displayWidth, displayHeight);
       offCtx.drawImage(img, dx, dy, dw, dh);
 
       try {
