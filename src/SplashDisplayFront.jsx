@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import ribbon from "/ribbon.png";
 import newBg from "/new_bg.png";
 import speech_bubble from "/speech_bubble.png";
@@ -41,21 +41,24 @@ export default function SplashDisplayFront(props) {
   var digits =
     n == 100 ? [1, 0, 0] : n > 9 ? [Math.floor(n / 10), n % 10] : [n];
 
-  function getTransformOrigin() {
+  const transformOrigin = useMemo(() => {
     if (!animating) {
       return bigNumberEntry.fromPack ? "50% 100%" : "50% 50%";
     }
     var numberContainer = document.getElementById("number-container-" + n);
+    if (!numberContainer) return "50% 50%";
     var rect = numberContainer.getBoundingClientRect();
     var x = rect.x + rect.width / 2;
     var y = rect.y + rect.height / 2;
     return x + "px " + y + "px";
-  }
+  }, [animating, n, bigNumberEntry.fromPack]);
+
+  const splashStyle = useMemo(() => ({ transformOrigin }), [transformOrigin]);
 
   return (
     <div
       className={"splash-front " + (animating ? "zoom-out" : "")}
-      style={{ transformOrigin: getTransformOrigin() }}
+      style={splashStyle}
     >
       <DitherShader
         src={ribbon}

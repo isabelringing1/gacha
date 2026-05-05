@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Timer from "./Timer";
 import ruled_paper from "/ruled_paper.png";
 import { DitherShader } from "./dither-shader";
@@ -12,6 +12,7 @@ export default function OutOfHeartsContainer(props) {
   const [mathProblems, setMathProblems] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [resetTick, setResetTick] = useState(0);
+  const outerRef = useRef(null);
 
   useEffect(() => {
     if (mathProblems.length > 0) {
@@ -24,7 +25,6 @@ export default function OutOfHeartsContainer(props) {
       }
     }
   }, [mathProblems]);
-
   function getNextDifficulty() {
     const now = Date.now();
     const hourStart = parseInt(localStorage.getItem("gacha_math_hour_start") || "0");
@@ -84,8 +84,9 @@ export default function OutOfHeartsContainer(props) {
       localStorage.setItem("gacha_math_completions", (prev + 1).toString());
       setShowSuccess(true);
       setTimeout(() => {
-        var container = document.getElementsByClassName("out-of-hearts-outer")[0];
-        container.classList.add("flicker-out");
+        if (outerRef.current) {
+          outerRef.current.classList.add("flicker-out");
+        }
         setTimeout(() => {
           setShowOutOfDiamonds(false);
           setShowSuccess(false);
@@ -105,7 +106,7 @@ export default function OutOfHeartsContainer(props) {
           setShowOutOfDiamonds(false);
       }}
     >
-      <div className={"out-of-hearts-outer" + (showMath != 0 ? " flip" : "")}>
+      <div ref={outerRef} className={"out-of-hearts-outer" + (showMath != 0 ? " flip" : "")}>
         <div className={"out-of-hearts-inner" + (showMath != 0 ? " flip" : "")}>
           <div className={"out-of-hearts-popup dither-bg"}>
             <div className="out-of-hearts-title title">

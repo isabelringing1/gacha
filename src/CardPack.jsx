@@ -21,6 +21,7 @@ const CardPack = (props) => {
 
   const drawAreaRef = useRef(null);
   const canvasRef = useRef(null);
+  const lineRef = useRef(null);
 
   useEffect(() => {
     const context = canvasRef.current.getContext("2d");
@@ -68,12 +69,14 @@ const CardPack = (props) => {
     const point = relativeCoordinatesForEvent(mouseEvent);
     setLines([[point]]);
     setIsDrawing(true);
+    lineRef.current = null;
   };
 
   const handleTouchStart = (mouseEvent) => {
     const point = relativeCoordinatesForEvent(mouseEvent);
     setLines([[point]]);
     setIsDrawing(true);
+    lineRef.current = null;
   };
 
   const handleMouseMove = (mouseEvent) => {
@@ -81,7 +84,10 @@ const CardPack = (props) => {
       return;
     }
 
-    var line = document.getElementById("line");
+    if (!lineRef.current || !lineRef.current.isConnected) {
+      lineRef.current = document.getElementById("line");
+    }
+    var line = lineRef.current;
     if (
       line &&
       (line.getTotalLength() > 1000 || lines[lines.length - 1].length > 300)

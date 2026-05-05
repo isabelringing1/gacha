@@ -22,6 +22,8 @@ export default function PackShopEntry(props) {
     lastPackOpened,
     hoveredPack,
     numPacksOpened,
+    imgWidth,
+    imgHeight,
   } = props;
 
   const [trashHovered, setTrashHovered] = useState(false);
@@ -64,26 +66,6 @@ export default function PackShopEntry(props) {
     setHoveredPack(null);
   }
 
-  function getCardPackImgWidth() {
-    var container = document.getElementsByClassName("pack-shop-packs")[0];
-    if (container) {
-      if (isMobile) {
-        return Math.floor(container.getBoundingClientRect().width * 0.2);
-      } else {
-        return Math.floor(container.getBoundingClientRect().width * 0.4);
-      }
-    }
-    return 0;
-  }
-
-  function getCardPackImgHeight() {
-    var container = document.getElementsByClassName("pack-shop-packs")[0];
-    if (container) {
-      return Math.floor(container.getBoundingClientRect().height * 0.4);
-    }
-    return 0;
-  }
-
   function onBuyPressed(e) {
     if (!canBuy()) {
       return;
@@ -117,8 +99,8 @@ export default function PackShopEntry(props) {
           outlineColor={outlineColor}
           outlineWidth={2}
           style={{
-            width: getCardPackImgWidth() + "px",
-            height: getCardPackImgHeight() + "px",
+            width: imgWidth + "px",
+            height: imgHeight + "px",
             opacity: canBuy() ? 1 : 0.5,
           }}
           children={[

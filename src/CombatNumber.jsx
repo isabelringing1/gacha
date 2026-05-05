@@ -30,6 +30,8 @@ export default function CombatNumber(props) {
   var timeoutRef = useRef(null);
 
   const healthRef = useRef(null);
+  const numberDivRef = useRef(null);
+  const critDivRef = useRef(null);
 
   var [block, setBlock] = useState(false);
   var [alive, setAlive] = useState(true);
@@ -134,17 +136,19 @@ export default function CombatNumber(props) {
       }
       return;
     }
-    var numberDiv = document.getElementById("combat-number-" + index);
+    var numberDiv = numberDivRef.current;
     var didCrit = onAttack(healthRef.current);
 
     lastAttackTimeRef.current = Date.now();
 
-    numberDiv.classList.remove("attack");
-    void numberDiv.offsetWidth;
-    numberDiv.classList.add("attack");
+    if (numberDiv) {
+      numberDiv.classList.remove("attack");
+      void numberDiv.offsetWidth;
+      numberDiv.classList.add("attack");
+    }
 
     if (didCrit) {
-      var critDiv = document.getElementById("combat-number-crit-" + index);
+      var critDiv = critDivRef.current;
       if (critDiv) {
         critDiv.classList.remove("crit-active");
         void critDiv.offsetWidth;
@@ -243,13 +247,14 @@ export default function CombatNumber(props) {
             setHover(false);
           }}
         >
-           <div className="combat-number-crit" id={"combat-number-crit-" + index}>Crit!</div>
+           <div className="combat-number-crit" id={"combat-number-crit-" + index} ref={critDivRef}>Crit!</div>
           <div
             className={
               "combat-number " +
               (combatState.numberStates[number].health == 0 ? " dead " : "combat-number-" + getRarity(number))
             }
             id={"combat-number-" + index}
+            ref={numberDivRef}
           >
             
             {combatState.numberStates[number].health}

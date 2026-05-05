@@ -1,6 +1,7 @@
+import { useState, useEffect, useRef } from "react";
 import PackShopEntry from "./PackShopEntry";
 import Timer from "./Timer";
-import { UNLOCK_ENTRY_COST, UNLOCK_PACK_SHOP_COST } from "./constants.js";
+import { UNLOCK_ENTRY_COST, UNLOCK_PACK_SHOP_COST, isMobile } from "./constants.js";
 
 import packData from "./json/packs.json";
 
@@ -37,6 +38,26 @@ export default function PackShop(props) {
     return spades > getRefreshEntryCost(entry);
   };
 
+  const packsRef = useRef(null);
+  const [packsSize, setPacksSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    if (packShopState != "unlocked" || !packsRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        setPacksSize((prev) =>
+          prev.width === width && prev.height === height ? prev : { width, height }
+        );
+      }
+    });
+    observer.observe(packsRef.current);
+    return () => observer.disconnect();
+  }, [packShopState]);
+
+  const packImgWidth = Math.floor(packsSize.width * (isMobile ? 0.2 : 0.4));
+  const packImgHeight = Math.floor(packsSize.height * 0.4);
+
   return (
     <div className="pack-shop-container">
       <div className="pack-shop dither-bg">
@@ -50,7 +71,7 @@ export default function PackShop(props) {
           </div>
         )}
         {packShopState == "unlocked" && (
-          <div className="pack-shop-packs">
+          <div className="pack-shop-packs" ref={packsRef}>
             {cardShopEntries.map((shopEntry, i) => {
               return packShopEntriesUnlocked[i] && shopEntry ? (
                 shopEntry.nextRefreshTime ? (
@@ -95,6 +116,8 @@ export default function PackShop(props) {
                     hoveredPack={hoveredPack}
                     lastPackOpened={lastPackOpened}
                     numPacksOpened={numPacksOpened}
+                    imgWidth={packImgWidth}
+                    imgHeight={packImgHeight}
                   />
                 )
               ) : (

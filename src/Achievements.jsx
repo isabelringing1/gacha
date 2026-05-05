@@ -1,7 +1,11 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import achievementData from "./json/achievements.json";
 import { UNLOCK_ACHIEVEMENTS_COST } from "./constants.js";
 import { getCurrencyIcon, getLevel } from "./Util";
+
+const REACH_ACHIEVEMENTS = achievementData
+  .filter((a) => a.id.startsWith("reach_"))
+  .sort((a, b) => a.threshold - b.threshold);
 
 function getRowNumbers(rowIndex) {
   var result = [];
@@ -97,15 +101,14 @@ export default function Achievements(props) {
   }
 
   // reach_X: only the closest unachieved one is visible; all beyond are locked
-  var reachAchievements = achievementData
-    .filter((a) => a.id.startsWith("reach_"))
-    .sort((a, b) => a.threshold - b.threshold);
-  var closestReachIndex = reachAchievements.findIndex((a) => uniqueCount < a.threshold);
-  var lockedReachIds = new Set(
-    closestReachIndex === -1
-      ? []
-      : reachAchievements.slice(closestReachIndex + 1).map((a) => a.id)
-  );
+  var lockedReachIds = useMemo(() => {
+    var closestReachIndex = REACH_ACHIEVEMENTS.findIndex((a) => uniqueCount < a.threshold);
+    return new Set(
+      closestReachIndex === -1
+        ? []
+        : REACH_ACHIEVEMENTS.slice(closestReachIndex + 1).map((a) => a.id)
+    );
+  }, [uniqueCount]);
 
   function isLockedByRequires(a) {
     if (!a.requires) return false;
@@ -116,14 +119,17 @@ export default function Achievements(props) {
     return lockedReachIds.has(a.id) || isLockedByRequires(a);
   }
 
-  var visibleAchievements = achievementData
-    .filter((a) => !fadingOut.includes(a.id) && !initialClaimed.current.includes(a.id))
-    .sort((a, b) => {
-      var aLocked = isLocked(a);
-      var bLocked = isLocked(b);
-      if (aLocked !== bLocked) return aLocked ? 1 : -1;
-      return getProgress(b) - getProgress(a);
-    });
+  var visibleAchievements = useMemo(() => {
+    return achievementData
+      .filter((a) => !fadingOut.includes(a.id) && !initialClaimed.current.includes(a.id))
+      .sort((a, b) => {
+        var aLocked = isLocked(a);
+        var bLocked = isLocked(b);
+        if (aLocked !== bLocked) return aLocked ? 1 : -1;
+        return getProgress(b) - getProgress(a);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fadingOut, claimedAchievements, lockedReachIds, numbers, packsOpened, completeRows, completeCols]);
 
   return (
     <div className="achievements-container">

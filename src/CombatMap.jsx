@@ -3,6 +3,11 @@ import CombatEntrySlot from "./CombatEntrySlot";
 import mapTxt from "/map.txt?raw";
 import shield from "/shield.png";
 
+const MAP_LINES = mapTxt.split("\n");
+const MAP_WIDTH = MAP_LINES[0].length;
+const MAP_HEIGHT = MAP_LINES.length;
+const MAP_CHARS = mapTxt.split("");
+
 export default function CombatMap(props) {
   var {
     combatState,
@@ -16,10 +21,10 @@ export default function CombatMap(props) {
     showReequip,
     setShowReequip,
   } = props;
-  var width = mapTxt.split("\n")[0].length;
-  var height = mapTxt.split("\n").length;
+  var width = MAP_WIDTH;
+  var height = MAP_HEIGHT;
 
-  var [mapState, setMapState] = useState(mapTxt.split(""));
+  var [mapState, setMapState] = useState(MAP_CHARS);
   var [playerPos, setPlayerPos] = useState([Math.floor(width / 2), height - 1]);
   var [discoveredMap, setDiscoveredMap] = useState({});
   var [numSteps, setNumSteps] = useState(0);

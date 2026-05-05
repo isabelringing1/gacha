@@ -65,12 +65,18 @@ export default function Combat(props) {
   const [winState, setWinState] = useState("menu");
   const [now, setNow] = useState(Date.now());
 
-  useEffect(() => {
-    const interval = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(interval);
-  }, []);
-
   const nextUnlock = combatState?.nextLevelUnlockTime || 0;
+
+  useEffect(() => {
+    if (nextUnlock <= Date.now()) return;
+    const interval = setInterval(() => {
+      const t = Date.now();
+      setNow(t);
+      if (t >= nextUnlock) clearInterval(interval);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [nextUnlock]);
+
   const waiting = now < nextUnlock;
   const msRemaining = waiting ? nextUnlock - now : 0;
   const totalSecRemaining = Math.ceil(msRemaining / 1000);
@@ -117,8 +123,8 @@ export default function Combat(props) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setEnemyState(enemyRef.current);
-      setScore(scoreRef.current);
+      setEnemyState((prev) => (prev === enemyRef.current ? prev : enemyRef.current));
+      setScore((prev) => (prev === scoreRef.current ? prev : scoreRef.current));
     }, 100); // sync rate
 
     if (combatState) {

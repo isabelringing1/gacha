@@ -186,7 +186,7 @@ function App() {
 
   const onSpacePressed = (e) => {
     if (e.key == " " && !isRollButtonDisabled()) {
-      rollNumber();
+      //rollNumber();
     }
   };
 

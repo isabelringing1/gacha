@@ -146,6 +146,21 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
     [customPaletteKey],
   );
 
+  const outlineFilter = useMemo(() => {
+    if (!outlineColor) return undefined;
+    return Array.from({ length: 8 }, (_, i) => {
+      const angle = (i * Math.PI) / 4;
+      const dx = Math.round(Math.cos(angle) * outlineWidth);
+      const dy = Math.round(Math.sin(angle) * outlineWidth);
+      return `drop-shadow(${dx}px ${dy}px 0 ${outlineColor})`;
+    }).join(" ");
+  }, [outlineColor, outlineWidth]);
+
+  const canvasStyle = useMemo(
+    () => ({ imageRendering: "pixelated" as const, filter: outlineFilter }),
+    [outlineFilter],
+  );
+
   const applyDithering = useCallback(
     (
       ctx: CanvasRenderingContext2D,
@@ -472,17 +487,7 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
       <canvas
         ref={canvasRef}
         className="absolute inset-0 h-full w-full"
-        style={{
-          imageRendering: "pixelated",
-          filter: outlineColor
-            ? Array.from({ length: 8 }, (_, i) => {
-                const angle = (i * Math.PI) / 4;
-                const dx = Math.round(Math.cos(angle) * outlineWidth);
-                const dy = Math.round(Math.sin(angle) * outlineWidth);
-                return `drop-shadow(${dx}px ${dy}px 0 ${outlineColor})`;
-              }).join(" ")
-            : undefined,
-        }}
+        style={canvasStyle}
         aria-label="Dithered image"
         role="img"
       />
