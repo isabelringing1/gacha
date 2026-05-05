@@ -995,6 +995,10 @@ button:disabled {
   max-width: 30dvh;
 }
 
+.entry-slot {
+  top: 6dvh;
+}
+
 .number-tooltip-text {
   padding: 0.3dvh 0;
   font-family: "Helvetica";
@@ -1108,7 +1112,7 @@ button:disabled {
 }
 
 .top {
-  margin-top: 54dvh;
+  margin-top: 56dvh;
 }
 
 .right {

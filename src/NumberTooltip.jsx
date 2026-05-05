@@ -25,6 +25,9 @@ export default function NumberTooltip(props) {
       cn += " right";
     }
   }
+  else{
+    cn += " entry-slot";
+  }
 
   
   var factorsText = n + " is **prime**.";

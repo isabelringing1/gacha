@@ -169,7 +169,8 @@ export default function PackShopEntry(props) {
               className="trash-button"
               onMouseOver={() => setTrashHovered(true)}
               onMouseOut={() => setTrashHovered(false)}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 setHoveredPack(null);
                 trashPack(shopEntry);
               }}
