@@ -2202,6 +2202,7 @@ button:disabled {
   -webkit-backface-visibility: hidden; /* Safari */
   backface-visibility: hidden;
   position: absolute;
+  transform: rotateY(0deg); /* Firefox: needs an explicit 3D transform for backface-visibility to apply */
 }
 
 .out-of-hearts-popup-inner {
