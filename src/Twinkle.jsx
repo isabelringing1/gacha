@@ -1,65 +1,49 @@
-import { useState, useEffect } from "react";
-
-import { DitherShader } from "./dither-shader";
-import twinkle from "/twinkle.png";
-import twinkleBig from "/twinkle_big.png";
+import { useEffect, useRef, useState } from "react";
 
 export default function Twinkle(props) {
   const { data } = props;
 
-  const [angle, setAngle] = useState(0);
-  const [distance, setDistance] = useState(0);
+  const containerRef = useRef(null);
+  const [isBig] = useState(() => Math.random() < 0.15);
+  const [duration] = useState(() => 3 + Math.random() * 2.3);
+  const [delay] = useState(() => -Math.random() * (3 + 2.3));
+
+  function randomizeDirection() {
+    const el = containerRef.current;
+    if (!el) return;
+    const a = Math.random() * Math.PI * 2;
+    const height = window.screen.height;
+    const d = Math.random() * height * 0.9 + height * 0.2;
+    const rot = Math.random() * 180;
+    el.style.setProperty("--tw-dx", `${Math.cos(a) * d}px`);
+    el.style.setProperty("--tw-dy", `${Math.sin(a) * d}px`);
+    el.style.setProperty("--tw-rot", `${rot}deg`);
+  }
 
   useEffect(() => {
-    setTransform();
+    randomizeDirection();
   }, []);
-
-  function setTransform() {
-    var a = Math.random() * Math.PI * 2;
-    var height = window.screen.height;
-    var d = (Math.random() * height) / 4 + height / 5;
-    setAngle(a);
-    setDistance(d);
-  }
 
   return (
     <div
+      ref={containerRef}
       className="twinkle-container"
+      onAnimationIteration={randomizeDirection}
       style={{
-        transform: `translate(${Math.cos(angle) * distance}px, ${
-          Math.sin(angle) * distance
-        }px)`,
+        animationDuration: `${duration}s`,
+        animationDelay: `${delay}s`,
       }}
     >
-      {Math.random() > 0.15 ? (
-        <DitherShader
-          src={twinkleBig}
-          gridSize={2}
-          ditherMode="bayer"
-          colorMode={data.color_mode}
-          customPalette={data.custom_palette}
-          threshold={-0.3}
-          className="twinkle twinkle-small"
-          style={{
-            animationDelay: Math.random() + "s",
-            filter: "drop-shadow(0 0 0.2vh " + data.twinkle_shadow + ")",
-          }}
-        />
-      ) : (
-        <DitherShader
-          src={twinkleBig}
-          gridSize={2}
-          ditherMode="bayer"
-          colorMode={data.color_mode}
-          customPalette={data.custom_palette}
-          threshold={data.threshold}
-          className="twinkle twinkle-big"
-          style={{
-            animationDelay: Math.random() + "s",
-            filter: "drop-shadow(0 0 0.2vh " + data.twinkle_shadow + ")",
-          }}
-        />
-      )}
+      <div
+        className={isBig ? "twinkle twinkle-big" : "twinkle twinkle-small"}
+        style={{
+          backgroundColor: data.custom_palette[2],
+          clipPath:
+            "polygon(50% 0, calc(50%*(1 + sin(.4turn))) calc(50%*(1 - cos(.4turn))), calc(50%*(1 - sin(.2turn))) calc(50%*(1 - cos(.2turn))), calc(50%*(1 + sin(.2turn))) calc(50%*(1 - cos(.2turn))), calc(50%*(1 - sin(.4turn))) calc(50%*(1 - cos(.4turn))))",
+          filter: `drop-shadow(0 0 0.3vh ${data.font_color}) drop-shadow(0 0 1.5vh ${data.twinkle_shadow})`,
+          transform: "rotate(var(--tw-rot, 0deg))",
+        }}
+      />
     </div>
   );
 }

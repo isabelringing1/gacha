@@ -1391,6 +1391,26 @@ button:disabled {
   }
 }
 
+@keyframes twinkle-fly {
+  0% {
+    transform: translate(-50%, -50%);
+    scale: 0.2;
+    opacity: 0;
+  }
+  15% {
+    scale: 1;
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(
+      calc(-50% + var(--tw-dx)),
+      calc(-50% + var(--tw-dy))
+    );
+    scale: 0.5;
+    opacity: 0;
+  }
+}
+
 @keyframes floating {
   from {
     transform: translate(0, -1dvh);
@@ -1554,9 +1574,14 @@ button:disabled {
 
 .twinkle-container {
   position: absolute;
+  top: 50%;
+  left: 50%;
   z-index: 3;
   mix-blend-mode: normal;
-  opacity: 0.8;
+  --tw-dx: 0px;
+  --tw-dy: 0px;
+  animation: twinkle-fly 2s infinite cubic-bezier(0.2, 0.55, 0.55, 0.95);
+  -webkit-animation: twinkle-fly 2s infinite cubic-bezier(0.2, 0.55, 0.55, 0.95);
 }
 
 .twinkle {
@@ -1565,15 +1590,11 @@ button:disabled {
 .twinkle-small {
   height: 2dvh;
   width: 2dvh;
-  animation: sparkle 2.3s infinite cubic-bezier(0.65, 0, 0.35, 1);
-  -webkit-animation: sparkle 2.3s infinite cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .twinkle-big {
-  height: 7dvh;
-  width: 6dvh;
-  animation: sparkle 3s infinite cubic-bezier(0.65, 0, 0.35, 1);
-  -webkit-animation: sparkle 3s infinite cubic-bezier(0.65, 0, 0.35, 1);
+  height: 4dvh;
+  width: 4dvh;
 }
 
 .prismatic-burst-container {
@@ -1782,12 +1803,13 @@ button:disabled {
 
 .pack-shop-entry-buy-button {
   margin-top: 20%;
-  right: 10%;
+  right: 8%;
   position: absolute;
   border: none;
   z-index: 2;
   padding: 0.2dvh 1dvh;
   border-radius: 0;
+  -webkit-text-stroke: .6vh #ffffff;
 }
 
 .pack-shop-entry-expiry {
@@ -3832,7 +3854,6 @@ input[type="number"] {
   position: absolute;
   top: -0.5dvh;
   right: -0.5dvh;
-  z-index: 3;
   height: 4.1dvh;
   width: 3vw;
   background-color: white;
@@ -4500,10 +4521,10 @@ input[type="number"] {
   }
 }
 
-.about-combat-button {
+.about-combat-button,
+.about-button {
   position: fixed;
-  bottom: 4dvh;
-  left: calc(50vw - 2dvh);
+  bottom: 3dvh;
   width: 3.3dvh;
   height: 3.3dvh;
   border-radius: 50%;
@@ -4518,12 +4539,20 @@ input[type="number"] {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  z-index: 50;
   padding: 0;
   line-height: 1;
 }
 
-.about-combat-button:hover {
+.about-combat-button {
+  left: calc(50vw - 2dvh);
+}
+
+.about-button {
+  left: 4dvh;
+}
+
+.about-combat-button:hover,
+.about-button:hover {
   background-color: #f0f0f0;
 }
 
@@ -4569,7 +4598,7 @@ input[type="number"] {
   font-family: Helvetica;
   text-align: center;
   margin-top: 0.3dvh;
-  width: 90%;
+  width: 100%;
 }
 
 .win-popup-buttons{
@@ -4582,7 +4611,17 @@ input[type="number"] {
 
 .win-popup-text-top{
   margin-top: 1dvh;
-} 
+}
+
+.reset-popup-overlay {
+  z-index: 110;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.reset-popup-buttons-row {
+  flex-direction: row;
+  gap: 2dvh;
+}
 
 .combat-level-text{
   margin-top: 2dvh;
@@ -4613,4 +4652,36 @@ input[type="number"] {
 .pack-timer{
   font-family: NewYork, serif;
   font-size: 3dvh;
+}
+
+.flower-link {
+  text-decoration: none;
+}
+
+.flower {
+  height: 2.2dvh;
+  padding-left: 0.2dvh;
+  vertical-align: text-top;
+  cursor: pointer;
+}
+
+.about-popup-buttons {
+  flex-direction: column;
+  gap: 1dvh;
+ display: flex;
+ justify-content: center;
+ padding-top: 2vh;
+ align-items: center;
+}
+
+.about-popup-button {
+  width: 40%;
+}
+
+.about-popup-small{
+  font-size: 1.5vh;
+}
+
+.reset-button {
+  color: rgb(255, 0, 0);
 }

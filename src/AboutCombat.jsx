@@ -10,7 +10,7 @@ export default function AboutCombat() {
         onClick={() => setOpen(true)}
         aria-label="About combat"
       >
-        i
+        ?
       </button>
       {open && (
         <div className="win-popup-overlay" onClick={() => setOpen(false)}>

@@ -131,7 +131,7 @@ export default function PackShopEntry(props) {
                 className="pack-shop-entry-buy-button"
                 disabled={!canBuy()}
               >
-                &#x2660;&#xfe0e; {getPackCost(pack)}
+                &#x2660;&#xfe0e;{getPackCost(pack) >= 1000 ? "" : " "}{getPackCost(pack)}
               </button>
               {isMobile && (
                 <div className="pack-shop-entry-expiry">

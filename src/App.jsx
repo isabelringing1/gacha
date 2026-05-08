@@ -38,6 +38,8 @@ import Event from "./Event.jsx";
 import History from "./History.jsx";
 import Combat from "./Combat.jsx";
 import AboutCombat from "./AboutCombat.jsx";
+import About from "./About.jsx";
+import ResetPopup from "./ResetPopup.jsx";
 import Achievements from "./Achievements.jsx";
 import WinPopup from "./WinPopup.jsx";
 import packData from "./json/packs.json";
@@ -154,6 +156,7 @@ function App() {
   const [combatButtonSeen, setCombatButtonSeen] = useState(false);
   const [outOfDiamondsSeen, setOutOfDiamondsSeen] = useState(false);
   const [ticketBoughtSeen, setTicketBoughtSeen] = useState(false);
+  const [showResetPopup, setShowResetPopup] = useState(false);
   const [lastBattledLevel, setLastBattledLevel] = useState(0);
   const [diamondsUnlocked, setDiamondsUnlocked] = useState(false);
   const [battleShopState, setBattleShopState] = useState("unlocked");
@@ -170,13 +173,25 @@ function App() {
   });
   const [lockedRollCounts, setLockedRollCounts] = useState({});
 
+
+  const saveDataRef = useRef();
   useEffect(() => {
-    loadData();
-  }, []);
+    saveDataRef.current = saveData;
+  });
 
   useEffect(() => {
+    loadData();
+    const onFocus = () => {
+      console.log('User is back on the page, saving');
+      saveDataRef.current();
+    };
+    window.addEventListener('focus', onFocus);
+
     const interval = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(interval);
+    return () => {
+      window.removeEventListener('focus', onFocus);
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
@@ -410,6 +425,7 @@ function App() {
       lastBattledLevel: lastBattledLevel,
       tenPullUnlocked: tenPullUnlocked,
     };
+    console.log('Saving data', newPlayerData);
     var saveString = JSON.stringify(newPlayerData);
     localStorage.setItem("gacha", window.btoa(saveString));
   }
@@ -1304,6 +1320,13 @@ function App() {
       </button>*/}
 
       {showCombat && !isCombatActive && combatState.combatLevel !== 1 && <AboutCombat />}
+      {!showCombat && (
+        <About
+          showResetPopup={showResetPopup}
+          setShowResetPopup={setShowResetPopup}
+        />
+      )}
+      {showResetPopup && <ResetPopup setShowResetPopup={setShowResetPopup} />}
       {showCombat && (
         <Combat
           hearts={hearts}
