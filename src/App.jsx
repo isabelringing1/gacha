@@ -278,7 +278,7 @@ function App() {
 
   useEffect(() => {
     if (!showWinPopup && Object.keys(numbers).length === 100 && lockedNumbers.length === 0 && !hasShownWinPopup) {
-      if (currentPack) {
+      if (currentPack || bigNumberQueue.length > 0) {
         setPendingWinPopup(true);
       } else {
         setShowWinPopup(true);
@@ -287,11 +287,11 @@ function App() {
   }, [numbers, lockedNumbers]);
 
   useEffect(() => {
-    if (pendingWinPopup && !currentPack && !hasShownWinPopup) {
+    if (pendingWinPopup && !currentPack && bigNumberQueue.length === 0 && !hasShownWinPopup) {
       setPendingWinPopup(false);
       setShowWinPopup(true);
     }
-  }, [currentPack]);
+  }, [currentPack, bigNumberQueue]);
 
   useEffect(() => {
     if (keys > 0 && !keysUnlocked) {
@@ -1324,6 +1324,9 @@ function App() {
         <About
           showResetPopup={showResetPopup}
           setShowResetPopup={setShowResetPopup}
+          numbers={numbers}
+          lockedNumbers={lockedNumbers}
+          startTime={startTime}
         />
       )}
       {showResetPopup && <ResetPopup setShowResetPopup={setShowResetPopup} />}

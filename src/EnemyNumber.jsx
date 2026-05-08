@@ -34,7 +34,7 @@ export default function EnemyNumber(props) {
   }
 
   function getRandomAttackInterval() {
-    return attackIntervalBase + Math.random() * 500;
+    return attackIntervalBase + Math.random() * 500 - 250;
   }
   return (
     <div

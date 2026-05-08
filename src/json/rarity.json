@@ -39,7 +39,7 @@
     "bg_type": "bg-spiky",
     "threshold": 0,
     "font_color": "#590289",
-    "num_twinkles":15,
+    "num_twinkles": 0,
     "twinkle_shadow": "#62008f6e",
     "ribbon_palette": ["#9b00a8", "#ecaeffff", "#ffffffff"],
     "completed_color": "#d991ff",

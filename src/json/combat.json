@@ -7,7 +7,8 @@
         "spades": 50,
         "clubs": 10
       },
-      "block_length": 1000
+      "block_length": 1000,
+      "block_cooldown": 3000
     },
     {
       "level": 2,
@@ -18,7 +19,8 @@
       },
       "attack_length": 1.9,
       "attack_interval": 5000,
-      "block_length": 1000
+      "block_length": 1000,
+      "block_cooldown": 4000
     },
     {
       "level": 3,
@@ -29,7 +31,8 @@
       },
       "attack_length": 1.7,
       "attack_interval": 4600,
-      "block_length": 900
+      "block_length": 900,
+      "block_cooldown": 4000
     },
     {
       "level": 4,
@@ -40,7 +43,8 @@
       },
       "attack_length": 1.4,
       "attack_interval": 4200,
-      "block_length": 800
+      "block_length": 800,
+      "block_cooldown": 4200
     },
     {
       "level": 5,
@@ -51,7 +55,8 @@
       },
       "attack_length": 1.2,
       "attack_interval": 3800,
-      "block_length": 700
+      "block_length": 700,
+      "block_cooldown": 3600
     },
     {
       "level": 6,
@@ -62,7 +67,8 @@
       },
       "attack_length": 1.0,
       "attack_interval": 3400,
-      "block_length": 600
+      "block_length": 600,
+      "block_cooldown": 3400
     },
     {
       "level": 7,
@@ -73,7 +79,8 @@
       },
       "attack_length": 1.0,
       "attack_interval": 3000,
-      "block_length": 500
+      "block_length": 500,
+      "block_cooldown": 3000
     },
     {
       "level": 8,
@@ -84,7 +91,8 @@
       },
       "attack_length": 0.9,
       "attack_interval": 2600,
-      "block_length": 500
+      "block_length": 500,
+      "block_cooldown": 2600
     },
     {
       "level": 9,
@@ -95,7 +103,8 @@
       },
       "attack_length": 0.8,
       "attack_interval": 2200,
-      "block_length": 500
+      "block_length": 500,
+      "block_cooldown": 2200
     },
     {
       "level": 10,
@@ -106,7 +115,8 @@
       },
       "attack_length": 0.7,
       "attack_interval": 1800,
-      "block_length": 500
+      "block_length": 500,
+      "block_cooldown": 1800
     }
   ],
   "shop": [

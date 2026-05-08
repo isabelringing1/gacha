@@ -329,7 +329,7 @@ export default function CombatNumber(props) {
               <CombatButton
                 id="block"
                 text={"BLOCK"}
-                cooldown={3}
+                cooldown={(getCombatLevelData(combatState.combatLevel).block_cooldown || 3000) / 1000}
                 startActive={true}
                 clickAction={onBlock}
                 isDisabled={!alive}

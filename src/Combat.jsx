@@ -274,7 +274,7 @@ export default function Combat(props) {
         newCombatState.active = false;
         return newCombatState;
       });
-      setWinState("menu");
+      setWinState("win");
     }
   }
 

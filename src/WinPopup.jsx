@@ -28,7 +28,7 @@ export default function WinPopup(props) {
 
   function onShareStats() {
     var t = getElapsedText(true);
-    var text = "I got all the numbers in " + t + ".";
+    var text = "I got all the numbers in " + t + "!";
     navigator.share({
       text: text,
       url: window.location.href,
@@ -45,13 +45,14 @@ export default function WinPopup(props) {
           <div className="win-popup-text"><b>{numRollButtonClicks}</b> rolls</div>
           <div className="win-popup-text"> <b>{numPacksOpened}</b> packs</div>
           <div className="win-popup-text"><b>{rolls.length}</b> numbers</div>
-          <div className="win-popup-text">and <b>{numBattles}</b> battles</div>
+          <div className="win-popup-text"><b>{numBattles}</b> battles</div>
           {elapsedText && <div className="win-popup-text">{elapsedText}</div>}
 
           <div className="win-popup-text combat-level-text">You reached level <b>{combatLevel}</b> in battle. Try pushing yourself higher!</div>
 
       <div className="win-popup-buttons">
           <button className="win-popup-button" onClick={onShareStats}>SHARE</button>
+          <button className="win-popup-button" onClick={onClose}>CLOSE</button>
           </div>
         </div>
       </div>

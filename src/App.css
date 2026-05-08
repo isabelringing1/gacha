@@ -1608,9 +1608,20 @@ button:disabled {
   position: absolute;
   top: 10dvh;
   left: 30vw;
-  animation: floating-ribbon-text 3s infinite ease-in-out;
-  -webkit-animation: floating-ribbon-text 3s infinite ease-in-out;
-  
+  transform-origin: center center;
+  animation: new-container-pop-in 0.3s 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both, floating-ribbon-text 3s infinite ease-in-out;
+  -webkit-animation: new-container-pop-in 0.3s 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both, floating-ribbon-text 3s infinite ease-in-out;
+  animation-composition: add;
+  -webkit-animation-composition: add;
+}
+
+@keyframes new-container-pop-in {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 
   .new-bg {
@@ -4545,6 +4556,7 @@ input[type="number"] {
 
 .about-combat-button {
   left: calc(50vw - 2dvh);
+  z-index: 3;
 }
 
 .about-button {
@@ -4684,4 +4696,9 @@ input[type="number"] {
 
 .reset-button {
   color: rgb(255, 0, 0);
+}
+
+.share-button {
+  color: rgb(186, 147, 17);
+  width: 60%;
 }

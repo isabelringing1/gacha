@@ -90,7 +90,7 @@ const CardPack = (props) => {
     var line = lineRef.current;
     if (
       line &&
-      (line.getTotalLength() > 1000 || lines[lines.length - 1].length > 300)
+      (line.getTotalLength() > 1300 || lines[lines.length - 1].length > 300)
     ) {
       handleMouseUp();
     }
