@@ -16,6 +16,8 @@ import {
   getMaxLevel,
   getLevelData,
   getLevelProgress,
+  getNumbersInPack,
+  getRarityIndex,
 } from "./Util";
 import { UNLOCK_ENTRY_COST } from "./constants.js";
 import ticket from "/ticket.png";
@@ -752,41 +754,44 @@ function App() {
   };
 
   const generatePackShopEntry = (amount = 1, slots = [-1], rarities = []) => {
-    var firstNullIndex = 0;
-    var newShopEntries = [...cardShopEntries];
-    for (var j = 0; j < amount; j++) {
-      if (slots[0] == -1) {
-        for (var i = 0; i < newShopEntries.length; i++) {
-          if (newShopEntries[i] == null) {
-            break;
+    setCardShopEntries((prev) => {
+      var newShopEntries = [...prev];
+      var firstNullIndex = 0;
+      for (var j = 0; j < amount; j++) {
+        if (slots[0] == -1) {
+          firstNullIndex = 0;
+          for (var i = 0; i < newShopEntries.length; i++) {
+            if (newShopEntries[i] == null) {
+              break;
+            }
+            firstNullIndex++;
           }
-          firstNullIndex++;
+        } else {
+          firstNullIndex = slots[j];
         }
-      } else {
-        firstNullIndex = slots[j];
-      }
 
-      if (firstNullIndex == newShopEntries.length) {
-        return;
-      }
-      var forcedRarity = rarities[j];
-      var pack = rollForPack(forcedRarity);
-      var existingIds = new Set(newShopEntries.filter(Boolean).map((e) => e.id));
-      while (
-        (pack.id == "copycat" && !lastPackOpened) ||
-        existingIds.has(pack.id)
-      ) {
-        pack = rollForPack(forcedRarity);
-      }
-      var newEntry = {
-        id: pack.id,
-        creation: Date.now(),
-        expirationTime: Date.now() + PACK_LIFETIME,
-      };
+        if (firstNullIndex == newShopEntries.length) {
+          return newShopEntries;
+        }
+        var forcedRarity = rarities[j];
+        var pack = rollForPack(forcedRarity);
+        var existingIds = new Set(newShopEntries.filter(Boolean).map((e) => e.id));
+        while (
+          (pack.id == "copycat" && !lastPackOpened) ||
+          existingIds.has(pack.id)
+        ) {
+          pack = rollForPack(forcedRarity);
+        }
+        var newEntry = {
+          id: pack.id,
+          creation: Date.now(),
+          expirationTime: Date.now() + PACK_LIFETIME,
+        };
 
-      newShopEntries[firstNullIndex] = newEntry;
-    }
-    setCardShopEntries(newShopEntries);
+        newShopEntries[firstNullIndex] = newEntry;
+      }
+      return newShopEntries;
+    });
   };
 
   const generateBet = (slots = [0]) => {
@@ -875,22 +880,22 @@ function App() {
     setSpades(spades - getPackCost(pack));
     setCurrentPack(packData.packs[shopEntry.id]);
     setHighlightedNumbers([]);
-    var newShopEntries = [...cardShopEntries];
-
-    for (var i = 0; i < cardShopEntries.length; i++) {
-      if (
-        cardShopEntries[i] &&
-        cardShopEntries[i].id == shopEntry.id &&
-        cardShopEntries[i].creation == shopEntry.creation
-      ) {
-        newShopEntries[i] = {
-          nextRefreshTime: Date.now() + 60000,
-        };
-        break;
+    setCardShopEntries((prev) => {
+      var newShopEntries = [...prev];
+      for (var i = 0; i < prev.length; i++) {
+        if (
+          prev[i] &&
+          prev[i].id == shopEntry.id &&
+          prev[i].creation == shopEntry.creation
+        ) {
+          newShopEntries[i] = {
+            nextRefreshTime: Date.now() + 60000,
+          };
+          break;
+        }
       }
-    }
-
-    setCardShopEntries(newShopEntries);
+      return newShopEntries;
+    });
 
     setTimeout(() => {
       var container = document.getElementById("card-pack-container");
@@ -905,21 +910,23 @@ function App() {
   };
 
   const trashPack = (shopEntry) => {
-    var newShopEntries = [...cardShopEntries];
     setHighlightedNumbers([]);
-    for (var i = 0; i < cardShopEntries.length; i++) {
-      if (
-        cardShopEntries[i] &&
-        cardShopEntries[i].id == shopEntry.id &&
-        cardShopEntries[i].creation == shopEntry.creation
-      ) {
-        newShopEntries[i] = {
-          nextRefreshTime: Date.now() + 60000,
-        };
-        break;
+    setCardShopEntries((prev) => {
+      var newShopEntries = [...prev];
+      for (var i = 0; i < prev.length; i++) {
+        if (
+          prev[i] &&
+          prev[i].id == shopEntry.id &&
+          prev[i].creation == shopEntry.creation
+        ) {
+          newShopEntries[i] = {
+            nextRefreshTime: Date.now() + 60000,
+          };
+          break;
+        }
       }
-    }
-    setCardShopEntries(newShopEntries);
+      return newShopEntries;
+    });
   };
 
   const refreshPackShopEntry = (index) => {
@@ -958,7 +965,8 @@ function App() {
 
   const openPack = (pack) => {
     setNumPacksOpened(numPacksOpened + 1);
-    if (pack.id == "copycat") {
+    var isCopycat = pack.id == "copycat";
+    if (isCopycat) {
       pack = packData.packs[lastPackOpened];
     }
     var rolledNumbers = rollMultiple(
@@ -970,6 +978,26 @@ function App() {
       pack.remainder,
       pack.pool,
     );
+
+    if (!isCopycat && pack.rarity >= 1 && Math.random() < .75) {
+      var poolNumbers = getNumbersInPack(pack.id);
+      var maxRarity = 0;
+      for (var pi = 0; pi < poolNumbers.length; pi++) {
+        var pr = getRarityIndex(poolNumbers[pi]);
+        if (pr > maxRarity) maxRarity = pr;
+      }
+      if (maxRarity > 0) {
+        var hasMax = rolledNumbers.some((n) => getRarityIndex(n) === maxRarity);
+        if (!hasMax) {
+          var maxRarityPool = poolNumbers.filter((n) => getRarityIndex(n) === maxRarity);
+          if (maxRarityPool.length > 0) {
+            var replacement = maxRarityPool[Math.floor(Math.random() * maxRarityPool.length)];
+            var replaceIndex = Math.floor(Math.random() * rolledNumbers.length);
+            rolledNumbers[replaceIndex] = replacement;
+          }
+        }
+      }
+    }
 
     if (!nextDiamondRefreshTime) {
       setNextDiamondRefreshTime(Date.now() + REFRESH_TIME);
