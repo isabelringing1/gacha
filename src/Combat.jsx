@@ -60,6 +60,10 @@ export default function Combat(props) {
     setHeartsUnlocked,
     heartsUnlocked,
     ticketBoughtSeen,
+    swapInstructionsSeen,
+    setSwapInstructionsSeen,
+    setLastDefeatedLevel,
+    setLastDefeatedEnemy,
   } = props;
   const [enemyState, setEnemyState] = useState(null);
   const [winState, setWinState] = useState("menu");
@@ -82,11 +86,7 @@ export default function Combat(props) {
   const totalSecRemaining = Math.ceil(msRemaining / 1000);
   const minRemaining = Math.floor(totalSecRemaining / 60);
   const secRemaining = totalSecRemaining % 60;
-  const lockDurationMs = getLockDurationMinutes(combatState?.combatLevel || 1) * 60 * 1000;
-  const elapsedMin = waiting
-    ? Math.floor((lockDurationMs - msRemaining) / 60000)
-    : 0;
-  const unlockEarlyCost = Math.max(200, 500 - elapsedMin * 30);
+  const unlockEarlyCost = Math.ceil(msRemaining / 60000) * 40;
   const canAffordUnlockEarly = spades >= unlockEarlyCost;
 
   function onUnlockEarly() {
@@ -96,6 +96,7 @@ export default function Combat(props) {
   }
   const [records, setRecords] = useState([]);
   const [levelRewards, setLevelRewards] = useState({});
+  const [lossRewards, setLossRewards] = useState({});
   const [score, setScore] = useState(0);
   const [isNewHighScore, setIsNewHighScore] = useState(false);
   const [anySlotHovered, setAnySlotHovered] = useState(false);
@@ -170,10 +171,28 @@ export default function Combat(props) {
           setHighScore(scoreRef.current);
           setIsNewHighScore(true);
         }
+        if (setLastDefeatedLevel) setLastDefeatedLevel(combatState.combatLevel || 0);
+        if (setLastDefeatedEnemy) setLastDefeatedEnemy(combatState.currentEnemyValue || 0);
       }
     }
     if (winState == "lose") {
       setFailString(getRandomFailString());
+      var awarded = {};
+      if (combatState && (combatState.combatLevel || 0) >= 7) {
+        var initialEnemy = combatState.currentEnemyValue || 0;
+        var damageDealt = initialEnemy - (enemyRef.current || 0);
+        var damagePct = initialEnemy > 0 ? (damageDealt / initialEnemy) * 100 : 0;
+        if (damagePct >= 25) {
+          var baseClubs = (combatState.levelRewards || {}).clubs || 0;
+          var scale = ((damagePct - 25) / 75) * 0.4;
+          var clubsAwarded = Math.floor(baseClubs * scale);
+          if (clubsAwarded > 0) {
+            awarded.clubs = clubsAwarded;
+            claimRewards(awarded);
+          }
+        }
+      }
+      setLossRewards(awarded);
     }
     if (winState == "intro") {
       var playerNumbers = document.getElementById("player-numbers");
@@ -406,6 +425,9 @@ export default function Combat(props) {
       newCombatState.combatLevel = nextLevel;
       newCombatState.currentEnemyValue = generateEnemyForLevel(nextLevel);
       newCombatState.levelRewards = generateCombatRewards(Math.min(nextLevel, 10), newCombatState.currentEnemyValue);
+      if (nextLevel > 10) {
+        delete newCombatState.levelRewards.keys;
+      }
       var waitMin = getLockDurationMinutes(nextLevel);
       if (waitMin > 0) {
         newCombatState.nextLevelUnlockTime = Date.now() + waitMin * 60 * 1000;
@@ -587,6 +609,8 @@ export default function Combat(props) {
               setAnySlotHovered={setAnySlotHovered}
               currentEnemy={currentEnemy}
               isLoading={waiting}
+              swapInstructionsSeen={swapInstructionsSeen}
+              setSwapInstructionsSeen={setSwapInstructionsSeen}
             />
           )}
         </>
@@ -610,9 +634,26 @@ export default function Combat(props) {
                 </div>
               ))}
             </div>
-              <button className="combat-outcome-popup-button" onClick={onNext}>Continue</button>
+            <div className="combat-outcome-popup-buttons">
+              {combatState && combatState.combatLevel >= 11 && (
+                <button
+                  className="combat-outcome-popup-button"
+                  onClick={() => {
+                    var enemyVal = combatState.currentEnemyValue || 0;
+                    var lvl = combatState.combatLevel || 0;
+                    navigator.share({
+                      text: "I just beat " + enemyVal.toLocaleString() + " at Level " + lvl + "!",
+                      url: window.location.href,
+                    });
+                  }}
+                >
+                  SHARE
+                </button>
+              )}
+              <button className="combat-outcome-popup-button" onClick={onNext}>CONTINUE</button>
+            </div>
           </div>
-          
+
         </div>
       )}
       {winState == "lose" && (
@@ -622,7 +663,20 @@ export default function Combat(props) {
             <div className="combat-outcome-popup-text">
               {failString}
             </div>
-            <button onClick={onBack} className="combat-outcome-popup-button">Back</button>
+            {lossRewards && Object.keys(lossRewards).length > 0 && (
+              <>
+                <div className="combat-outcome-popup-text"><b>REWARDS:</b></div>
+                <div className="combat-entry-rewards">
+                  {Object.keys(lossRewards).map((r, i) => (
+                    <div key={"loss-reward-" + i} className="combat-entry-rewards-item">
+                      {getCurrencyIcon(r)}
+                      {lossRewards[r].toLocaleString()}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+            <button onClick={onBack} className="combat-outcome-popup-button">BACK</button>
           </div>
         </div>
       )}
@@ -729,7 +783,7 @@ export default function Combat(props) {
 
           {winState == "combat" &&
             (combatState.team || []).some(
-              (n) => n != null && (combatState.numberStates?.[n]?.shields ?? 0) > 0
+              (n) => n != null && (combatState.numberStates?.[n]?.initialShields ?? 0) > 0
             ) && (
           <div id="hearts-container" className="hearts-container">
                 &hearts;&#xfe0e; {hearts.toLocaleString()}

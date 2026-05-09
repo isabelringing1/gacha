@@ -454,22 +454,23 @@ function getPayout(bet, option, stake) {
 
 function rollEventNumber(numbers, lockedNumbers) {
   var locked = lockedNumbers || [];
-  var unrolled = [];
-  var defaultPool = [];
+  var byLevel = {};
   for (var i = 1; i <= 100; i++) {
     var rarity = data.drop_rates[i];
     if (rarity > 0 && !locked.includes(i)) {
-      if (!numbers[i]) {
-        unrolled.push(i);
-      }
-      defaultPool.push(i);
+      var rolls = numbers[i] || 0;
+      var lvl = rolls > 0 ? (getLevel(rolls) ?? getMaxLevel()) : 0;
+      if (!byLevel[lvl]) byLevel[lvl] = [];
+      byLevel[lvl].push(i);
     }
   }
 
-  if (unrolled.length != 0) {
-    return unrolled[Math.floor(Math.random() * unrolled.length)];
-  }
-  return defaultPool[Math.floor(Math.random() * defaultPool.length)];
+  var levels = Object.keys(byLevel)
+    .map(function (k) { return parseInt(k); })
+    .sort(function (a, b) { return a - b; });
+  if (levels.length === 0) return null;
+  var pool = byLevel[levels[0]];
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 function chance3SumGreaterThan(goal = 100) {
@@ -607,9 +608,14 @@ function getCombatLevelMin(combatLevel) {
   if (combatLevel < 7) {
     return (combatLevel - 1) * 400;
   }
-  // From level 7 on, each level's min is double the previous level's min.
+  // From level 7 through 10, each level's min is double the previous.
   // Level 6 min = 1500 → level 7 min = 3000, level 8 min = 6000, etc.
-  return 1500 * Math.pow(2, combatLevel - 6);
+  if (combatLevel <= 10) {
+    return 1500 * Math.pow(2, combatLevel - 6);
+  }
+  // After level 10, each level's min is 3x the previous (instead of 2x).
+  var level10Min = 1500 * Math.pow(2, 4);
+  return level10Min * Math.pow(3, combatLevel - 10);
 }
 
 function getCombatLevelMax(combatLevel) {

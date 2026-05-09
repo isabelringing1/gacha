@@ -4,13 +4,18 @@ import ticket from "/ticket.png";
 
 export default function CombatShopEntry(props) {
   const { shopEntry, buyCombatShopItem, currency, index, hearts, maxHearts, combatTickets, ticketBoughtSeen } = props;
-  const [count, setCount] = useState(1);
   const holdTimerRef = useRef(null);
   const didHoldRef = useRef(false);
 
   const isHeartsEntry = shopEntry.reward === "hearts";
   const heartCapacity = isHeartsEntry ? Math.max(0, (maxHearts || 0) - (hearts || 0)) : Infinity;
   const atHeartCap = isHeartsEntry && heartCapacity <= 0;
+
+  const [count, setCount] = useState(() => {
+    if (!isHeartsEntry) return 1;
+    var affordable = Math.floor((currency || 0) / shopEntry.cost);
+    return Math.max(1, Math.min(affordable, heartCapacity));
+  });
 
   useEffect(() => {
     if (isHeartsEntry && count > heartCapacity) {

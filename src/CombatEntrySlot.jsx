@@ -16,7 +16,7 @@ export default function CombatEntrySlot(props) {
     if (!slotRef.current) return { top: 0, left: 0 };
     var rect = slotRef.current.getBoundingClientRect();
     return {
-      top: rect.bottom - 300,
+      top: rect.top,
       left: rect.left + rect.width / 2,
     };
   }
@@ -61,7 +61,7 @@ export default function CombatEntrySlot(props) {
           position: "fixed",
           top: getTooltipPosition().top,
           left: getTooltipPosition().left,
-          transform: "translate(-50%, 0)",
+          transform: "translate(-50%, -115%)",
           zIndex: 100,
           pointerEvents: "none",
         }}>

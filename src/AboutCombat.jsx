@@ -24,7 +24,7 @@ export default function AboutCombat() {
                 Winning is all about picking the right team.
               </div><br />
               <div className="win-popup-text">
-                Numbers that are <b>factors</b> of the enemy are buffed.
+                Equip numbers that are <b>higher rarity</b> or <b>enemy factors</b> to buff your attack.
               </div><br />
               <div className="win-popup-text">
                 Stuck? Keep rolling numbers to unlock new abilities.

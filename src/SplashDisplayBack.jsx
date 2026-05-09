@@ -133,6 +133,14 @@ export default function SplashDisplayBack(props) {
     setTwinkleArray(newTwinkleArray);
   }, [n]);
 
+  useEffect(() => {
+    if (!bigNumberEntry.isMultiRoll) return;
+    var t = setTimeout(() => {
+      onClick();
+    }, 500);
+    return () => clearTimeout(t);
+  }, []);
+
   function getTransformOrigin() {
     if (!animating) {
       return bigNumberEntry.fromPack ? "50% 100%" : "50% 50%";

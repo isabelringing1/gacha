@@ -60,7 +60,7 @@ export default function CombatEntry(props) {
               className="floating-num-cloud cloud-2"
               objectFit="contain"
             />
-            <div className="floating-num">
+            <div className={"floating-num" + (len > 6 ? " floating-num-long" : "")}>
               {waiting ? (
                 <>
                   <div id={"floating-num-0"} key={"floating-num-0"}>?</div>

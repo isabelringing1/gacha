@@ -2,11 +2,13 @@ import { useState } from "react";
 import flower from "/flower.png";
 
 export default function About(props) {
-  var { showResetPopup, setShowResetPopup, numbers, lockedNumbers, startTime } = props;
+  var { showResetPopup, setShowResetPopup, numbers, lockedNumbers, startTime, lastDefeatedLevel, lastDefeatedEnemy } = props;
   const [open, setOpen] = useState(false);
 
   var hasAllNumbers =
     numbers && Object.keys(numbers).length === 100 && lockedNumbers && lockedNumbers.length === 0;
+  var pastLevel10 = (lastDefeatedLevel || 0) >= 11;
+  var canShare = hasAllNumbers || pastLevel10;
 
   function getElapsedTextString() {
     if (!startTime) return "";
@@ -24,8 +26,13 @@ export default function About(props) {
   }
 
   function onShareStats() {
-    var t = getElapsedTextString();
-    var text = "I got all the numbers in " + t + "!";
+    var text;
+    if (pastLevel10) {
+      text = "I just beat " + (lastDefeatedEnemy || 0).toLocaleString() + " at Level " + lastDefeatedLevel + "!";
+    } else {
+      var t = getElapsedTextString();
+      text = "I got all the numbers in " + t + "!";
+    }
     navigator.share({
       text: text,
       url: window.location.href,
@@ -49,7 +56,6 @@ export default function About(props) {
           >
             <div className="title">ABOUT</div>
             <div className="win-popup-body">
-              <div className="win-popup-buttons">
               <div className="win-popup-text">
                 <b>Number Gacha</b> is a gacha game.
                 </div>
@@ -60,7 +66,7 @@ export default function About(props) {
                 Made by <a className="flower-link" href="https://isabisabel.com" target="_blank" rel="noopener noreferrer">Isabel</a><img src={flower} alt="flower" className="flower" onClick={() => window.open('https://isabisabel.com', '_blank')}/>
                 </div>
                 <div className="about-popup-buttons">
-                  {hasAllNumbers && (
+                  {canShare && (
                     <button
                       className="about-popup-button share-button"
                       onClick={onShareStats}
@@ -86,7 +92,6 @@ export default function About(props) {
                 <div className="about-popup-small">v0.1</div>
                 
               </div>
-            </div>
           </div>
         </div>
       )}

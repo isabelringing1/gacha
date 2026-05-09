@@ -1,16 +1,14 @@
-import { useState } from "react";
+import { memo } from "react";
 import { DitherShader } from "./dither-shader";
-import cardPackOld from "/card_pack_old.png";
 import priceTag from "/price_tag.png";
 import priceTagYellow from "/price_tag_yellow.png";
 import Timer from "./Timer.jsx";
 import trash from "/trash.png";
-import trash_highlight from "/trash_hover.png";
 
 import { getNumbersInPack, getPackCost } from "./Util";
 import { isMobile } from "./constants.js";
 
-export default function PackShopEntry(props) {
+function PackShopEntry(props) {
   const {
     buyPack,
     shopEntry,
@@ -20,13 +18,10 @@ export default function PackShopEntry(props) {
     setHighlightedNumbers,
     setHoveredPack,
     lastPackOpened,
-    hoveredPack,
     numPacksOpened,
     imgWidth,
     imgHeight,
   } = props;
-
-  const [trashHovered, setTrashHovered] = useState(false);
 
   function canBuy() {
     return spades - getPackCost(pack) >= 0;
@@ -108,26 +103,15 @@ export default function PackShopEntry(props) {
               className="pack-shop-entry-buy-button-container"
               key="pack-shop-entry-buy-button-container"
             >
-              <DitherShader
-                src={priceTag}
-                gridSize={2}
-                ditherMode="bayer"
-                colorMode={"original"}
-                threshold={0}
-                className={"price-tag"}
-              />
+              <img src={priceTag} className="price-tag" alt="" />
               {numPacksOpened === 0 && canBuy() && (
-                <DitherShader
+                <img
                   src={priceTagYellow}
-                  gridSize={2}
-                  ditherMode="bayer"
-                  colorMode={"original"}
-                  threshold={0}
-                  className={"price-tag price-tag-yellow-pulse"}
+                  className="price-tag price-tag-yellow-pulse"
+                  alt=""
                 />
               )}
               <button
-               
                 className="pack-shop-entry-buy-button"
                 disabled={!canBuy()}
               >
@@ -149,22 +133,13 @@ export default function PackShopEntry(props) {
             <div
               key="trash-button"
               className="trash-button"
-              onMouseOver={() => setTrashHovered(true)}
-              onMouseOut={() => setTrashHovered(false)}
               onClick={(e) => {
                 e.stopPropagation();
                 setHoveredPack(null);
                 trashPack(shopEntry);
               }}
             >
-              <DitherShader
-                src={trashHovered ? trash_highlight : trash}
-                gridSize={1}
-                ditherMode="bayer"
-                colorMode={"original"}
-                threshold={0}
-                className={"trash-button-img" + (trashHovered ? " trash-button-img-hover" : "")}
-              />
+              <img src={trash} className="trash-button-img" alt="trash" />
             </div>,
           ]}
         />
@@ -182,3 +157,15 @@ export default function PackShopEntry(props) {
     </div>
   );
 }
+
+export default memo(PackShopEntry, (prev, next) => {
+  return (
+    prev.shopEntry === next.shopEntry &&
+    prev.pack === next.pack &&
+    prev.spades === next.spades &&
+    prev.lastPackOpened === next.lastPackOpened &&
+    prev.numPacksOpened === next.numPacksOpened &&
+    prev.imgWidth === next.imgWidth &&
+    prev.imgHeight === next.imgHeight
+  );
+});

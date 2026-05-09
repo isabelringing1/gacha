@@ -156,6 +156,9 @@ function App() {
   const [combatButtonSeen, setCombatButtonSeen] = useState(false);
   const [outOfDiamondsSeen, setOutOfDiamondsSeen] = useState(false);
   const [ticketBoughtSeen, setTicketBoughtSeen] = useState(false);
+  const [swapInstructionsSeen, setSwapInstructionsSeen] = useState(false);
+  const [lastDefeatedLevel, setLastDefeatedLevel] = useState(0);
+  const [lastDefeatedEnemy, setLastDefeatedEnemy] = useState(0);
   const [showResetPopup, setShowResetPopup] = useState(false);
   const [lastBattledLevel, setLastBattledLevel] = useState(0);
   const [diamondsUnlocked, setDiamondsUnlocked] = useState(false);
@@ -371,7 +374,10 @@ function App() {
     combatButtonSeen,
     outOfDiamondsSeen,
     ticketBoughtSeen,
+    swapInstructionsSeen,
     lastBattledLevel,
+    lastDefeatedLevel,
+    lastDefeatedEnemy,
     tenPullUnlocked,
     lockedRollCounts,
   ]);
@@ -422,6 +428,9 @@ function App() {
       combatButtonSeen: combatButtonSeen,
       outOfDiamondsSeen: outOfDiamondsSeen,
       ticketBoughtSeen: ticketBoughtSeen,
+      swapInstructionsSeen: swapInstructionsSeen,
+      lastDefeatedLevel: lastDefeatedLevel,
+      lastDefeatedEnemy: lastDefeatedEnemy,
       lastBattledLevel: lastBattledLevel,
       tenPullUnlocked: tenPullUnlocked,
     };
@@ -494,6 +503,9 @@ function App() {
         setCombatButtonSeen(saveData.combatButtonSeen || false);
         setOutOfDiamondsSeen(saveData.outOfDiamondsSeen || false);
         setTicketBoughtSeen(saveData.ticketBoughtSeen || false);
+        setSwapInstructionsSeen(saveData.swapInstructionsSeen || false);
+        setLastDefeatedLevel(saveData.lastDefeatedLevel || 0);
+        setLastDefeatedEnemy(saveData.lastDefeatedEnemy || 0);
         setLastBattledLevel(
           saveData.lastBattledLevel != null
             ? saveData.lastBattledLevel
@@ -638,7 +650,7 @@ function App() {
                   setTimeout(() => {
                     setMultiRolledNumbers([]);
                     setShowingRoll(-1);
-                    var newBigNumbers = rolledNumbers.map((n) => ({ n: n, fromPack: true }));
+                    var newBigNumbers = rolledNumbers.map((n) => ({ n: n, fromPack: true, isMultiRoll: true }));
                     setBigNumberQueue((prev) => [...prev, ...newBigNumbers]);
                   }, 300 * timeMultiplier);
                 }, 400 * timeMultiplier);
@@ -1180,6 +1192,7 @@ function App() {
         setKeys={setKeys}
         winBattleRef={winBattleRef}
         lockedNumbers={lockedNumbers}
+        setLockedRollCounts={setLockedRollCounts}
       />
       {showOutOfDiamonds && (
         <OutOfHeartsContainer
@@ -1320,13 +1333,15 @@ function App() {
       </button>*/}
 
       {showCombat && !isCombatActive && combatState.combatLevel !== 1 && <AboutCombat />}
-      {!showCombat && (
+      {!isCombatActive && (
         <About
           showResetPopup={showResetPopup}
           setShowResetPopup={setShowResetPopup}
           numbers={numbers}
           lockedNumbers={lockedNumbers}
           startTime={startTime}
+          lastDefeatedLevel={lastDefeatedLevel}
+          lastDefeatedEnemy={lastDefeatedEnemy}
         />
       )}
       {showResetPopup && <ResetPopup setShowResetPopup={setShowResetPopup} />}
@@ -1362,6 +1377,10 @@ function App() {
           setHeartsUnlocked={setHeartsUnlocked}
           heartsUnlocked={heartsUnlocked}
           ticketBoughtSeen={ticketBoughtSeen}
+          swapInstructionsSeen={swapInstructionsSeen}
+          setSwapInstructionsSeen={setSwapInstructionsSeen}
+          setLastDefeatedLevel={setLastDefeatedLevel}
+          setLastDefeatedEnemy={setLastDefeatedEnemy}
         />
       )}
 

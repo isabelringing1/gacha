@@ -1,4 +1,8 @@
+import { useEffect } from "react";
 import CombatEntrySlot from "./CombatEntrySlot";
+import { DitherShader } from "./dither-shader";
+import numberBg from "/number_bg.png";
+import arrow from "/dotted_arrow.png";
 
 export default function CombatMenu(props) {
   var {
@@ -14,6 +18,8 @@ export default function CombatMenu(props) {
     currentEnemy,
     belowEntry,
     isLoading,
+    swapInstructionsSeen,
+    setSwapInstructionsSeen,
   } = props;
 
   var draggingIsDuplicate =
@@ -22,12 +28,61 @@ export default function CombatMenu(props) {
     ? combatState.team.indexOf(isDraggingNumber)
     : -1;
 
+  var showSwapInstructions =
+    !swapInstructionsSeen &&
+    !showReequip &&
+    combatState &&
+    combatState.combatLevel > 1;
+
+  useEffect(() => {
+    if (showSwapInstructions && isDraggingNumber) {
+      setSwapInstructionsSeen(true);
+    }
+  }, [showSwapInstructions, isDraggingNumber]);
+
+  useEffect(() => {
+    if (!showSwapInstructions) return;
+    function dismiss() {
+      setSwapInstructionsSeen(true);
+    }
+    window.addEventListener("mousedown", dismiss);
+    window.addEventListener("touchstart", dismiss);
+    return () => {
+      window.removeEventListener("mousedown", dismiss);
+      window.removeEventListener("touchstart", dismiss);
+    };
+  }, [showSwapInstructions]);
+
   return (
     <div
       className={"combat-menu-container" + (belowEntry ? " combat-menu-below-entry" : "")}
       style={{ opacity: showReequip ? 0 : 1 }}
     >
       <div className="combat-menu-team-section">
+        {showSwapInstructions && (
+          <div className="swap-instructions">
+            <DitherShader
+              src={numberBg}
+              gridSize={2}
+              ditherMode="bayer"
+              colorMode="colorMode"
+              className="swap-instructions-bg"
+              objectFit="fill"
+              threshold={0}
+              brightness={0.05}
+              children={[
+                <div key="swap-text" className="swap-instructions-text">
+                  drag numbers in to change your team!
+                </div>,
+              ]}
+            />
+          </div>
+        )}
+        {showSwapInstructions && (
+          <div className="swap-instructions-arrow">
+            <img src={arrow} className="swap-instructions-arrow-img" />
+          </div>
+        )}
         <div className="combat-entry-text">TEAM</div>
         <div className="combat-slots-container">
           {combatState &&

@@ -31,6 +31,7 @@ const Debug = (props) => {
     setKeys,
     winBattleRef,
     lockedNumbers,
+    setLockedRollCounts,
   } = props;
   const [showDebug, setShowDebug] = useState(false);
   const heartsInputRef = useRef(null);
@@ -62,17 +63,33 @@ const Debug = (props) => {
 
   function simulateRolls(numRolls) {
     var lockedSet = new Set(lockedNumbers || []);
-    var rolled = rollMultiple(numRolls).filter((n) => !lockedSet.has(n));
+    var rolled = rollMultiple(numRolls);
     var newNumbers = { ...numbers };
+    var stashedDelta = {};
+    var unlockedRolls = [];
     var spadeGain = 0;
     for (var i = 0; i < rolled.length; i++) {
       var n = rolled[i];
-      newNumbers[n] = newNumbers[n] ? newNumbers[n] + 1 : 1;
-      spadeGain += n;
+      if (lockedSet.has(n)) {
+        stashedDelta[n] = (stashedDelta[n] || 0) + 1;
+      } else {
+        newNumbers[n] = newNumbers[n] ? newNumbers[n] + 1 : 1;
+        unlockedRolls.push(n);
+        spadeGain += n;
+      }
     }
     setNumbers(newNumbers);
-    setRolls([...rolled, ...rolls]);
+    setRolls([...unlockedRolls, ...rolls]);
     setSpades(spades + spadeGain);
+    if (Object.keys(stashedDelta).length > 0) {
+      setLockedRollCounts((prev) => {
+        var next = { ...(prev || {}) };
+        for (var k in stashedDelta) {
+          next[k] = (next[k] || 0) + stashedDelta[k];
+        }
+        return next;
+      });
+    }
   }
 
   return (
