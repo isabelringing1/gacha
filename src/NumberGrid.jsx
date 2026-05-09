@@ -1,9 +1,11 @@
 import Number from "./Number";
-import { getLevel } from "./Util";
+import { getLevel, getMaxLevel } from "./Util";
 
-export function StarLevel({ level }) {
+export function StarLevel({ level, isMax }) {
   var numStars = level - 1;
   if (numStars <= 0) return null;
+  var fillColor = isMax ? "#e7b500" : "black";
+  var strokeColor = isMax ? "#e7b500" : "black";
   return (
     <>
       {Array.from({ length: numStars }, (_, i) => {
@@ -11,7 +13,7 @@ export function StarLevel({ level }) {
         const startAngle = 90 - ((numStars - 1) * step) / 2;
         const angleDeg = startAngle + i * step;
         const angle = angleDeg * (Math.PI / 180);
-        const r = 45;
+        const r = 43;
         const x = 50 + r * Math.cos(angle);
         const y = 50 + r * Math.sin(angle);
         const rotation = angleDeg + 270;
@@ -25,8 +27,8 @@ export function StarLevel({ level }) {
           >
             <polygon
               points="50,5 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35"
-              fill="black"
-              stroke="black"
+              fill={fillColor}
+              stroke={strokeColor}
               strokeWidth="10"
               strokeLinejoin="round"
             />
@@ -85,7 +87,7 @@ export default function NumberGrid({
           keys={keys}
           unlockNumber={unlockNumber}
         />
-        {numTimesRolled > 0 && level > 0 && !(lockedNumbers || []).includes(n) && <StarLevel level={level} />}
+        {numTimesRolled > 0 && level > 0 && !(lockedNumbers || []).includes(n) && <StarLevel level={level} isMax={level === getMaxLevel()} />}
       </div>
     );
   });

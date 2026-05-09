@@ -1,4 +1,4 @@
-export default function WinPopup(props) {
+export default function SuperWinPopup(props) {
   var { rolls, numPacksOpened, numRollButtonClicks, numBattles, startTime, combatLevel, onClose } = props;
 
   function getElapsedText(returnText = false) {
@@ -28,7 +28,7 @@ export default function WinPopup(props) {
 
   function onShareStats() {
     var t = getElapsedText(true);
-    var text = "I got all the numbers in " + t + "!";
+    var text = "I 100%ed Number Gacha in " + t + "!";
     navigator.share({
       text: text,
       url: window.location.href,
@@ -38,7 +38,7 @@ export default function WinPopup(props) {
   return (
     <div className="win-popup-overlay" onClick={onClose}>
       <div className="win-popup dither-bg" onClick={(e) => e.stopPropagation()}>
-        <div className="title">COLLECTION COMPLETE</div>
+        <div className="title">COLLECTION SUPER COMPLETE</div>
         <div className="win-popup-body">
 
           <div className="win-popup-text win-popup-text-top">...and it only took </div>
@@ -48,7 +48,7 @@ export default function WinPopup(props) {
           <div className="win-popup-text"><b>{numBattles.toLocaleString()}</b> battles</div>
           {elapsedText && <div className="win-popup-text">{elapsedText}</div>}
 
-          <div className="win-popup-text combat-level-text">You reached level <b>{combatLevel}</b> in battle. Try pushing yourself higher!</div>
+          <div className="win-popup-text combat-level-text">You reached level <b>{combatLevel}</b> in battle. That's some serious work!</div>
 
       <div className="win-popup-buttons">
           <button className="win-popup-button" onClick={onShareStats}>SHARE</button>

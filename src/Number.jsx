@@ -103,6 +103,10 @@ function Number(props) {
 
   var realOpacity = hover && selectingIndex != -1 && numTimesRolled > 0
   ? 1 : opacity;
+  var isMaxLevel = numTimesRolled > 0 && getLevel(numTimesRolled) === getMaxLevel();
+  var numberColor = isMaxLevel
+    ? "rgba(253, 213, 0, " + realOpacity + ")"
+    : "rgba(0, 0, 0, " + realOpacity + ")";
   
   return (
     <div
@@ -130,7 +134,7 @@ function Number(props) {
         draggable={inCombatMenu && numTimesRolled > 0}
         style={{
           scale: hover ? 1.1 : 1,
-          color: "rgba(0, 0, 0, " + realOpacity + ")",
+          color: numberColor,
           cursor: isLocked && keys >= 1 ? "pointer" : inCombatMenu && numTimesRolled > 0 ? "grab" : undefined,
         }}
         onDragStart={(e) => {

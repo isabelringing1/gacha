@@ -520,7 +520,7 @@ function getLevelData(numRolls) {
       return levelData[i - 1];
     }
   }
-  return levelData[0];
+  return levelData[levelData.length - 1];
 }
 
 function getLevel(numRolls) {
@@ -529,6 +529,7 @@ function getLevel(numRolls) {
       return levelData[i].level - 1;
     }
   }
+  return levelData[levelData.length - 1].level;
 }
 
 function getMaxLevel() {

@@ -144,10 +144,15 @@ export default function NumberTooltip(props) {
         
         {!isCombat && (() => {
           var progress = getLevelProgress(numTimesRolled);
+          if (progress.isMax) {
+            return (
+              <div className="number-tooltip-text">
+                Rolled <b>{numTimesRolled}</b> time{numTimesRolled === 1 ? "" : "s"}
+              </div>
+            );
+          }
           var span = Math.max(1, progress.max - progress.min);
-          var pct = progress.isMax
-            ? 100
-            : Math.max(0, Math.min(100, ((progress.current - progress.min) / span) * 100));
+          var pct = Math.max(0, Math.min(100, ((progress.current - progress.min) / span) * 100));
           var remaining = getNumToUpgrade(numTimesRolled);
           return (
             <>
@@ -158,11 +163,9 @@ export default function NumberTooltip(props) {
                 </div>
                 <span className="level-progress-bound">{progress.max}</span>
               </div>
-              {!progress.isMax && (
-                <div className="level-progress-caption">
-                  {remaining} more to level up!
-                </div>
-              )}
+              <div className="level-progress-caption">
+                {remaining} more to level up!
+              </div>
             </>
           );
         })()}

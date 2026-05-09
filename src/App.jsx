@@ -13,7 +13,9 @@ import {
   generateCombatRewards,
   getFactors,
   getLevel,
+  getMaxLevel,
   getLevelData,
+  getLevelProgress,
 } from "./Util";
 import { UNLOCK_ENTRY_COST } from "./constants.js";
 import ticket from "/ticket.png";
@@ -42,6 +44,7 @@ import About from "./About.jsx";
 import ResetPopup from "./ResetPopup.jsx";
 import Achievements from "./Achievements.jsx";
 import WinPopup from "./WinPopup.jsx";
+import SuperWinPopup from "./SuperWinPopup.jsx";
 import packData from "./json/packs.json";
 
 import arrow from "/arrow.png";
@@ -153,6 +156,9 @@ function App() {
   const [hasShownWinPopup, setHasShownWinPopup] = useState(false);
   const [startTime, setStartTime] = useState(null);
   const [pendingWinPopup, setPendingWinPopup] = useState(false);
+  const [showSuperWinPopup, setShowSuperWinPopup] = useState(false);
+  const [hasShownSuperWinPopup, setHasShownSuperWinPopup] = useState(false);
+  const [pendingSuperWinPopup, setPendingSuperWinPopup] = useState(false);
   const [combatButtonSeen, setCombatButtonSeen] = useState(false);
   const [outOfDiamondsSeen, setOutOfDiamondsSeen] = useState(false);
   const [ticketBoughtSeen, setTicketBoughtSeen] = useState(false);
@@ -296,6 +302,40 @@ function App() {
     }
   }, [currentPack, bigNumberQueue]);
 
+  function isSuperComplete() {
+    if (Object.keys(numbers).length !== 100) return false;
+    if (lockedNumbers.length !== 0) return false;
+    var maxLvl = getMaxLevel();
+    for (var n = 1; n <= 100; n++) {
+      if (getLevel(numbers[n] || 0) !== maxLvl) return false;
+    }
+    return true;
+  }
+
+  useEffect(() => {
+    if (!showSuperWinPopup && !hasShownSuperWinPopup && isSuperComplete()) {
+      if (currentPack || bigNumberQueue.length > 0 || showWinPopup || pendingWinPopup) {
+        setPendingSuperWinPopup(true);
+      } else {
+        setShowSuperWinPopup(true);
+      }
+    }
+  }, [numbers, lockedNumbers]);
+
+  useEffect(() => {
+    if (
+      pendingSuperWinPopup &&
+      !currentPack &&
+      bigNumberQueue.length === 0 &&
+      !showWinPopup &&
+      !pendingWinPopup &&
+      !hasShownSuperWinPopup
+    ) {
+      setPendingSuperWinPopup(false);
+      setShowSuperWinPopup(true);
+    }
+  }, [currentPack, bigNumberQueue, showWinPopup, pendingWinPopup]);
+
   useEffect(() => {
     if (keys > 0 && !keysUnlocked) {
       setKeysUnlocked(true);
@@ -371,6 +411,7 @@ function App() {
     achievementsState,
     diamondsUnlocked,
     hasShownWinPopup,
+    hasShownSuperWinPopup,
     combatButtonSeen,
     outOfDiamondsSeen,
     ticketBoughtSeen,
@@ -423,6 +464,7 @@ function App() {
       numBattles: numBattles,
       startTime: startTime,
       hasShownWinPopup: hasShownWinPopup,
+      hasShownSuperWinPopup: hasShownSuperWinPopup,
       lockedNumbers: lockedNumbers,
       lockedRollCounts: lockedRollCounts,
       combatButtonSeen: combatButtonSeen,
@@ -498,6 +540,7 @@ function App() {
         setNumBattles(saveData.numBattles || 0);
         setStartTime(saveData.startTime || null);
         setHasShownWinPopup(saveData.hasShownWinPopup || false);
+        setHasShownSuperWinPopup(saveData.hasShownSuperWinPopup || false);
         if (saveData.lockedNumbers) setLockedNumbers(saveData.lockedNumbers);
         setLockedRollCounts(saveData.lockedRollCounts || {});
         setCombatButtonSeen(saveData.combatButtonSeen || false);
@@ -1220,6 +1263,11 @@ function App() {
             }
             return newLevel;
           })()}
+          isMaxLevel={(() => {
+            var n = bigNumberQueue[0].n;
+            var count = numbers[n] || 0;
+            return getLevelProgress(count + 1).isMax;
+          })()}
         />
       )}
       {bigNumberQueue.length > 0 && (
@@ -1608,6 +1656,17 @@ function App() {
       />
       {showWinPopup && (
         <WinPopup combatLevel={combatState.combatLevel} rolls={rolls} numPacksOpened={numPacksOpened} numRollButtonClicks={numRollButtonClicks} numBattles={numBattles} startTime={startTime} onClose={() =>{ setShowWinPopup(false); setHasShownWinPopup(true); }} />
+      )}
+      {showSuperWinPopup && (
+        <SuperWinPopup
+          combatLevel={combatState.combatLevel}
+          rolls={rolls}
+          numPacksOpened={numPacksOpened}
+          numRollButtonClicks={numRollButtonClicks}
+          numBattles={numBattles}
+          startTime={startTime}
+          onClose={() => { setShowSuperWinPopup(false); setHasShownSuperWinPopup(true); }}
+        />
       )}
     </div>
   );

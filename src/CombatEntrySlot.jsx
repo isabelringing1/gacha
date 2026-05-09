@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import NumberTooltip from "./NumberTooltip";
 import { StarLevel } from "./NumberGrid";
-import { getLevel, getRarity } from "./Util";
+import { getLevel, getMaxLevel, getRarity } from "./Util";
 
 export default function CombatEntrySlot(props) {
   var { currentEnemy, index, number, onEdit, selectingIndex, numTimesRolled, isDead, inCombatEntry, onDropNumber, isDraggingNumber, duplicateBlocked, setAnySlotHovered, isLoading } = props;
@@ -85,9 +85,9 @@ export default function CombatEntrySlot(props) {
       )}
       
       {selectingIndex && <div className="combat-slot-hover-view">PICK</div>}
-      {number ? <div className={("combat-number-" + getRarity(number))}>{number}</div> : ""}
+      {number ? <div className={("combat-number-" + getRarity(number))} style={numTimesRolled > 0 && getLevel(numTimesRolled) === getMaxLevel() ? { color: "#e7b500" } : undefined}>{number}</div> : ""}
       {number && numTimesRolled > 0 && getLevel(numTimesRolled) > 0 && (
-        <StarLevel level={getLevel(numTimesRolled)} />
+        <StarLevel level={getLevel(numTimesRolled)} isMax={getLevel(numTimesRolled) === getMaxLevel()} />
       )}
       {isDead && <div className="num-dead-x">×</div>}
     </div>

@@ -23,6 +23,10 @@ export default function CombatEntry(props) {
 
   var raw = String(currentEnemy).split("");
   var len = raw.length;
+  var useExpNotation = len > 15;
+  var expDisplay = useExpNotation
+    ? Number(currentEnemy).toExponential(2).replace("+", "")
+    : null;
   var digits = raw.map((digit, i) => {
     var posFromRight = len - 1 - i;
     if (posFromRight > 0 && posFromRight % 3 === 0) {
@@ -60,18 +64,32 @@ export default function CombatEntry(props) {
               className="floating-num-cloud cloud-2"
               objectFit="contain"
             />
-            <div className={"floating-num" + (len > 6 ? " floating-num-long" : "")}>
+            <div className={"floating-num" + (useExpNotation ? " floating-num-long" : len > 11 ? " floating-num-xlong" : len > 8 ? " floating-num-long-xl" : len > 6 ? " floating-num-long" : "")}>
               {waiting ? (
                 <>
                   <div id={"floating-num-0"} key={"floating-num-0"}>?</div>
                   <div id={"floating-num-1"} key={"floating-num-1"}>?</div>
                   <div id={"floating-num-2"} key={"floating-num-2"}>?</div>
                 </>
+              ) : useExpNotation ? (
+                expDisplay.split("").map((ch, i) => (
+                  <div
+                    id={"floating-num-" + i}
+                    key={"floating-num-exp-" + i}
+                    className={"floating-num-anim-" + (i % 4)}
+                  >
+                    {ch}
+                  </div>
+                ))
               ) : (
                 digits.map((digit, i) => {
                   var hasComma = digit.length > 1;
                   return (
-                    <div id={"floating-num-" + i} key={"floating-num-" + i}>
+                    <div
+                      id={"floating-num-" + i}
+                      key={"floating-num-" + i}
+                      className={len > 4 ? "floating-num-anim-" + (i % 4) : undefined}
+                    >
                       {hasComma ? digit[0] : digit}{hasComma && <span className="floating-num-comma">,</span>}
                     </div>
                   );

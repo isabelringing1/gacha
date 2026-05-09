@@ -9,7 +9,7 @@ import numberData from "./json/numbers.json";
 import rarityJson from "./json/rarity.json";
 
 export default function SplashDisplayFront(props) {
-  const { bigNumberEntry, isNew, animating, isLocked, newLevel } = props;
+  const { bigNumberEntry, isNew, animating, isLocked, newLevel, isMaxLevel } = props;
   var n = bigNumberEntry.n;
   var data = isLocked ? rarityJson["0"] : getRarityData(n);
   var r = isLocked ? "LOCKED" : getRarity(n).toUpperCase();
@@ -24,6 +24,11 @@ export default function SplashDisplayFront(props) {
   var levelUpText = (
     <span className="level-up-text" key="level-up-text">
       LEVEL UP
+    </span>
+  );
+  var maxLevelText = (
+    <span className="max-level-text" key="max-level-text">
+      MAX LEVEL
     </span>
   );
   var randomNumberText =
@@ -99,7 +104,7 @@ export default function SplashDisplayFront(props) {
           />
         </div>
       )}
-      {newLevel > 1 && !isLocked && ( 
+      {newLevel > 1 && !isLocked && !isMaxLevel && (
         <div className="new-container">
           <DitherShader
             src={newBg}
@@ -112,6 +117,22 @@ export default function SplashDisplayFront(props) {
             threshold={0}
             children={[levelUpText]}
             style={{ color: data.font_color }}
+          />
+        </div>
+      )}
+      {isMaxLevel && !isLocked && (
+        <div className="new-container">
+          <DitherShader
+            src={newBg}
+            gridSize={2}
+            ditherMode="bayer"
+            colorMode="custom"
+            className="new-bg"
+            customPalette={["#c81d25ff", "#ff8a8aff", "#ffffffff"]}
+            objectFit="contain"
+            threshold={0}
+            children={[maxLevelText]}
+            style={{ color: "#5a0008" }}
           />
         </div>
       )}
