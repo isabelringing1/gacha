@@ -1928,7 +1928,6 @@ button:disabled {
   font-size: 2dvh;
   z-index: 1;
   cursor: pointer;
-  color: #ff0000;
   margin-left: -9%;
   margin-top: -4%;
   height: 3dvh;
@@ -2494,6 +2493,10 @@ input[type="number"] {
 }
 
 .dot-filled {
+  opacity: 1;
+}
+
+.dot.can-claim-yellow {
   opacity: 1;
 }
 
@@ -4498,11 +4501,10 @@ input[type="number"] {
   }
 
   .number-text {
-    font-size: 2.5dvh;
   }
 
   .number-text-long {
-    font-size: 2dvh;
+    font-size: 5.5vw;
   }
 
   #roll-container {
@@ -4513,6 +4515,8 @@ input[type="number"] {
 
   .pack-shop {
     width: 80%;
+    height: 100%;
+    box-sizing: border-box;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -4526,34 +4530,68 @@ input[type="number"] {
     aspect-ratio: auto;
   }
 
+  .achievements-container {
+    position: absolute;
+    bottom: 0;
+    height: 36dvh;
+    width: 100vw;
+    padding-top: 0;
+    transform: translate(100vw, 0);
+  }
+
   .pack-shop-container {
     position: absolute;
-    bottom: 2dvh;
-    height: 36dvh;
+    bottom: 0;
+    height: 30dvh;
     width: 100vw;
     display: flex;
     justify-content: center;
     align-items: start;
-    transform: translate(100vw, 0);
+    transform: translate(200vw, 0);
+  }
+
+  .pack-shop-packs {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 1fr;
+    gap: 0.4dvh;
+    padding: 0.4dvh;
+    flex: 1;
+    min-height: 0;
   }
 
   .pack-shop-entry {
-    height: 14dvh;
-    padding: 0 1dvh;
+    height: 100%;
+    padding: 0 0.3dvh;
+    aspect-ratio: auto;
+    justify-content: start;
+  }
+
+
+  .pack-shop-entry-img {
+    width: 100%;
+    height: 11dvh;
     aspect-ratio: auto;
   }
 
-  
-  .pack-shop-entry-img {
-    width: 5dvh;
-    height: 8dvh;
-  }
-
   .pack-shop-entry-buy-button {
-    height: 4dvh;
+    height: 3.5dvh;
     padding: 0;
     width: 100%;
     position: relative;
+  }
+
+  .pack-shop-entry-buy-button-mobile {
+    margin-top: 0.4dvh;
+    font-size: 1.6dvh;
+    background: url("/price_tag.png") center center no-repeat;
+    background-size: 100% 100%;
+    border: none;
+    border-radius: 0;
+  }
+
+  .pack-shop-entry-expiry {
+    font-size: 1.4dvh;
+    padding-top: 0.4dvh;
   }
 
   .pack-shop-entry-buy-button-container {
@@ -4568,6 +4606,29 @@ input[type="number"] {
     padding-bottom: 0.5dvh;
   }
 
+  .pack-shop-unlock-title {
+    font-size: 1.8dvh;
+  }
+
+  .pack-shop-entry-locked {
+    font-size: 1.4dvh;
+    padding: 0.4dvh 0;
+  }
+
+  .pack-shop-entry-refresh-early {
+    padding-bottom: 0.3dvh;
+    font-size: 1.3dvh;
+  }
+
+  .pack-shop-entry-unlock-button-container {
+    padding-top: 0.4dvh;
+  }
+
+  .locked-entry,
+  .empty-entry.blank {
+    margin: 4%;
+  }
+
   .title {
     padding: 0 0 0.3dvh 0;
   }
@@ -4578,7 +4639,7 @@ input[type="number"] {
     height: 36dvh;
     width: 100vw;
     align-items: center;
-    transform: translate(200vw, 0);
+    transform: translate(300vw, 0);
   }
 
   .charm-shop {
@@ -4624,8 +4685,10 @@ input[type="number"] {
     position: absolute;
     bottom: 0;
     height: 39dvh;
-    width: 100vw;
+    width: 80vw;
+    justify-content: space-between;
     pointer-events: none;
+    font-size: 4.5vw;
   }
 
   .hearts-container {
@@ -4637,7 +4700,8 @@ input[type="number"] {
   }
 
   #diamonds-container {
-   
+    display: flex;
+   flex-direction: column-reverse;
   }
 
   #roll-button {
@@ -4652,7 +4716,7 @@ input[type="number"] {
 
   .goal-container {
     font-size: 2vh;
-    top: 0.5vh;
+    top: 0;
   }
 
   .sportsbook-container {
@@ -4684,6 +4748,23 @@ input[type="number"] {
   .history {
     width: 80%;
     position: relative;
+  }
+
+  .achievements-container {
+    height: 30dvh;
+  }
+
+  .about-button {
+    left: 3vw !important;
+    bottom: 1dvh !important;
+  }
+
+  .next-heart-container{
+    font-size: 3.5vw;
+  }
+
+  .ray-box{
+    scale: 2;
   }
 }
 
@@ -4844,7 +4925,6 @@ input[type="number"] {
 }
 
 .about-popup-button {
-  width: 60%;
 }
 
 .about-popup-small{

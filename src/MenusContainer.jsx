@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import PackShop from "./PackShop";
 import CharmShop from "./CharmShop.jsx";
-import Achievements from "./Achievements.jsx";
+import Achievements, { hasClaimableAchievement } from "./Achievements.jsx";
 import Sportsbook from "./Sportsbook.jsx";
 import Timer from "./Timer";
 import History from "./History";
@@ -17,7 +17,6 @@ export default function MenusContainer(props) {
     charmShopState,
     canUnlockCharmShop,
     unlockCharmShop,
-    nextHeartRefreshTime,
     diamonds,
     setDiamonds,
     hearts,
@@ -98,6 +97,11 @@ export default function MenusContainer(props) {
     }
   };
 
+  var visibleSlotCount = 1;
+  if (achievementsState != "hidden") visibleSlotCount++;
+  if (packShopState != "hidden") visibleSlotCount++;
+  if (charmShopState != "hidden") visibleSlotCount++;
+
   return (
     <div
       id="menus-container"
@@ -106,14 +110,28 @@ export default function MenusContainer(props) {
       onTouchEnd={onTouchEnd}
       style={{ opacity: showCombat ? 0 : 1 }}
     >
-      {isMobile && (
+      {isMobile && achievementsState != "hidden" && (
         <div className="dots-container">
-          {Array.from({ length: NUM_TABS }, (_, i) => (
-            <span
-              key={"dot-" + i}
-              className={"dot" + (mobileMenuIndex == i ? " dot-filled" : "")}
-            ></span>
-          ))}
+          {Array.from({ length: visibleSlotCount }, (_, i) => {
+            var isFilled = mobileMenuIndex == i;
+            var pulseAchievement =
+              i === 1 &&
+              achievementsState == "unlocked" &&
+              hasClaimableAchievement(numbers, numPacksOpened, claimedAchievements);
+            var pulsePackShop = i === 2 && canUnlockPackShop && canUnlockPackShop();
+            var pulseCharmShop = i === 3 && canUnlockCharmShop && canUnlockCharmShop();
+            var shouldPulse = !isFilled && (pulseAchievement || pulsePackShop || pulseCharmShop);
+            return (
+              <span
+                key={"dot-" + i}
+                className={
+                  "dot" +
+                  (isFilled ? " dot-filled" : "") +
+                  (shouldPulse ? " can-claim-yellow" : "")
+                }
+              ></span>
+            );
+          })}
         </div>
       )}
       <div
@@ -151,18 +169,21 @@ export default function MenusContainer(props) {
               </button>
             )}
           </span>
-          {isMobile && nextHeartRefreshTime && (
-            <div className="next-heart-container">
-              Next &diams;&#xfe0e; in{" "}
-              <Timer
-                endTime={nextHeartRefreshTime}
-                onTimerEnd={refreshDiamonds}
-              />
-            </div>
-          )}
         </div>
 
         {/* MOBILE */}
+        {achievementsState != "hidden" && isMobile && (
+          <Achievements
+            numbers={numbers}
+            numPacksOpened={numPacksOpened}
+            claimedAchievements={claimedAchievements}
+            claimAchievement={claimAchievement}
+            achievementsState={achievementsState}
+            canUnlockAchievements={canUnlockAchievements}
+            unlockAchievements={unlockAchievements}
+            setHighlightedNumbers={setHighlightedNumbers}
+          />
+        )}
         {packShopState != "hidden" && isMobile && (
           <PackShop
             packShopState={packShopState}
@@ -197,35 +218,6 @@ export default function MenusContainer(props) {
             canUnlockCharmShop={canUnlockCharmShop}
             unlockCharmShop={unlockCharmShop}
           />
-        )}
-        {achievementsState != "hidden" && isMobile && (
-          <Achievements
-            numbers={numbers}
-            numPacksOpened={numPacksOpened}
-            claimedAchievements={claimedAchievements}
-            claimAchievement={claimAchievement}
-            achievementsState={achievementsState}
-            canUnlockAchievements={canUnlockAchievements}
-            unlockAchievements={unlockAchievements}
-            setHighlightedNumbers={setHighlightedNumbers}
-          />
-        )}
-
-        {/*{sportsbookState != "hidden" && isMobile && (
-          <Sportsbook
-            diamonds={diamonds}
-            sportsbookEntries={sportsbookEntries}
-            setSportsbookEntries={setSportsbookEntries}
-            setDiamonds={setDiamonds}
-            rolls={rolls}
-            generateBet={generateBet}
-          />
-        )}*/}
-
-        {isMobile && (
-          <div className="history-container">
-            <History rolls={rolls} />
-          </div>
         )}
       </div>
     </div>

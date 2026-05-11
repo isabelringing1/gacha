@@ -7,6 +7,51 @@ const REACH_ACHIEVEMENTS = achievementData
   .filter((a) => a.id.startsWith("reach_"))
   .sort((a, b) => a.threshold - b.threshold);
 
+export function hasClaimableAchievement(numbers, numPacksOpened, claimedAchievements) {
+  var uniqueCount = Object.keys(numbers).length;
+  var completeRows = countCompleteRows(numbers);
+  var completeCols = countCompleteCols(numbers);
+  var packsOpened = numPacksOpened || 0;
+
+  function countAtLevel(targetLevel) {
+    var count = 0;
+    for (var i = 1; i <= 100; i++) {
+      var rolls = numbers[i];
+      if (rolls !== undefined && getLevel(rolls) >= targetLevel) count++;
+    }
+    return count;
+  }
+
+  function getCurrent(a) {
+    if (a.type === "row") return completeRows;
+    if (a.type === "column") return completeCols;
+    if (a.type === "packs") return packsOpened;
+    if (a.type === "level") return countAtLevel(a.target_level);
+    return uniqueCount;
+  }
+
+  function getTarget(a) {
+    if (a.type === "row" || a.type === "column" || a.type === "packs" || a.type === "level") return a.count;
+    return a.threshold;
+  }
+
+  var closestReachIndex = REACH_ACHIEVEMENTS.findIndex((a) => uniqueCount < a.threshold);
+  var lockedReachIds = new Set(
+    closestReachIndex === -1
+      ? []
+      : REACH_ACHIEVEMENTS.slice(closestReachIndex + 1).map((a) => a.id)
+  );
+
+  for (var i = 0; i < achievementData.length; i++) {
+    var a = achievementData[i];
+    if (claimedAchievements.includes(a.id)) continue;
+    if (lockedReachIds.has(a.id)) continue;
+    if (a.requires && !claimedAchievements.includes(a.requires)) continue;
+    if (getCurrent(a) >= getTarget(a)) return true;
+  }
+  return false;
+}
+
 function getRowNumbers(rowIndex) {
   var result = [];
   for (var i = 1; i <= 10; i++) {

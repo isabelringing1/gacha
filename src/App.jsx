@@ -808,10 +808,18 @@ function App() {
     setSportsbookEntries(newSportsbookEntries);
   };
 
+  const getVisibleSlotCount = () => {
+    var count = 1;
+    if (achievementsState != "hidden") count++;
+    if (packShopState != "hidden") count++;
+    if (charmShopState != "hidden") count++;
+    return count;
+  };
+
   const trySwipe = (direction) => {
     if (mobileMenuIndex == 0 && direction < 0) {
       return;
-    } else if (mobileMenuIndex == NUM_TABS - 1 && direction > 0) {
+    } else if (mobileMenuIndex == getVisibleSlotCount() - 1 && direction > 0) {
       return;
     }
     setMobileMenuIndex(mobileMenuIndex + direction);
@@ -1531,7 +1539,7 @@ function App() {
               lockedRollCounts={lockedRollCounts}
             />
           </div>
-          {isMobile && (
+          {isMobile && achievementsState != "hidden" && (
             <div id="arrows-container">
               {mobileMenuIndex != 0 && (
                 <img
@@ -1541,7 +1549,7 @@ function App() {
                 />
               )}
 
-              {mobileMenuIndex != NUM_TABS - 1 && (
+              {mobileMenuIndex != getVisibleSlotCount() - 1 && (
                 <img
                   className="arrow right-arrow"
                   src={arrow}
@@ -1568,6 +1576,15 @@ function App() {
                     </span>
                   )}
                 </div>
+                {isMobile && nextDiamondRefreshTime && (
+                  <div className="next-heart-container">
+                    Next &diams;&#xfe0e; in{" "}
+                    <Timer
+                      endTime={nextDiamondRefreshTime}
+                      onTimerEnd={refreshDiamonds}
+                    />
+                  </div>
+                )}
               </div>
               <div id="clubs-container" style={{ opacity: clubsUnlocked ? 1 : 0 }}>
                 &#x2663;&#xfe0e; {clubs.toLocaleString()}

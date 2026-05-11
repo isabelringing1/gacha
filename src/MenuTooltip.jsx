@@ -56,7 +56,7 @@ export default function MenuTooltip(props) {
             </div>
             {!canBuy && (
               <div className="menu-tooltip-text">
-               Not enough &#x2660;&#xfe0e;.
+               Not enough &#x2660;&#xfe0e;
               </div>
             )}
             {canBuy && (

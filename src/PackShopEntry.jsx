@@ -1,11 +1,13 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import priceTag from "/price_tag.png";
 import priceTagYellow from "/price_tag_yellow.png";
 import Timer from "./Timer.jsx";
 import trash from "/trash.png";
+import trash_hover from "/trash_hover.png";
 
 import { getNumbersInPack, getPackCost } from "./Util";
 import { isMobile } from "./constants.js";
+import { DitherShader } from "./dither-shader.tsx";
 
 const OUTLINE_WIDTH = 2;
 function buildOutlineFilter(color) {
@@ -34,6 +36,8 @@ function PackShopEntry(props) {
     imgWidth,
     imgHeight,
   } = props;
+
+  const [trashHovered, setTrashHovered] = useState(false);
 
   function canBuy() {
     return spades - getPackCost(pack) >= 0;
@@ -99,55 +103,78 @@ function PackShopEntry(props) {
           style={{
             width: imgWidth + "px",
             height: imgHeight + "px",
-            opacity: canBuy() ? 1 : 0.5,
           }}
         >
           <img
             src={pack.dt_art}
             alt=""
             className="pack-shop-entry-img-img"
-            style={{ filter: buildOutlineFilter(outlineColor) }}
+            style={{ filter: buildOutlineFilter(outlineColor), opacity: canBuy() ? 1 : 0.5 }}
           />
-          <div className="pack-shop-entry-buy-button-container">
-            <img src={priceTag} className="price-tag" alt="" />
-            {numPacksOpened === 0 && canBuy() && (
-              <img
-                src={priceTagYellow}
-                className="price-tag price-tag-yellow-pulse"
-                alt=""
-              />
-            )}
-            <button
-              className="pack-shop-entry-buy-button"
-              disabled={!canBuy()}
-            >
-              &#x2660;&#xfe0e;{getPackCost(pack) >= 1000 ? "" : " "}{getPackCost(pack)}
-            </button>
-            {isMobile && (
-              <div className="pack-shop-entry-expiry">
-                Expires in{" "}
-                <Timer
-                  endTime={shopEntry.expirationTime}
-                  onTimerEnd={() => {
-                    setHoveredPack(null);
-                    trashPack(shopEntry);
-                  }}
+          {!isMobile && (
+            <div className="pack-shop-entry-buy-button-container">
+              <img src={priceTag} className="price-tag" alt="" />
+              {numPacksOpened === 0 && canBuy() && (
+                <img
+                  src={priceTagYellow}
+                  className="price-tag price-tag-yellow-pulse"
+                  alt=""
                 />
-              </div>
-            )}
-          </div>
+              )}
+              <button
+                className="pack-shop-entry-buy-button"
+                disabled={!canBuy()}
+              >
+                &#x2660;&#xfe0e;{getPackCost(pack) >= 1000 ? "" : " "}{getPackCost(pack)}
+              </button>
+            </div>
+          )}
           <div
             className="trash-button"
+            onMouseOver={() => setTrashHovered(true)}
+            onMouseOut={() => setTrashHovered(false)}
             onClick={(e) => {
               e.stopPropagation();
               setHoveredPack(null);
               trashPack(shopEntry);
             }}
           >
-            <img src={trash} className="trash-button-img" alt="trash" />
+             <DitherShader
+                src={trashHovered ? trash_hover : trash}
+                gridSize={1}
+                ditherMode="bayer"
+                colorMode={"original"}
+                threshold={0}
+                className={"trash-button-img" + (trashHovered ? " trash-button-img-hover" : "")}
+              />
           </div>
         </div>
       </div>
+
+      {isMobile && (
+        <div className="pack-shop-entry-expiry">
+          Expires in{" "}
+          <Timer
+            endTime={shopEntry.expirationTime}
+            onTimerEnd={() => {
+              setHoveredPack(null);
+              trashPack(shopEntry);
+            }}
+          />
+        </div>
+      )}
+      {isMobile && (
+        <button
+          className="pack-shop-entry-buy-button pack-shop-entry-buy-button-mobile"
+          disabled={!canBuy()}
+          onClick={(e) => {
+            e.stopPropagation();
+            onBuyPressed(shopEntry);
+          }}
+        >
+          &#x2660;&#xfe0e;{getPackCost(pack) >= 1000 ? "" : " "}{getPackCost(pack)}
+        </button>
+      )}
 
       {!isMobile && (
         <div className="pack-shop-entry-expiry">
