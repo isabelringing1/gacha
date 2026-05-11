@@ -70,6 +70,7 @@ export default function CombatMenu(props) {
               objectFit="fill"
               threshold={0}
               brightness={0.05}
+              opacity={0.8}
               children={[
                 <div key="swap-text" className="swap-instructions-text">
                   drag numbers in to change your team!

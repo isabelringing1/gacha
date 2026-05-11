@@ -126,6 +126,7 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
   className,
   style,
   children,
+  opacity = 1,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -163,7 +164,7 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
   }, [outlineColor, outlineWidth]);
 
   const canvasStyle = useMemo(
-    () => ({ imageRendering: "pixelated" as const, filter: outlineFilter }),
+    () => ({ imageRendering: "pixelated" as const, filter: outlineFilter, opacity: opacity }),
     [outlineFilter],
   );
 

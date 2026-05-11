@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { DitherShader } from "./dither-shader";
 import priceTag from "/price_tag.png";
 import priceTagYellow from "/price_tag_yellow.png";
 import Timer from "./Timer.jsx";
@@ -7,6 +6,19 @@ import trash from "/trash.png";
 
 import { getNumbersInPack, getPackCost } from "./Util";
 import { isMobile } from "./constants.js";
+
+const OUTLINE_WIDTH = 2;
+function buildOutlineFilter(color) {
+  if (!color) return undefined;
+  var parts = [];
+  for (var i = 0; i < 8; i++) {
+    var angle = (i * Math.PI) / 4;
+    var dx = Math.round(Math.cos(angle) * OUTLINE_WIDTH);
+    var dy = Math.round(Math.sin(angle) * OUTLINE_WIDTH);
+    parts.push("drop-shadow(" + dx + "px " + dy + "px 0 " + color + ")");
+  }
+  return parts.join(" ");
+}
 
 function PackShopEntry(props) {
   const {
@@ -82,67 +94,59 @@ function PackShopEntry(props) {
       onTouchCancel={onTouchEnd}
     >
       <div className="pack-shop-entry-img-container"  onClick={() => onBuyPressed(shopEntry)}>
-        <DitherShader
-          src={pack.art}
-          gridSize={2}
-          ditherMode="bayer"
-          colorMode={pack.color_mode}
-          threshold={0}
-          customPalette={pack.custom_palette}
-          className={"pack-shop-entry-img"}
-          objectFit="fill"
-          outlineColor={outlineColor}
-          outlineWidth={2}
+        <div
+          className="pack-shop-entry-img"
           style={{
             width: imgWidth + "px",
             height: imgHeight + "px",
             opacity: canBuy() ? 1 : 0.5,
           }}
-          children={[
-            <div
-              className="pack-shop-entry-buy-button-container"
-              key="pack-shop-entry-buy-button-container"
+        >
+          <img
+            src={pack.dt_art}
+            alt=""
+            className="pack-shop-entry-img-img"
+            style={{ filter: buildOutlineFilter(outlineColor) }}
+          />
+          <div className="pack-shop-entry-buy-button-container">
+            <img src={priceTag} className="price-tag" alt="" />
+            {numPacksOpened === 0 && canBuy() && (
+              <img
+                src={priceTagYellow}
+                className="price-tag price-tag-yellow-pulse"
+                alt=""
+              />
+            )}
+            <button
+              className="pack-shop-entry-buy-button"
+              disabled={!canBuy()}
             >
-              <img src={priceTag} className="price-tag" alt="" />
-              {numPacksOpened === 0 && canBuy() && (
-                <img
-                  src={priceTagYellow}
-                  className="price-tag price-tag-yellow-pulse"
-                  alt=""
+              &#x2660;&#xfe0e;{getPackCost(pack) >= 1000 ? "" : " "}{getPackCost(pack)}
+            </button>
+            {isMobile && (
+              <div className="pack-shop-entry-expiry">
+                Expires in{" "}
+                <Timer
+                  endTime={shopEntry.expirationTime}
+                  onTimerEnd={() => {
+                    setHoveredPack(null);
+                    trashPack(shopEntry);
+                  }}
                 />
-              )}
-              <button
-                className="pack-shop-entry-buy-button"
-                disabled={!canBuy()}
-              >
-                &#x2660;&#xfe0e;{getPackCost(pack) >= 1000 ? "" : " "}{getPackCost(pack)}
-              </button>
-              {isMobile && (
-                <div className="pack-shop-entry-expiry">
-                  Expires in{" "}
-                  <Timer
-                    endTime={shopEntry.expirationTime}
-                    onTimerEnd={() => {
-                      setHoveredPack(null);
-                      trashPack(shopEntry);
-                    }}
-                  />
-                </div>
-              )}
-            </div>,
-            <div
-              key="trash-button"
-              className="trash-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setHoveredPack(null);
-                trashPack(shopEntry);
-              }}
-            >
-              <img src={trash} className="trash-button-img" alt="trash" />
-            </div>,
-          ]}
-        />
+              </div>
+            )}
+          </div>
+          <div
+            className="trash-button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setHoveredPack(null);
+              trashPack(shopEntry);
+            }}
+          >
+            <img src={trash} className="trash-button-img" alt="trash" />
+          </div>
+        </div>
       </div>
 
       {!isMobile && (

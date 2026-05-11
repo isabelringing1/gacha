@@ -169,6 +169,7 @@ const CardPack = (props) => {
             objectFit="fill"
             threshold={0}
             brightness={0.05}
+            opacity={0.8}
             children={[
               <div key="slice-text" className="slice-instructions-text">
                 Click and drag to open

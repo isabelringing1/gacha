@@ -1757,7 +1757,7 @@ button:disabled {
   display: flex;
   justify-content: center;
   align-items: start;
-  padding-top: 5dvh;
+  padding-top: 4dvh;
 }
 
 .pack-shop {
@@ -1864,6 +1864,15 @@ button:disabled {
   height: 22dvh;
   aspect-ratio: 2 /1;
   position: relative;
+}
+
+.pack-shop-entry-img-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  image-rendering: pixelated;
 }
 
 .pack-shop-entry-img:hover {
@@ -2704,7 +2713,6 @@ input[type="number"] {
   height: 100%;
   width: 100%;
   pointer-events: none;
-  mix-blend-mode: multiply;
 }
 
 .combat-view {
@@ -4629,9 +4637,7 @@ input[type="number"] {
   }
 
   #diamonds-container {
-    position: absolute;
-    right: 10vw;
-    text-align: right;
+   
   }
 
   #roll-button {
