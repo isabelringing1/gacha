@@ -121,6 +121,7 @@ function App() {
   const [highlightedNumbers, setHighlightedNumbers] = useState([]);
   const [badgedNumbers, setBadgedNumbers] = useState([]);
   const [mobileMenuIndex, setMobileMenuIndex] = useState(0);
+  const [mobileTab, setMobileTab] = useState(null);
   const [goal, setGoal] = useState(0);
   const [hoveredPack, setHoveredPack] = useState(null);
   const [mousePos, setMousePos] = useState([]);
@@ -168,6 +169,7 @@ function App() {
   const [lastDefeatedLevel, setLastDefeatedLevel] = useState(0);
   const [lastDefeatedEnemy, setLastDefeatedEnemy] = useState(0);
   const [showResetPopup, setShowResetPopup] = useState(false);
+  const [showAboutPopup, setShowAboutPopup] = useState(false);
   const [lastBattledLevel, setLastBattledLevel] = useState(0);
   const [diamondsUnlocked, setDiamondsUnlocked] = useState(false);
   const [battleShopState, setBattleShopState] = useState("unlocked");
@@ -1345,7 +1347,10 @@ function App() {
       {currentEvent && currentEvent.isNew && bigNumberQueue.length == 0 && (
         <EventBanner event={currentEvent} setCurrentEvent={setCurrentEvent} />
       )}
-      <div className="goal-container">
+      <div
+        className="goal-container"
+        onClick={() => setShowAboutPopup(true)}
+      >
         <div className="marquee-track">
           <span className="marquee-text">
             {("NUMBER " + (showCombat ? "BATTLE" : "GACHA") + " \u00A0 ").repeat(20)}
@@ -1426,6 +1431,8 @@ function App() {
           startTime={startTime}
           lastDefeatedLevel={lastDefeatedLevel}
           lastDefeatedEnemy={lastDefeatedEnemy}
+          open={showAboutPopup}
+          setOpen={setShowAboutPopup}
         />
       )}
       {showResetPopup && <ResetPopup setShowResetPopup={setShowResetPopup} />}
@@ -1539,25 +1546,6 @@ function App() {
               lockedRollCounts={lockedRollCounts}
             />
           </div>
-          {isMobile && achievementsState != "hidden" && (
-            <div id="arrows-container">
-              {mobileMenuIndex != 0 && (
-                <img
-                  className="arrow left-arrow"
-                  src={arrow}
-                  onClick={() => trySwipe(-1)}
-                />
-              )}
-
-              {mobileMenuIndex != getVisibleSlotCount() - 1 && (
-                <img
-                  className="arrow right-arrow"
-                  src={arrow}
-                  onClick={() => trySwipe(1)}
-                />
-              )}
-            </div>
-          )}
           <div
             className="wallet-container"
             style={{ opacity: combatState.active || (showCombat && combatState && combatState.combatLevel === 1) ? 0 : 1 }}
@@ -1698,6 +1686,21 @@ function App() {
         achievementsState={achievementsState}
         canUnlockAchievements={canUnlockAchievements}
         unlockAchievements={unlockAchievements}
+        mobileTab={mobileTab}
+        setMobileTab={setMobileTab}
+        currentEvent={currentEvent}
+        setCurrentEvent={setCurrentEvent}
+        rollForEvent={rollForEvent}
+        isCombatActive={isCombatActive}
+        combatState={combatState}
+        buyCombatShopItem={buyCombatShopItem}
+        battleShopState={battleShopState}
+        canUnlockBattleShop={canUnlockBattleShop}
+        unlockBattleShop={unlockBattleShop}
+        maxHearts={maxHearts}
+        heartsUnlocked={heartsUnlocked}
+        ticketBoughtSeen={ticketBoughtSeen}
+        setHighlightedNumbers={setHighlightedNumbers}
       />
       {showWinPopup && (
         <WinPopup combatLevel={combatState.combatLevel} rolls={rolls} numPacksOpened={numPacksOpened} numRollButtonClicks={numRollButtonClicks} numBattles={numBattles} startTime={startTime} onClose={() =>{ setShowWinPopup(false); setHasShownWinPopup(true); }} />

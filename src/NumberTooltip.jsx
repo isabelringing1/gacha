@@ -2,14 +2,13 @@ import { factors, getRarity } from "./Util";
 import Markdown from "react-markdown";
 import tail from "/tail.png";
 import { getRarityData, getLevel, getNumToUpgrade, getLevelData, getLevelProgress } from "./Util";
-import { CRIT_BOOST, AUTO_LEVEL, DIVIDE_LEVEL, FACTOR_TIMING_BOOST } from "./constants.js";
+import { CRIT_BOOST, AUTO_LEVEL, DIVIDE_LEVEL, FACTOR_TIMING_BOOST, isMobile } from "./constants.js";
 import keyIcon from "/key.png";
 
 export default function NumberTooltip(props) {
-  const { n, numTimesRolled, isMobile, isCombat, attackNumber, isFactor, makeTop, isLocked, canUnlock, isEntrySlot } = props;
+  const { n, numTimesRolled, isCombat, attackNumber, isFactor, makeTop, isLocked, canUnlock, isEntrySlot } = props;
   var cn = "number-tooltip dither-bg";
   var cnTail = "tooltip-tail number-tail";
-
   if (isCombat) {
     cn += " combat-tooltip";
   }
@@ -20,9 +19,11 @@ export default function NumberTooltip(props) {
     }
     if (n % 10 == 1 && isMobile) {
       cn += " left";
+      cnTail += " tooltip-tail-left";
     }
     if (n % 10 == 0 && isMobile) {
       cn += " right";
+      cnTail += " tooltip-tail-right";
     }
   }
   else{

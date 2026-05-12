@@ -552,7 +552,7 @@ export default function Combat(props) {
       {showStartLabel && <div className="start-label">START</div>}
       {winState == "menu" && (
         <>
-          {combatState.combatLevel > 1 && (
+          {combatState.combatLevel > 1 && !isMobile && (
             <CombatShop
               spades={spades}
               buyCombatShopItem={buyCombatShopItem}

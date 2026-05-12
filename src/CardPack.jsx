@@ -8,7 +8,6 @@ import Drawing from "./Drawing";
 import cardPackImg from "/card_pack.png";
 import cardPackOld from "/copycat_big.png";
 import { DitherShader } from "./dither-shader";
-import { isMobile } from "./constants.js";
 import numberBg from "/number_bg.png";
 
 const CardPack = (props) => {
@@ -24,14 +23,15 @@ const CardPack = (props) => {
   const lineRef = useRef(null);
 
   useEffect(() => {
-    const context = canvasRef.current.getContext("2d");
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
     const image = new Image();
     image.src = pack.big_art;
     if (image.src == "" || image.src == null) {
       image.src = "./card_pack.png";
     }
     image.onload = () => {
-      context.drawImage(image, 0, 0, 373, 658);
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
     };
   }, []);
 
@@ -185,8 +185,8 @@ const CardPack = (props) => {
           className="card-pack-img"
           id="card-pack-img-og"
           ref={canvasRef}
-          width={isMobile ? 250 : 373}
-          height={isMobile ? 470 : 658}
+          width={373}
+          height={658}
         />
       </div>
       {/*<DitherShader

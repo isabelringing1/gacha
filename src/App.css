@@ -429,7 +429,7 @@ p {
 }
 
 #card-pack-container {
-  z-index: 2;
+  z-index: 20;
   width: 100vw;
   height: 100dvh;
   position: absolute;
@@ -1040,7 +1040,7 @@ button:disabled {
   font-size: 1.5dvh;
 
   position: absolute;
-  z-index: 2;
+  z-index: 100;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1092,7 +1092,7 @@ button:disabled {
   width: 17dvh;
   border-radius: 2dvh;
   position: absolute;
-  z-index: 3;
+  z-index: 100;
   padding: 0.2dvh 0.5dvh 1dvh;
   border-radius: 2dvh;
   transform: translate(-50%, 35%);
@@ -1181,14 +1181,6 @@ button:disabled {
   margin-top: 56dvh;
 }
 
-.right {
-  margin-right: 20vw;
-}
-
-.left {
-  margin-left: 20vw;
-}
-
 .rarity-tooltip-text {
   font-weight: bold;
   margin-bottom: 0.5dvh;
@@ -1273,7 +1265,7 @@ button:disabled {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 3;
+  z-index: 30;
   mix-blend-mode: multiply;
   animation: zoom-in 0.7s ease-in-out;
 }
@@ -1332,7 +1324,7 @@ button:disabled {
   flex-direction: column;
   justify-content: start;
   align-items: center;
-  z-index: 4;
+  z-index: 31;
   mix-blend-mode: initial;
   animation: zoom-in 0.7s ease-in-out;
   pointer-events: none;
@@ -1828,6 +1820,7 @@ button:disabled {
   aspect-ratio: 2 / 3;
   font-family: NewYork, serif;
   font-size: 2dvh;
+  justify-content: center;
 }
 
 .pack-shop-unlock-title{
@@ -2454,6 +2447,8 @@ input[type="number"] {
   width: 100%;
   overflow: hidden;
   white-space: nowrap;
+  cursor: pointer;
+  z-index: 2;
 }
 
 .marquee-track {
@@ -3148,7 +3143,6 @@ input[type="number"] {
   width: 80%;
   max-width: 500px;
   height: auto;
-  margin-top: 0;
 }
 
 .combat-entry-column .combat-entry-inner-inner {
@@ -3179,22 +3173,52 @@ input[type="number"] {
 
 .cloud-1 {
   position: absolute;
-  width: 28dvh;
-  height: 18dvh;
-  bottom: -4dvh;
-  right: -10dvh;
-  z-index: 1;
-  animation: cloud-1 34s infinite ease-in-out, cloud-float 5s infinite ease-in-out;
+  width: 30dvh;
+  height: 23dvh;
+  bottom: -7dvh;
+  right: 15dvh;
+  z-index: 2;
+  animation: cloud-float 3s infinite ease-in-out;
 }
 
 .cloud-2 {
   position: absolute;
-  width: 22dvh;
-  height: 13dvh;
-  left: -8dvh;
-  bottom: -3dvh;
-  z-index: 1;
-  animation: cloud-2 34s infinite ease-in-out, cloud-float 6.5s -2s infinite ease-in-out;
+  width: 37dvh;
+  height: 20dvh;
+  bottom: -6.5dvh;
+  right: -14dvh;
+  z-index: 2;
+  animation: cloud-2 34s infinite ease-in-out, cloud-float 3s -2s infinite ease-in-out;
+}
+
+.cloud-3 {
+  position: absolute;
+  width: 28dvh;
+  height: 18dvh;
+  bottom: 2.5dvh;
+  right: -6dvh;
+  z-index: 0;
+  animation: cloud-float 4s infinite ease-in-out;
+}
+
+.cloud-4 {
+  position: absolute;
+  width: 28dvh;
+  height: 18dvh;
+  bottom: 5dvh;
+  left: -4dvh;
+  z-index: 0;
+  animation: cloud-float 3s infinite ease-in-out;
+}
+
+.cloud-5 {
+  position: absolute;
+  width: 35dvh;
+  height: 23dvh;
+  bottom: -9dvh;
+  right: -2dvh;
+  z-index: 0;
+  animation: cloud-float 3s infinite ease-in-out;
 }
 
 .combat-entry-outer {
@@ -3549,6 +3573,7 @@ input[type="number"] {
   paint-order: stroke fill;
   position: absolute;
   left: 0;
+  z-index: 1;
 }
 
 .floating-num.floating-num-long {
@@ -3734,33 +3759,14 @@ input[type="number"] {
   position: absolute;
   opacity: 0.66;
   user-select: none;
-  z-index: 1;
 }
 
-
-
 @keyframes cloud-1 {
-  0% {
-    right: -7dvh;
-  }
-  50% {
-    right: -2dvh;
-  }
-  100%{
-    right: -7dvh;
-  }
+
 }
 
 @keyframes cloud-2 {
-  0% {
-    left: -5dvh;
-  }
-  50% {
-    left: 0dvh;
-  }
-  100%{
-    left: -5dvh;
-  }
+
 }
 
 @keyframes cloud-float {
@@ -3768,7 +3774,7 @@ input[type="number"] {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-0.5dvh);
+    transform: translateY(-0.7dvh);
   }
   100% {
     transform: translateY(0);
@@ -4451,7 +4457,7 @@ input[type="number"] {
     width: max-content;
 
     border-radius: 3vw;
-    margin-bottom: 30vw;
+
   }
 
   .ribbon {
@@ -4514,7 +4520,7 @@ input[type="number"] {
   }
 
   .pack-shop {
-    width: 80%;
+    width: 95%;
     height: 100%;
     box-sizing: border-box;
     position: relative;
@@ -4563,7 +4569,7 @@ input[type="number"] {
     height: 100%;
     padding: 0 0.3dvh;
     aspect-ratio: auto;
-    justify-content: start;
+    justify-content: center;
   }
 
 
@@ -4573,33 +4579,9 @@ input[type="number"] {
     aspect-ratio: auto;
   }
 
-  .pack-shop-entry-buy-button {
-    height: 3.5dvh;
-    padding: 0;
-    width: 100%;
-    position: relative;
-  }
-
-  .pack-shop-entry-buy-button-mobile {
-    margin-top: 0.4dvh;
-    font-size: 1.6dvh;
-    background: url("/price_tag.png") center center no-repeat;
-    background-size: 100% 100%;
-    border: none;
-    border-radius: 0;
-  }
-
   .pack-shop-entry-expiry {
-    font-size: 1.4dvh;
+    font-size: 1.8dvh;
     padding-top: 0.4dvh;
-  }
-
-  .pack-shop-entry-buy-button-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: start;
-    height: 100%;
   }
 
   .pack-shop-entry-name {
@@ -4611,26 +4593,33 @@ input[type="number"] {
   }
 
   .pack-shop-entry-locked {
-    font-size: 1.4dvh;
-    padding: 0.4dvh 0;
+    font-size: 1.7dvh;
+      padding: 0.4dvh 0;
+      width: 95%;
   }
 
   .pack-shop-entry-refresh-early {
     padding-bottom: 0.3dvh;
-    font-size: 1.3dvh;
+    font-size: 1.8dvh;
   }
 
   .pack-shop-entry-unlock-button-container {
     padding-top: 0.4dvh;
   }
 
+  .pack-shop-entry-unlock-button {
+    padding: 0.8dvh 1dvh;
+  }
+
   .locked-entry,
   .empty-entry.blank {
     margin: 4%;
+    height: 70%;
+    align-self: center;
   }
 
   .title {
-    padding: 0 0 0.3dvh 0;
+    padding: 0;
   }
 
   .charm-shop-container {
@@ -4685,10 +4674,11 @@ input[type="number"] {
     position: absolute;
     bottom: 0;
     height: 39dvh;
-    width: 80vw;
+    width: 88vw;
     justify-content: space-between;
     pointer-events: none;
     font-size: 4.5vw;
+    z-index: 20;
   }
 
   .hearts-container {
@@ -4710,13 +4700,18 @@ input[type="number"] {
   }
 
   .card-pack {
-    width: 250px;
-    height: 470px;
+    width: min(60vw, calc(70dvh * 373 / 658));
+    height: auto;
+    aspect-ratio: 373 / 658;
+    right: 50vw;
+    bottom: 8%;
+    transform: translate(50%, 50%);
   }
 
   .goal-container {
     font-size: 2vh;
     top: 0;
+    
   }
 
   .sportsbook-container {
@@ -4766,6 +4761,195 @@ input[type="number"] {
   .ray-box{
     scale: 2;
   }
+
+  /* ---- Mobile tab strip & menu panel ---- */
+
+  .mobile-tab-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    background: transparent;
+  }
+
+  .mobile-tab-strip {
+    position: absolute;
+    bottom: 26dvh;
+    left: 15vw;
+    display: flex;
+    align-items: end;
+    gap: 0.4dvh;
+    z-index: 2;
+    pointer-events: all;
+  }
+
+  .mobile-tab-strip-open {
+    bottom: 30dvh;
+  }
+
+  .mobile-tab {
+    width: 15vw;
+    height: 3.5dvh;
+    padding: 0;
+    border-radius: 1.5dvh 1.5dvh 0 0;
+    cursor: pointer;
+    -webkit-text-stroke: 0;
+    position: relative;
+    z-index: 1;
+    border-bottom: none;
+    
+  }
+
+  /* The active tab is the same size/position as its siblings — it just
+     reads as "on top" via a brighter fill, darker border, and higher
+     z-index (so it would cover neighbors if they overlapped). */
+  .mobile-tab-strip-open .mobile-tab-active {
+    z-index: 2;
+    filter: brightness(1.15);
+    border-color: black;
+  }
+
+  .mobile-menu-panel {
+    position: absolute;
+    bottom: 10dvh;
+    left: 0;
+    width: 100vw;
+    height: 30dvh;
+    z-index: 2;
+    pointer-events: none;
+    transform: translateY(120%);
+    transition: transform 0.25s ease-out;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+  }
+
+  .mobile-menu-panel.open {
+    transform: translateY(30%);
+    pointer-events: auto;
+  }
+
+  /* Inner menu containers when rendered inside the mobile panel.
+     Reset their old absolute/slot positioning so they fill the panel. */
+  .mobile-menu-panel .achievements-container,
+  .mobile-menu-panel .pack-shop-container,
+  .mobile-menu-panel .charm-shop-container,
+  .mobile-menu-panel .combat-shop-container,
+  .mobile-menu-panel .event-container {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    top: auto;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    transform: none;
+    padding-top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    background-color: white;
+  }
+
+  .mobile-menu-panel .pack-shop,
+  .mobile-menu-panel .charm-shop,
+  .mobile-menu-panel .combat-shop,
+  .mobile-menu-panel .achievements {
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .combat-entry-centered {
+    width: 100vw;
+  }
+
+  .number-rare {
+    -webkit-text-stroke: 0.3vh #285cc96b;
+  }
+
+  .number-epic {
+    -webkit-text-stroke: 0.3vh #cb97ff9f;
+  }
+
+  .number-legendary {
+    -webkit-text-stroke: 0.3vh #ffea7091;
+  }
+
+  .combat-menu-team-section {
+    padding-bottom: 30dvh;
+  }
+
+  .combat-entry-column{
+    width: 100vw;
+    top: auto;
+    bottom: 2dvh;
+  }
+
+  .combat-entry-inner{
+    height: 17dvh;
+    width: 70vw;
+  }
+
+  .combat-entry-rewards-pre{
+   display: flex;
+   width: 100%;
+   justify-content: center;
+   align-items: center;
+   margin-top: 2dvh !important;
+  }
+
+  .combat-menu-start-button{
+    position: absolute;
+    background-color: white;
+    z-index: 2;
+    margin-top: 10dvh;
+  }
+
+  .pack-shop{
+    margin-top: 0;
+  }
+  .combat-entry-rewards-item{
+    margin: 0 1vw;
+  }
+
+  .charm-shop-entries{
+    height: auto;
+  }
+
+  .entry-0{
+    margin-top: 0.5dvh
+  }
+
+  .charm-shop-entry{
+    margin-bottom: 0.5dvh;
+    padding: 0.2dvh;
+    width: 95%;
+  }
+
+  .about-combat-button{
+    bottom: 1dvh;
+  }
+
+  .right {
+    margin-right: 15vw;
+  }
+  
+  .left {
+    margin-left: 15vw;
+  }
+
+  .tooltip-tail-right{
+    right: 5vw;
+  }
+
+  .tooltip-tail-left{
+    left: 5vw;
+  }
+
+  .about-combat-button {
+    bottom: 1dvh !important;
+  }
+  
 }
 
 .about-combat-button,

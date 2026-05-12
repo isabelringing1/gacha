@@ -1,9 +1,8 @@
-import { useState } from "react";
 import flower from "/flower.png";
+import { isMobile } from "./constants.js";
 
 export default function About(props) {
-  var { showResetPopup, setShowResetPopup, numbers, lockedNumbers, startTime, lastDefeatedLevel, lastDefeatedEnemy } = props;
-  const [open, setOpen] = useState(false);
+  var { showResetPopup, setShowResetPopup, numbers, lockedNumbers, startTime, lastDefeatedLevel, lastDefeatedEnemy, open, setOpen } = props;
 
   var hasAllNumbers =
     numbers && Object.keys(numbers).length === 100 && lockedNumbers && lockedNumbers.length === 0;
@@ -41,13 +40,15 @@ export default function About(props) {
 
   return (
     <>
-      <button
-        className="about-button"
-        onClick={() => setOpen(true)}
-        aria-label="About"
-      >
-        i
-      </button>
+      {!isMobile && (
+        <button
+          className="about-button"
+          onClick={() => setOpen(true)}
+          aria-label="About"
+        >
+          i
+        </button>
+      )}
       {open && (
         <div className="win-popup-overlay" onClick={() => setOpen(false)}>
           <div

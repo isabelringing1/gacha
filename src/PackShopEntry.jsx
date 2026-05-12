@@ -111,24 +111,22 @@ function PackShopEntry(props) {
             className="pack-shop-entry-img-img"
             style={{ filter: buildOutlineFilter(outlineColor), opacity: canBuy() ? 1 : 0.5 }}
           />
-          {!isMobile && (
-            <div className="pack-shop-entry-buy-button-container">
-              <img src={priceTag} className="price-tag" alt="" />
-              {numPacksOpened === 0 && canBuy() && (
-                <img
-                  src={priceTagYellow}
-                  className="price-tag price-tag-yellow-pulse"
-                  alt=""
-                />
-              )}
-              <button
-                className="pack-shop-entry-buy-button"
-                disabled={!canBuy()}
-              >
-                &#x2660;&#xfe0e;{getPackCost(pack) >= 1000 ? "" : " "}{getPackCost(pack)}
-              </button>
-            </div>
-          )}
+          <div className="pack-shop-entry-buy-button-container">
+            <img src={priceTag} className="price-tag" alt="" />
+            {numPacksOpened === 0 && canBuy() && (
+              <img
+                src={priceTagYellow}
+                className="price-tag price-tag-yellow-pulse"
+                alt=""
+              />
+            )}
+            <button
+              className="pack-shop-entry-buy-button"
+              disabled={!canBuy()}
+            >
+              &#x2660;&#xfe0e;{getPackCost(pack) >= 1000 ? "" : " "}{getPackCost(pack)}
+            </button>
+          </div>
           <div
             className="trash-button"
             onMouseOver={() => setTrashHovered(true)}
@@ -162,18 +160,6 @@ function PackShopEntry(props) {
             }}
           />
         </div>
-      )}
-      {isMobile && (
-        <button
-          className="pack-shop-entry-buy-button pack-shop-entry-buy-button-mobile"
-          disabled={!canBuy()}
-          onClick={(e) => {
-            e.stopPropagation();
-            onBuyPressed(shopEntry);
-          }}
-        >
-          &#x2660;&#xfe0e;{getPackCost(pack) >= 1000 ? "" : " "}{getPackCost(pack)}
-        </button>
       )}
 
       {!isMobile && (

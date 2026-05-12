@@ -246,6 +246,15 @@ export default function CombatNumber(props) {
           onMouseOut={() => {
             setHover(false);
           }}
+          onTouchStart={() => {
+            setHover(true);
+          }}
+          onTouchEnd={() => {
+            setHover(false);
+          }}
+          onTouchCancel={() => {
+            setHover(false);
+          }}
         >
            <div className="combat-number-crit" id={"combat-number-crit-" + index} ref={critDivRef}>Crit!</div>
           <div

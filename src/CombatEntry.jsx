@@ -1,5 +1,7 @@
-import cloud1 from "/cloud_1.png";
-import cloud2 from "/cloud_2.png";
+import cloud1 from "/cloud1.png";
+import cloud2 from "/cloud2.png";
+import cloud3 from "/cloud3.png"; 
+import cloud4 from "/cloud4.png"; 
 import cloud_bg from "/cloud_bg2.png";
 import { DitherShader } from "./dither-shader";
 import { getCurrencyIcon } from "./Util";
@@ -56,6 +58,8 @@ export default function CombatEntry(props) {
               ditherMode="bayer"
               className="floating-num-cloud cloud-1"
               objectFit="contain"
+              contrast={1.6}
+              threshold={0.2}
             />
             <DitherShader
               src={cloud2}
@@ -63,7 +67,37 @@ export default function CombatEntry(props) {
               ditherMode="bayer"
               className="floating-num-cloud cloud-2"
               objectFit="contain"
+              contrast={1.6}
+              threshold={0.2}
             />
+            <DitherShader
+              src={cloud2}
+              gridSize={2}
+              ditherMode="bayer"
+              className="floating-num-cloud cloud-5"
+              objectFit="contain"
+              contrast={1.6}
+              threshold={0.2}
+            />
+            <DitherShader
+              src={cloud3}
+              gridSize={2}
+              ditherMode="bayer"
+              className="floating-num-cloud cloud-3"
+              objectFit="contain"
+              contrast={1.6}
+              threshold={0.2}
+            />
+            <DitherShader
+              src={cloud4}
+              gridSize={2}
+              ditherMode="bayer"
+              className="floating-num-cloud cloud-4"
+              objectFit="contain"
+              contrast={1.6}
+              threshold={0.2}
+            />
+            
             <div className={"floating-num" + (useExpNotation ? " floating-num-long" : len > 11 ? " floating-num-xlong" : len > 8 ? " floating-num-long-xl" : len > 6 ? " floating-num-long" : "")}>
               {waiting ? (
                 <>
@@ -126,8 +160,8 @@ export default function CombatEntry(props) {
           )}
 
           {!waiting && (
-            <div className="combat-entry-rewards" style={{ marginTop: "2dvh" }}>
-              <div>REWARDS</div>
+            <div className="combat-entry-rewards combat-entry-rewards-pre" style={{ marginTop: "2dvh" }}>
+              <div>REWARDS: </div>
                 {levelRewards && Object.keys(levelRewards).map((r, i) => (
                   <div key={"reward-" + i} className="combat-entry-rewards-item">
                     {getCurrencyIcon(r)}

@@ -27,6 +27,9 @@ export default function CombatEntrySlot(props) {
       className={"combat-slot" + (inCombatEntry ? " combat-slot-for-entry" : "") + (isFactor ? " factor-bg" : "") + (dragOver && !duplicateBlocked ? " drag-over" : "") + (isDraggingNumber && inCombatEntry && !duplicateBlocked ? " drag-pulse" : "") + (duplicateBlocked ? " duplicate-blocked" : "")}
       onMouseOver={() => {setHover(true); setAnySlotHovered(true)}}
       onMouseOut={() => {setHover(false); setAnySlotHovered(false)}}
+      onTouchStart={() => {setHover(true); setAnySlotHovered(true)}}
+      onTouchEnd={() => {setHover(false); setAnySlotHovered(false)}}
+      onTouchCancel={() => {setHover(false); setAnySlotHovered(false)}}
       onDragOver={(e) => {
         if (inCombatEntry && !duplicateBlocked) {
           e.preventDefault();

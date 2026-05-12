@@ -56,7 +56,7 @@ export default function PackShop(props) {
   }, [packShopState]);
 
   const packImgWidth = Math.floor(packsSize.width * (isMobile ? 0.2 : 0.4));
-  const packImgHeight = Math.floor(packsSize.height * 0.4);
+  const packImgHeight = Math.floor(isMobile ? packImgWidth * 1.6 : packsSize.height * 0.4);
 
   return (
     <div className="pack-shop-container">
