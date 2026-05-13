@@ -1,5 +1,4 @@
 import flower from "/flower.png";
-import { isMobile } from "./constants.js";
 
 export default function About(props) {
   var { showResetPopup, setShowResetPopup, numbers, lockedNumbers, startTime, lastDefeatedLevel, lastDefeatedEnemy, open, setOpen } = props;
@@ -40,15 +39,13 @@ export default function About(props) {
 
   return (
     <>
-      {!isMobile && (
-        <button
-          className="about-button"
-          onClick={() => setOpen(true)}
-          aria-label="About"
-        >
-          i
-        </button>
-      )}
+      <button
+        className="about-button"
+        onClick={() => setOpen(true)}
+        aria-label="About"
+      >
+        i
+      </button>
       {open && (
         <div className="win-popup-overlay" onClick={() => setOpen(false)}>
           <div

@@ -88,6 +88,13 @@ export default function CombatShopEntry(props) {
           {shopEntry.name === "ticket_img"
             ? <><img src={ticket} alt="ticket" className="ticket-icon" /> x{count}</>
             : <>{shopEntry.name.toUpperCase()} x{count}</>}
+          <div className="combat-shop-entry-current">
+           current: {isHeartsEntry ? (
+              <>{hearts || 0}/{maxHearts || 0} &hearts;&#xfe0e;</>
+            ) : (
+              <>{combatTickets || 0} <img src={ticket} alt="ticket" className="ticket-icon" /></>
+            )}
+          </div>
         </div>
 
         <div className="combat-shop-stepper">

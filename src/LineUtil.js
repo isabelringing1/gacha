@@ -64,13 +64,44 @@ function segmentIntersection(p1, p2, p3, p4) {
   return { x, y };
 }
 
+// Extend the line at both endpoints along the local direction so a slice that
+// starts or ends inside the canvas still produces boundary crossings.
+function extendPolyline(points, distance) {
+  if (!points || points.length < 2) return points;
+  var first = points[0];
+  var second = points[1];
+  var last = points[points.length - 1];
+  var penultimate = points[points.length - 2];
+
+  var sdx = first.x - second.x;
+  var sdy = first.y - second.y;
+  var smag = Math.hypot(sdx, sdy) || 1;
+  var startPt = {
+    x: first.x + (sdx / smag) * distance,
+    y: first.y + (sdy / smag) * distance,
+  };
+
+  var edx = last.x - penultimate.x;
+  var edy = last.y - penultimate.y;
+  var emag = Math.hypot(edx, edy) || 1;
+  var endPt = {
+    x: last.x + (edx / emag) * distance,
+    y: last.y + (edy / emag) * distance,
+  };
+
+  return [startPt, ...points, endPt];
+}
+
 function segmentsCanvas(originalCanvas, points) {
   var boundingBox = originalCanvas.getBoundingClientRect();
   const width = boundingBox.width;
   const height = boundingBox.height;
   const top = boundingBox.top;
   const left = boundingBox.left;
-  const intersections = getLineIntersections(points, top, left, width, height);
+  // Extend by the canvas diagonal so the virtual line is guaranteed to reach
+  // outside the rect from any interior starting point.
+  const extended = extendPolyline(points, Math.hypot(width, height));
+  const intersections = getLineIntersections(extended, top, left, width, height);
   return intersections && intersections.length > 1;
 }
 
@@ -126,7 +157,15 @@ function splitCanvasByLine(originalCanvas, screenPoints) {
   const width = originalCanvas.width;
   const height = originalCanvas.height;
 
-  const points = screenLineToCanvasLine(screenPoints, originalCanvas);
+  // Extend the polyline outward at both endpoints so a slice that starts or
+  // ends inside the pack still lands on the canvas perimeter after clamping.
+  const screenBox = originalCanvas.getBoundingClientRect();
+  const extendedScreen = extendPolyline(
+    screenPoints,
+    Math.hypot(screenBox.width, screenBox.height)
+  );
+
+  const points = screenLineToCanvasLine(extendedScreen, originalCanvas);
   if (points.length < 2) return null;
 
   const startPt = points[0];

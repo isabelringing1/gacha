@@ -151,7 +151,7 @@ export default function SplashDisplayFront(props) {
         })}
       </span>
 
-      <div className="big-numbers">
+      <div className={"big-numbers big-numbers-" + n}>
         {isLocked ? (
           <img src={lock} alt="locked" className="big-number-locked-icon" />
           

@@ -9,6 +9,7 @@ import cardPackImg from "/card_pack.png";
 import cardPackOld from "/copycat_big.png";
 import { DitherShader } from "./dither-shader";
 import numberBg from "/number_bg.png";
+import { isMobile } from "./constants.js";
 
 const CardPack = (props) => {
   const { pack, openPack, hidePack, bigNumberQueue } = props;
@@ -122,12 +123,14 @@ const CardPack = (props) => {
     if (!canvasRef.current || !canvasRef.current.isConnected) {
       return;
     }
-    if (!segmentsCanvas(canvasRef.current, lines[0])) {
+    if (!isMobile && !segmentsCanvas(canvasRef.current, lines[0])) {
+      console.log("doesn't segment canvas");
       triggerErrorShake();
       return;
     }
     const result = splitCanvasByLine(canvasRef.current, lines[0]);
-    if (result == null) {
+    if (!isMobile && result == null) {
+      console.log("splitCanvasByLine result is null");
       triggerErrorShake();
       return;
     }
@@ -172,7 +175,7 @@ const CardPack = (props) => {
             opacity={0.8}
             children={[
               <div key="slice-text" className="slice-instructions-text">
-                Click and drag to open
+                {isMobile ? "Drag to open" : "Click and drag to open"}
               </div>,
             ]}
           />

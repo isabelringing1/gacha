@@ -15,7 +15,9 @@ export default function MenuTooltip(props) {
       id="menu-tooltip"
       style={{
         left: mousePos[0] + "px",
-        top: mousePos[1] - (isMobile ? 180 : 0) + "px",
+        top: isMobile
+          ? `calc(${mousePos[1]}px - 26dvh)`
+          : `${mousePos[1]}px`,
       }}
     >
       <div id="menu-tooltip-inner">

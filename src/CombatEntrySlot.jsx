@@ -24,6 +24,7 @@ export default function CombatEntrySlot(props) {
   return (
     <div
       ref={slotRef}
+      data-combat-slot-index={inCombatEntry ? index : undefined}
       className={"combat-slot" + (inCombatEntry ? " combat-slot-for-entry" : "") + (isFactor ? " factor-bg" : "") + (dragOver && !duplicateBlocked ? " drag-over" : "") + (isDraggingNumber && inCombatEntry && !duplicateBlocked ? " drag-pulse" : "") + (duplicateBlocked ? " duplicate-blocked" : "")}
       onMouseOver={() => {setHover(true); setAnySlotHovered(true)}}
       onMouseOut={() => {setHover(false); setAnySlotHovered(false)}}

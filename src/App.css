@@ -429,7 +429,7 @@ p {
 }
 
 #card-pack-container {
-  z-index: 20;
+  z-index: 28;
   width: 100vw;
   height: 100dvh;
   position: absolute;
@@ -1129,6 +1129,18 @@ button:disabled {
   width: 3dvh;
   position: absolute;
   bottom: -2.6dvh;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.number-locked-icon,
+.big-number-locked-icon {
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
 }
 
 .combat-tooltip-tail {
@@ -2066,7 +2078,7 @@ button:disabled {
 
 .charm-shop-entry-name {
   width: 300%;
-  font-size: 2.1dvh;
+  font-size: 2.1svh;
   padding: 0dvh 1dvh 0dvh 0dvh;
   font-weight: bold;
 }
@@ -2552,7 +2564,7 @@ input[type="number"] {
   width: 100vw;
   height: 100dvh;
   position: absolute;
-  z-index: 9;
+  z-index: 25;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -2577,8 +2589,9 @@ input[type="number"] {
 
 .event-in-menu {
   max-width: 550px;
-  width: 80%;
+  width: 90%;
   padding: 2.7dvh 1.2dvh;
+  border-radius: 3dvh;
 }
 
 .event-inner {
@@ -2682,7 +2695,7 @@ input[type="number"] {
 }
 
 .event-container {
-  width: 100%;
+  width: 85%;
   display: flex;
   justify-content: center;
   padding-top: 1dvh;
@@ -2821,7 +2834,7 @@ input[type="number"] {
   background-color: white;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
   padding-bottom: 4dvh;
 }
@@ -4059,7 +4072,6 @@ input[type="number"] {
 }
 
 .combat-shop-compact .combat-shop-entries {
-  height: auto;
 }
 
 .combat-shop {
@@ -4103,7 +4115,16 @@ input[type="number"] {
   color: black;
   -webkit-text-stroke: 0.4dvh #ffffffb0;
   paint-order: stroke fill;
-  
+
+}
+
+.combat-shop-entry-current {
+  font-size: 1.5dvh;
+  font-weight: normal;
+  -webkit-text-stroke: 0;
+  padding-top: 0.3dvh;
+  font-family: Helvetica;
+  width: 70%;
 }
 
 .combat-shop-info-container{
@@ -4396,7 +4417,7 @@ input[type="number"] {
   #numbers-grid {
     width: 90vw;
     height: 100vw;
-    padding-top: 5dvh;
+    padding-top: 6dvh;
   }
 
   #debug {
@@ -4496,7 +4517,7 @@ input[type="number"] {
   }
 
   .new-text {
-    font-size: 4dvh;
+    font-size: 5dvh;
   }
 
   .speech-bubble {
@@ -4510,7 +4531,7 @@ input[type="number"] {
   }
 
   .number-text-long {
-    font-size: 5.5vw;
+    font-size: 4.5vw;
   }
 
   #roll-container {
@@ -4620,6 +4641,7 @@ input[type="number"] {
 
   .title {
     padding: 0;
+    padding-bottom: 0.3dvh;
   }
 
   .charm-shop-container {
@@ -4632,7 +4654,7 @@ input[type="number"] {
   }
 
   .charm-shop {
-    width: 80%;
+    width: 95%;
     right: auto;
     top: auto;
   }
@@ -4672,8 +4694,9 @@ input[type="number"] {
 
   .wallet-container {
     position: absolute;
-    bottom: 0;
-    height: 39dvh;
+    top: calc(100vw + 6dvh);
+    bottom: auto;
+    height: auto;
     width: 88vw;
     justify-content: space-between;
     pointer-events: none;
@@ -4682,36 +4705,57 @@ input[type="number"] {
   }
 
   .hearts-container {
-    position: absolute;
-    left: 10vw;
-    text-align: left;
-    display: flex;
-    flex-direction: row;
+    position: static;
+    width: 100%;
+    text-align: center;
+    display: block;
+    margin-top: 5dvh;
   }
 
   #diamonds-container {
     display: flex;
-   flex-direction: column-reverse;
+   flex-direction: column;
   }
 
   #roll-button {
     padding: 3vh 2vh;
-    font-size: 3vh;
+    font-size: 2.5vh;
+  }
+
+  #roll-ten-button {
+    padding: 3vh 2vh;
+    font-size: 2.5vh;
+  }
+
+  .combat-shop-entry{
+    width: 94%
+  }
+
+
+  .home-button-combat-level{
+    bottom: auto;
   }
 
   .card-pack {
-    width: min(60vw, calc(70dvh * 373 / 658));
+    width: min(58vw, calc(70dvh * 373 / 658));
     height: auto;
     aspect-ratio: 373 / 658;
     right: 50vw;
-    bottom: 8%;
-    transform: translate(50%, 50%);
+    bottom: -12%;
   }
 
   .goal-container {
     font-size: 2vh;
-    top: 0;
-    
+    top: 0; 
+  }
+
+  .combat-shop-stepper{
+    left: 25%;
+  }
+
+  .number-locked-icon{
+    width: 60%;
+    height: 60%;
   }
 
   .sportsbook-container {
@@ -4755,11 +4799,12 @@ input[type="number"] {
   }
 
   .next-heart-container{
-    font-size: 3.5vw;
+    font-size: 3vw;
+    margin: -0.5dvh 0 -0.6dvh .5dvh;
   }
 
   .ray-box{
-    scale: 2;
+    scale: 1.8;
   }
 
   /* ---- Mobile tab strip & menu panel ---- */
@@ -4769,26 +4814,29 @@ input[type="number"] {
     inset: 0;
     z-index: 2;
     background: transparent;
+    pointer-events: auto;
   }
 
   .mobile-tab-strip {
     position: absolute;
-    bottom: 26dvh;
-    left: 15vw;
+    bottom: 30dvh;
+    left: 18vw;
     display: flex;
     align-items: end;
     gap: 0.4dvh;
-    z-index: 2;
+    z-index: 25;
     pointer-events: all;
   }
 
-  .mobile-tab-strip-open {
-    bottom: 30dvh;
+  .mobile-tab-strip-centered {
+    left: 50%;
+    transform: translateX(-50%);
   }
 
+
   .mobile-tab {
-    width: 15vw;
-    height: 3.5dvh;
+    width: 12vw;
+    height: 4.5dvh;
     padding: 0;
     border-radius: 1.5dvh 1.5dvh 0 0;
     cursor: pointer;
@@ -4796,7 +4844,25 @@ input[type="number"] {
     position: relative;
     z-index: 1;
     border-bottom: none;
-    
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-tab-icon {
+    height: 70%;
+    width: auto;
+    aspect-ratio: 1 / 1;
+    z-index: 1;
+    object-fit: contain;
+    image-rendering: pixelated;
+    pointer-events: none;
+    opacity: .9;
+  }
+
+  .combat-shop{
+    width: 100%;
   }
 
   /* The active tab is the same size/position as its siblings — it just
@@ -4810,22 +4876,37 @@ input[type="number"] {
 
   .mobile-menu-panel {
     position: absolute;
-    bottom: 10dvh;
+    bottom: -30dvh;
     left: 0;
     width: 100vw;
     height: 30dvh;
-    z-index: 2;
+    z-index: 25;
     pointer-events: none;
-    transform: translateY(120%);
-    transition: transform 0.25s ease-out;
     display: flex;
     justify-content: center;
     align-items: stretch;
   }
 
   .mobile-menu-panel.open {
-    transform: translateY(30%);
+    bottom: 1dvh;
     pointer-events: auto;
+    animation: bounceUp 0.5s ease-in-out;
+  }
+
+  .mobile-menu-panel.closing {
+    animation: bounceDown 0.5s ease-in-out;
+  }
+
+  @keyframes bounceUp {
+    0% { bottom: -26dvh; }
+    30% { bottom: -30dvh; }
+    100% { bottom: 1dvh; }
+  }
+
+  @keyframes bounceDown {
+    0% { bottom: 1dvh; }
+    30% { bottom: 4dvh; }
+    100% { bottom: -26dvh; }
   }
 
   /* Inner menu containers when rendered inside the mobile panel.
@@ -4857,10 +4938,24 @@ input[type="number"] {
   .mobile-menu-panel .achievements {
     height: 100%;
     box-sizing: border-box;
+    background-color: white;
   }
 
+  .achievements{
+    width: 95%;
+  }
+
+  .event-outer{
+    height: 23dvh;
+  }
+
+  .event-container {
+    width: 100%;
+  }
+  
+
   .combat-entry-centered {
-    width: 100vw;
+    margin-bottom: 36dvh;
   }
 
   .number-rare {
@@ -4913,17 +5008,10 @@ input[type="number"] {
   }
 
   .charm-shop-entries{
-    height: auto;
-  }
-
-  .entry-0{
-    margin-top: 0.5dvh
   }
 
   .charm-shop-entry{
-    margin-bottom: 0.5dvh;
-    padding: 0.2dvh;
-    width: 95%;
+    width: 92%;
   }
 
   .about-combat-button{
@@ -4949,7 +5037,85 @@ input[type="number"] {
   .about-combat-button {
     bottom: 1dvh !important;
   }
+
+  .combat-menu-number-wrapper{
+    height: 80% !important;
+  }
+
+  .achievements-progress-bar-container {
+    height: 4dvh;
+  }
+
+  .menus-tail-bottom {
+    rotate: 180deg;
+    top: auto;
+    bottom: -2.6dvh;
+    left: 40%;
+    transform: translateX(0%);
+  }  
+
+  #out-of-hearts-button{
+    margin-bottom: 1dvh;
+  }
   
+  .combat-button{
+    padding: 2vh 1vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8vh;
+  }
+
+  .swap-instructions{
+    bottom: 70dvh;
+  }
+
+  .swap-instructions-arrow-img{
+    bottom: 40dvh;
+    left: 17dvh;
+  }
+
+  .combat-menu-next-level-text{
+    padding: 0;
+    margin-top: 0dvh;
+    margin-bottom: dvh;
+  }
+
+  .unlock-early-text{
+    margin-top: 1.7dvh;
+  }
+
+  .unlocks-in-text{
+    margin-bottom: 2dvh;
+  }
+
+  .event-outer{
+    padding: 5% 2%;
+  }
+
+  .big-numbers-100{
+    scale: 0.8
+  }
+
+  .combat-auto-label {
+    height: 3dvh;
+    padding: 1dvh 0.8dvh;
+    font-size: 2dvh;
+  }
+
+  .combat-number-button-container{
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 5dvh;
+  }
+
+  .heal-button{
+    width: 110%;
+  }
+
+  .divide-button{
+    width: 130%;
+  }
 }
 
 .about-combat-button,

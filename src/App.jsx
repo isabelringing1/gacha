@@ -121,7 +121,8 @@ function App() {
   const [highlightedNumbers, setHighlightedNumbers] = useState([]);
   const [badgedNumbers, setBadgedNumbers] = useState([]);
   const [mobileMenuIndex, setMobileMenuIndex] = useState(0);
-  const [mobileTab, setMobileTab] = useState(null);
+  const [mobileTab, setMobileTab] = useState("achievements");
+  const [isMobileTabShowing, setIsMobileTabShowing] = useState(false);
   const [goal, setGoal] = useState(0);
   const [hoveredPack, setHoveredPack] = useState(null);
   const [mousePos, setMousePos] = useState([]);
@@ -282,6 +283,13 @@ function App() {
       pulse(diamondsContainer);
     }
   }, [diamonds]);
+
+  useEffect(() => {
+    var ticketsContainer = document.getElementById("tickets-container");
+    if (ticketsContainer) {
+      pulse(ticketsContainer);
+    }
+  }, [combatState.combatTickets]);
 
   function pulse(item) {
     item.classList.remove("pulse");
@@ -1142,6 +1150,19 @@ function App() {
     }
   };
 
+  // Clear an expired event automatically — otherwise the events tab keeps
+  // showing until the Event component happens to mount and notice.
+  useEffect(() => {
+    if (!currentEvent || !currentEvent.endTime) return;
+    var remaining = currentEvent.endTime - Date.now();
+    if (remaining <= 0) {
+      setCurrentEvent(null);
+      return;
+    }
+    var t = setTimeout(() => setCurrentEvent(null), remaining);
+    return () => clearTimeout(t);
+  }, [currentEvent]);
+
   const isRollButtonDisabled = () => {
     return (
       showingRoll != -1 || diamonds <= 0 || animating || bigNumberQueue.length > 0
@@ -1688,6 +1709,8 @@ function App() {
         unlockAchievements={unlockAchievements}
         mobileTab={mobileTab}
         setMobileTab={setMobileTab}
+        isMobileTabShowing={isMobileTabShowing}
+        setIsMobileTabShowing={setIsMobileTabShowing}
         currentEvent={currentEvent}
         setCurrentEvent={setCurrentEvent}
         rollForEvent={rollForEvent}
@@ -1701,6 +1724,14 @@ function App() {
         heartsUnlocked={heartsUnlocked}
         ticketBoughtSeen={ticketBoughtSeen}
         setHighlightedNumbers={setHighlightedNumbers}
+        combatUnlocked={combatUnlocked}
+        setShowCombat={setShowCombat}
+        combatButtonSeen={combatButtonSeen}
+        setCombatButtonSeen={setCombatButtonSeen}
+        lastBattledLevel={lastBattledLevel}
+        setLastBattledLevel={setLastBattledLevel}
+        now={now}
+        showingRoll={showingRoll}
       />
       {showWinPopup && (
         <WinPopup combatLevel={combatState.combatLevel} rolls={rolls} numPacksOpened={numPacksOpened} numRollButtonClicks={numRollButtonClicks} numBattles={numBattles} startTime={startTime} onClose={() =>{ setShowWinPopup(false); setHasShownWinPopup(true); }} />

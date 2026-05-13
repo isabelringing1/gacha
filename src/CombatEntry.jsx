@@ -6,6 +6,7 @@ import cloud_bg from "/cloud_bg2.png";
 import { DitherShader } from "./dither-shader";
 import { getCurrencyIcon } from "./Util";
 import ticket from "/ticket.png";
+import { isMobile } from "./constants.js";
 
 export default function CombatEntry(props) {
   var {
@@ -133,8 +134,14 @@ export default function CombatEntry(props) {
 
           </div>
         </div>
+        {waiting && isMobile && (
+          <div className="combat-menu-next-level-text unlock-early-text">
+           UNLOCK EARLY 
+          </div>
+        )}
+
         {waiting ? (
-          <div className="combat-menu-next-level-text">
+          <div className="combat-menu-next-level-text unlocks-in-text">
             Unlocks in {minRemaining} min {secRemaining} sec
           </div>
         ) : (
@@ -143,8 +150,8 @@ export default function CombatEntry(props) {
           </button>
         )}
 
-        {waiting && (
-          <div className="combat-menu-next-level-text">
+        {waiting && !isMobile && (
+          <div className="combat-menu-next-level-text unlock-early-text">
            UNLOCK EARLY 
           </div>
         )}

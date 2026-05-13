@@ -1,5 +1,6 @@
 import Number from "./Number";
 import { getLevel, getMaxLevel } from "./Util";
+import { isMobile } from "./constants.js";
 
 export function StarLevel({ level, isMax }) {
   var numStars = level - 1;
@@ -13,7 +14,7 @@ export function StarLevel({ level, isMax }) {
         const startAngle = 90 - ((numStars - 1) * step) / 2;
         const angleDeg = startAngle + i * step;
         const angle = angleDeg * (Math.PI / 180);
-        const r = 43;
+        const r = isMobile ? 47 : 43;
         const x = 50 + r * Math.cos(angle);
         const y = 50 + r * Math.sin(angle);
         const rotation = angleDeg + 270;

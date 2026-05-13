@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import PackShop from "./PackShop";
 import CharmShop from "./CharmShop.jsx";
@@ -66,6 +66,8 @@ export default function MenusContainer(props) {
     unlockAchievements,
     mobileTab,
     setMobileTab,
+    isMobileTabShowing,
+    setIsMobileTabShowing,
     currentEvent,
     setCurrentEvent,
     rollForEvent,
@@ -78,6 +80,14 @@ export default function MenusContainer(props) {
     maxHearts,
     heartsUnlocked,
     ticketBoughtSeen,
+    combatUnlocked,
+    setShowCombat,
+    combatButtonSeen,
+    setCombatButtonSeen,
+    lastBattledLevel,
+    setLastBattledLevel,
+    now,
+    showingRoll,
   } = props;
 
   // Tabs visible on mobile.
@@ -102,25 +112,80 @@ export default function MenusContainer(props) {
     }
   }
 
-  // If the events tab is active but the event ends, close it.
+  // Snap the selected tab to a valid one for the current mode.
+  useEffect(() => {
+    if (showCombat) {
+      if (mobileTab !== "battleShop") {
+        setMobileTab("battleShop");
+        setIsMobileTabShowing(false);
+      }
+    } else {
+      if (mobileTab === "battleShop") {
+        setMobileTab("achievements");
+        setIsMobileTabShowing(false);
+      }
+    }
+  }, [showCombat]);
+
+  // If the events tab is active but the event ends, fall back to achievements.
   useEffect(() => {
     if (mobileTab === "events" && !currentEvent) {
-      setMobileTab(null);
+      setMobileTab("achievements");
+      setIsMobileTabShowing(false);
     }
-  }, [mobileTab, currentEvent, setMobileTab]);
+  }, [mobileTab, currentEvent, setMobileTab, setIsMobileTabShowing]);
 
-  // Close any open tab when transitioning into/out of the combat screen,
-  // or when actual combat begins.
+  // Close the panel when actual combat begins.
   useEffect(() => {
-    if (!mobileTab) return;
-    if (showCombat && mobileTab !== "battleShop") {
-      setMobileTab(null);
-    } else if (!showCombat && mobileTab === "battleShop") {
-      setMobileTab(null);
-    } else if (mobileTab === "battleShop" && isCombatActive) {
-      setMobileTab(null);
+    if (isCombatActive && isMobileTabShowing) {
+      setIsMobileTabShowing(false);
     }
-  }, [showCombat, isCombatActive, mobileTab, setMobileTab]);
+  }, [isCombatActive, isMobileTabShowing, setIsMobileTabShowing]);
+
+  // Play the bounce-down animation briefly when the panel transitions from
+  // open to closed.
+  const [panelClosing, setPanelClosing] = useState(false);
+  const prevShowing = useRef(isMobileTabShowing);
+  useEffect(() => {
+    if (prevShowing.current && !isMobileTabShowing) {
+      setPanelClosing(true);
+      var closeTimer = setTimeout(() => setPanelClosing(false), 300);
+      prevShowing.current = isMobileTabShowing;
+      return () => clearTimeout(closeTimer);
+    }
+    if (isMobileTabShowing) setPanelClosing(false);
+    prevShowing.current = isMobileTabShowing;
+  }, [isMobileTabShowing]);
+
+  // Close the panel when the user taps outside it — but leave the number grid
+  // and tab strip interactive so tooltips still work while the menu is open.
+  // Also skip closing while a big-number splash is up, so the player can tap
+  // through it (e.g. after rolling from the events tab) without dismissing.
+  useEffect(() => {
+    if (!isMobileTabShowing) return;
+    function onDocPointerDown(e) {
+      if (bigNumberQueue && bigNumberQueue.length > 0) return;
+      var t = e.target;
+      if (!t || !t.closest) return;
+      if (
+        t.closest(".mobile-menu-panel") ||
+        t.closest(".mobile-tab-strip") ||
+        t.closest("#numbers-grid") ||
+        t.closest(".big-number-container") ||
+        t.closest(".splash-front")
+      ) {
+        return;
+      }
+      setIsMobileTabShowing(false);
+    }
+    var timeout = setTimeout(() => {
+      document.addEventListener("pointerdown", onDocPointerDown);
+    }, 0);
+    return () => {
+      clearTimeout(timeout);
+      document.removeEventListener("pointerdown", onDocPointerDown);
+    };
+  }, [isMobileTabShowing, setIsMobileTabShowing, bigNumberQueue]);
 
   function getTabPulse(tabId) {
     if (tabId === "achievements") {
@@ -131,7 +196,18 @@ export default function MenusContainer(props) {
     }
     if (tabId === "packShop") return canUnlockPackShop && canUnlockPackShop();
     if (tabId === "charmShop") return canUnlockCharmShop && canUnlockCharmShop();
-    if (tabId === "battleShop") return canUnlockBattleShop && canUnlockBattleShop();
+    if (tabId === "battleShop") {
+      if (canUnlockBattleShop && canUnlockBattleShop()) return true;
+      if (
+        isMobile &&
+        battleShopState === "unlocked" &&
+        combatState &&
+        (combatState.combatTickets || 0) <= 0
+      ) {
+        return true;
+      }
+      return false;
+    }
     if (tabId === "events") return !!currentEvent && !currentEvent.tabSeen;
     return false;
   }
@@ -220,7 +296,18 @@ export default function MenusContainer(props) {
         />
       );
     }
-    return null;
+    return (
+      <Achievements
+        numbers={numbers}
+        numPacksOpened={numPacksOpened}
+        claimedAchievements={claimedAchievements}
+        claimAchievement={claimAchievement}
+        achievementsState={achievementsState}
+        canUnlockAchievements={canUnlockAchievements}
+        unlockAchievements={unlockAchievements}
+        setHighlightedNumbers={setHighlightedNumbers}
+      />
+    );
   }
 
   return (
@@ -269,25 +356,34 @@ export default function MenusContainer(props) {
 
       {isMobile && mobileTabs.length > 0 && (
         <>
-          {mobileTab && (
-            <div
-              className="mobile-tab-overlay"
-              onClick={() => setMobileTab(null)}
-            />
-          )}
           <div
-            className={"mobile-menu-panel" + (mobileTab ? " open" : "")}
+            className={
+              "mobile-menu-panel" +
+              (isMobileTabShowing ? " open" : "") +
+              (panelClosing ? " closing" : "")
+            }
             onClick={(e) => e.stopPropagation()}
           >
             <div
             className={
-              "mobile-tab-strip" + (mobileTab ? " mobile-tab-strip-open" : "")
+              "mobile-tab-strip" +
+              (isMobileTabShowing ? " mobile-tab-strip-open" : "") +
+              (panelClosing ? " mobile-tab-strip-closing" : "") +
+              (!currentEvent ? " mobile-tab-strip-centered" : "")
             }
             onClick={(e) => e.stopPropagation()}
           >
             {mobileTabs.map((tab) => {
-              var isActive = mobileTab === tab.id;
+              var isSelected = mobileTab === tab.id;
+              var isActive = isMobileTabShowing && isSelected;
               var pulse = !isActive && getTabPulse(tab.id);
+              var iconSrc = {
+                achievements: "./achievements.png",
+                charmShop: "./charms.png",
+                packShop: "./pack_shop.png",
+                events: "./events.png",
+                battleShop: "./ticket.png",
+              }[tab.id];
               return (
                 <button
                   key={"mobile-tab-" + tab.id}
@@ -300,9 +396,18 @@ export default function MenusContainer(props) {
                     if (tab.id === "events" && currentEvent && !currentEvent.tabSeen) {
                       setCurrentEvent({ ...currentEvent, tabSeen: true });
                     }
-                    setMobileTab(isActive ? null : tab.id);
+                    if (isSelected) {
+                      setIsMobileTabShowing(!isMobileTabShowing);
+                    } else {
+                      setMobileTab(tab.id);
+                      setIsMobileTabShowing(true);
+                    }
                   }}
-                />
+                >
+                  {iconSrc && (
+                    <img className="mobile-tab-icon" src={iconSrc} alt="" />
+                  )}
+                </button>
               );
             })}
           </div>

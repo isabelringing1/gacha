@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import NumberTooltip from "./NumberTooltip";
 import { getRarityData, getLevel, getMaxLevel } from "./Util";
 import lock from "/lock.png";
@@ -27,6 +27,41 @@ function Number(props) {
   } = props;
   const [hover, setHover] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const touchDragRef = useRef({ active: false });
+  const ghostRef = useRef(null);
+
+  function removeGhost() {
+    if (ghostRef.current && ghostRef.current.parentNode) {
+      ghostRef.current.parentNode.removeChild(ghostRef.current);
+    }
+    ghostRef.current = null;
+  }
+
+  function createGhost(sourceEl, x, y) {
+    if (!sourceEl) return;
+    var clone = sourceEl.cloneNode(true);
+    clone.removeAttribute("id");
+    var rect = sourceEl.getBoundingClientRect();
+    clone.style.position = "fixed";
+    clone.style.left = x - rect.width / 2 + "px";
+    clone.style.top = y - rect.height / 2 + "px";
+    clone.style.width = rect.width + "px";
+    clone.style.height = rect.height + "px";
+    clone.style.pointerEvents = "none";
+    clone.style.zIndex = "1000";
+    clone.style.opacity = "0.85";
+    clone.style.scale = "1.2";
+    document.body.appendChild(clone);
+    ghostRef.current = clone;
+  }
+
+  function moveGhost(x, y) {
+    if (!ghostRef.current) return;
+    var w = ghostRef.current.offsetWidth;
+    var h = ghostRef.current.offsetHeight;
+    ghostRef.current.style.left = x - w / 2 + "px";
+    ghostRef.current.style.top = y - h / 2 + "px";
+  }
 
   var opacity = 0.1;
   var numTimesRolled = 0;
@@ -136,6 +171,7 @@ function Number(props) {
           scale: hover ? 1.1 : 1,
           color: numberColor,
           cursor: isLocked && keys >= 1 ? "pointer" : inCombatMenu && numTimesRolled > 0 ? "grab" : undefined,
+          touchAction: inCombatMenu && numTimesRolled > 0 ? "none" : undefined,
         }}
         onDragStart={(e) => {
           if (inCombatMenu && numTimesRolled > 0) {
@@ -168,11 +204,59 @@ function Number(props) {
             selectNumber(n, selectingIndex);
           }
         }}
-        onTouchStart={() => {
+        onTouchStart={(e) => {
           setHover(true);
+          if (inCombatMenu && numTimesRolled > 0) {
+            var t = e.touches[0];
+            touchDragRef.current = {
+              active: false,
+              started: true,
+              startX: t ? t.clientX : 0,
+              startY: t ? t.clientY : 0,
+            };
+          }
         }}
-        onTouchEnd={() => {
+        onTouchMove={(e) => {
+          if (!touchDragRef.current.started) return;
+          var t = e.touches[0];
+          if (!t) return;
+          if (!touchDragRef.current.active) {
+            var dx = t.clientX - touchDragRef.current.startX;
+            var dy = t.clientY - touchDragRef.current.startY;
+            if (dx * dx + dy * dy < 64) return; // 8px threshold
+            touchDragRef.current.active = true;
+            if (onDragStateChange) onDragStateChange(n);
+            createGhost(e.currentTarget, t.clientX, t.clientY);
+          } else {
+            moveGhost(t.clientX, t.clientY);
+          }
+        }}
+        onTouchEnd={(e) => {
           setHover(false);
+          var dragInfo = touchDragRef.current;
+          touchDragRef.current = { active: false, started: false };
+          removeGhost();
+          if (!dragInfo.active) return;
+          var slotEl = null;
+          var t = (e.changedTouches && e.changedTouches[0]) || null;
+          if (t) {
+            var el = document.elementFromPoint(t.clientX, t.clientY);
+            slotEl = el && el.closest("[data-combat-slot-index]");
+          }
+          if (slotEl && !slotEl.classList.contains("duplicate-blocked")) {
+            var slotIndex = parseInt(slotEl.getAttribute("data-combat-slot-index"), 10);
+            if (slotIndex >= 0 && selectNumber) {
+              selectNumber(n, slotIndex);
+            }
+          }
+          if (onDragStateChange) onDragStateChange(false);
+        }}
+        onTouchCancel={() => {
+          setHover(false);
+          var wasActive = touchDragRef.current.active;
+          touchDragRef.current = { active: false, started: false };
+          removeGhost();
+          if (wasActive && onDragStateChange) onDragStateChange(false);
         }}
       >
         {isLocked ? (!hasBeenRolled ? "?" : <img src={lock} alt="locked" className={"number-locked-icon" + (keys >= 1 ? " lock-pulse" : "")} style={keys >= 1 ? undefined : { opacity: 0.4 }} />) : (numTimesRolled == 0 ? "?" : n)}
