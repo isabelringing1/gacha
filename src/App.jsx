@@ -20,6 +20,7 @@ import {
   getRarityIndex,
 } from "./Util";
 import { UNLOCK_ENTRY_COST } from "./constants.js";
+import { playSfx, preloadSfx } from "./sfx.js";
 import ticket from "/ticket.png";
 import keyIcon from "/key.png";
 
@@ -195,6 +196,7 @@ function App() {
 
   useEffect(() => {
     loadData();
+    if (!isMobile) preloadSfx("./tick.wav");
     const onFocus = () => {
       console.log('User is back on the page, saving');
       saveDataRef.current();
@@ -689,11 +691,7 @@ function App() {
 
       var count = 0;
       var interval = setInterval(() => {
-        try {
-          var audio = new Audio("./tick.wav");
-          audio.volume = 0.55;
-          audio.play().catch(() => {});
-        } catch (e) {}
+        if (!isMobile) playSfx("./tick.wav", 0.55);
         count++;
         if (count >= 10) {
           clearInterval(interval);
@@ -759,11 +757,7 @@ function App() {
       setTimeout(() => {
         var n = ((i - 1) % 100) + 1;
         setHighlightedNumber(n);
-        try {
-          var tick = new Audio("./tick.wav");
-          tick.volume = 0.55;
-          tick.play().catch(() => {});
-        } catch (e) {}
+        if (!isMobile) playSfx("./tick.wav", 0.55);
         if (i == total) {
           setTimeout(() => {
             setHighlightedNumber(-1);
