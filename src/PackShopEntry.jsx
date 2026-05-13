@@ -81,6 +81,10 @@ function PackShopEntry(props) {
     if (!canBuy()) {
       return;
     }
+    try {
+      var a = new Audio("./buy.mp3");
+      a.play().catch(() => {});
+    } catch (err) {}
     setHoveredPack(null);
     buyPack(e);
   }

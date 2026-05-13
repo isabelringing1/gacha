@@ -262,6 +262,10 @@ export default function Combat(props) {
     var actualDamage = damage > enemyRef.current ? enemyRef.current : damage;
     scoreRef.current += actualDamage;
     enemyRef.current = Math.max(0, Math.floor(enemyRef.current - damage));
+    try {
+      var hitAudio = new Audio("./hit.wav");
+      hitAudio.play().catch(() => {});
+    } catch (e) {}
     if (enemyRef.current == 0) {
       setWinState("win");
       setEnemyState(null);
@@ -335,6 +339,11 @@ export default function Combat(props) {
       else {
         hitDiv = document.getElementById("combat-number-" + rollIndex);
       }
+
+      try {
+        var sfx = new Audio(isBlocked ? "./block.mp3" : "./hit.wav");
+        sfx.play().catch(() => {});
+      } catch (e) {}
 
       hitDiv.classList.remove("damage");
       void hitDiv.offsetWidth;
@@ -650,7 +659,20 @@ export default function Combat(props) {
                   SHARE
                 </button>
               )}
-              <button className="combat-outcome-popup-button" onClick={onNext}>CONTINUE</button>
+              <button
+                className="combat-outcome-popup-button"
+                onClick={() => {
+                  if (levelRewards && Object.keys(levelRewards).length > 0) {
+                    try {
+                      var a = new Audio("./get.wav");
+                      a.play().catch(() => {});
+                    } catch (e) {}
+                  }
+                  onNext();
+                }}
+              >
+                CONTINUE
+              </button>
             </div>
           </div>
 
@@ -676,7 +698,20 @@ export default function Combat(props) {
                 </div>
               </>
             )}
-            <button onClick={onBack} className="combat-outcome-popup-button">BACK</button>
+            <button
+              onClick={() => {
+                if (lossRewards && Object.keys(lossRewards).length > 0) {
+                  try {
+                    var a = new Audio("./get.wav");
+                    a.play().catch(() => {});
+                  } catch (e) {}
+                }
+                onBack();
+              }}
+              className="combat-outcome-popup-button"
+            >
+              BACK
+            </button>
           </div>
         </div>
       )}

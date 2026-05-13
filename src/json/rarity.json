@@ -10,7 +10,8 @@
     "ribbon_palette": ["#575757", "#cbcbcbff", "#ffffffff"],
     "completed_color": "#d0d0d0",
     "event_banner_bg": "#d4d4d4",
-    "combat_crit_chance": 0
+    "combat_crit_chance": 0,
+    "sound_fx": "./common.wav"
   },
   "1": {
     "id": "rare",
@@ -27,7 +28,8 @@
     "ribbon_palette": ["#2804b5", "#aed5ffff", "#ffffffff"],
     "completed_color": "#a1d0ff",
     "event_banner_bg": "#d2e5ff",
-    "combat_crit_chance": 10
+    "combat_crit_chance": 10,
+    "sound_fx": "./rare.wav"
   },
   "2": {
     "id": "epic",
@@ -44,7 +46,8 @@
     "ribbon_palette": ["#9b00a8", "#ecaeffff", "#ffffffff"],
     "completed_color": "#d991ff",
     "event_banner_bg": "#fad2ff",
-    "combat_crit_chance": 25
+    "combat_crit_chance": 25,
+    "sound_fx": "./epic.wav"
   },
   "3": {
     "id": "legendary",
@@ -62,6 +65,7 @@
     "ribbon_palette": ["#916800", "#fff9c2ff", "#ffffffff"],
     "completed_color": "#ffe77b",
     "event_banner_bg": "#fffec0",
-    "combat_crit_chance": 50
+    "combat_crit_chance": 50,
+    "sound_fx": "./legendary.wav"
   }
 }

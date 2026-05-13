@@ -13,7 +13,13 @@ export default function (props) {
         <div className="charm-shop-entry-desc charm-shop-entry-text">{shopEntry.desc}</div>
         <div className="charm-shop-entry-buy-button-container">
           <button
-            onClick={() => buyCharm(shopEntry, index)}
+            onClick={() => {
+              try {
+                var a = new Audio("./buy.mp3");
+                a.play().catch(() => {});
+              } catch (e) {}
+              buyCharm(shopEntry, index);
+            }}
             className="charm-shop-entry-buy-button"
             disabled={!canBuy()}
           >

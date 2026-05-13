@@ -107,6 +107,10 @@ export default function SplashDisplayBack(props) {
         to: spadesEl,
         label: "♠︎",
         onLand: () => {
+          try {
+            var a = new Audio("./get.wav");
+            a.play().catch(() => {});
+          } catch (e) {}
           // Increment spades on landing — existing useEffect on `spades` pulses #spades-container.
           setSpades((prev) => prev + n);
           finalize();
@@ -131,6 +135,17 @@ export default function SplashDisplayBack(props) {
     }
 
     setTwinkleArray(newTwinkleArray);
+
+    var sfxSrc = isLocked ? "./lock.mp3" : newData && newData.sound_fx;
+    if (sfxSrc) {
+      var sfxTimer = setTimeout(() => {
+        try {
+          var audio = new Audio(sfxSrc);
+          audio.play().catch(() => {});
+        } catch (e) {}
+      }, 200);
+      return () => clearTimeout(sfxTimer);
+    }
   }, [n]);
 
   useEffect(() => {

@@ -687,6 +687,19 @@ function App() {
       }
       var scale = rawSum > 0 ? T / rawSum : 1;
 
+      var count = 0;
+      var interval = setInterval(() => {
+        try {
+          var audio = new Audio("./tick.wav");
+          audio.volume = 0.55;
+          audio.play().catch(() => {});
+        } catch (e) {}
+        count++;
+        if (count >= 10) {
+          clearInterval(interval);
+        }
+      }, 50);
+
       for (var step = 1; step <= total; step++) {
         ((stepCaptured) => {
           var scheduledTime = rawDelays[stepCaptured - 1] * scale;
@@ -714,6 +727,8 @@ function App() {
           }, scheduledTime);
         })(step);
       }
+
+      
     });
   };
 
@@ -744,6 +759,11 @@ function App() {
       setTimeout(() => {
         var n = ((i - 1) % 100) + 1;
         setHighlightedNumber(n);
+        try {
+          var tick = new Audio("./tick.wav");
+          tick.volume = 0.55;
+          tick.play().catch(() => {});
+        } catch (e) {}
         if (i == total) {
           setTimeout(() => {
             setHighlightedNumber(-1);
@@ -1609,7 +1629,15 @@ function App() {
                 &#x2660;&#xfe0e; {spades.toLocaleString()}
               </div>
               
-              <div id="hearts-container" style={{ opacity: heartsUnlocked ? 1 : 0 }}>
+              <div
+                id="hearts-container"
+                style={{
+                  opacity: heartsUnlocked ? 1 : 0,
+                  height: heartsUnlocked ? undefined : 0,
+                  padding: heartsUnlocked ? undefined : 0,
+                  overflow: heartsUnlocked ? undefined : "hidden",
+                }}
+              >
                 &hearts;&#xfe0e; {hearts.toLocaleString()}/{maxHearts.toLocaleString()}
               </div>
               <div id="keys-container" style={{ opacity: keysUnlocked && keys > 0 ? 1 : 0 }}>

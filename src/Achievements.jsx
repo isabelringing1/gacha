@@ -109,6 +109,10 @@ export default function Achievements(props) {
   }, [numbers]);
 
   function handleClaim(achievement) {
+    try {
+      var a = new Audio("./get.wav");
+      a.play().catch(() => {});
+    } catch (e) {}
     claimAchievement(achievement);
     setTimeout(() => {
       setFadingOut((prev) => [...prev, achievement.id]);

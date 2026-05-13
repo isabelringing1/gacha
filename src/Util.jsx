@@ -6,7 +6,7 @@ import charmData from "./json/charms.json";
 import betData from "./json/bets.json";
 import levelData from "./json/levels.json";
 import combatData from "./json/combat.json";
-import { PYRAMID_LEVELS } from "./constants.js";
+import { PYRAMID_LEVELS, isMobile } from "./constants.js";
 import keyIcon from "/key.png";
 //https://www.joshwcomeau.com/snippets/react-hooks/use-interval/
 function useInterval(callback, delay) {
@@ -599,7 +599,16 @@ function generateEnemyValue(min, max, uniqueValues) {
 }
 
 function getCombatLevelData(combatLevel) {
-  return combatData.levels.find((l) => l.level == combatLevel) || {};
+  var data = combatData.levels.find((l) => l.level == combatLevel);
+  if (!data) return {};
+  if (!isMobile) return data;
+  // On mobile, use the mobile_* overrides when present.
+  var out = { ...data };
+  if (data.mobile_attack_length != null) out.attack_length = data.mobile_attack_length;
+  if (data.mobile_attack_interval != null) out.attack_interval = data.mobile_attack_interval;
+  if (data.mobile_block_length != null) out.block_length = data.mobile_block_length;
+  if (data.mobile_block_cooldown != null) out.block_cooldown = data.mobile_block_cooldown;
+  return out;
 }
 
 function getCombatLevelMin(combatLevel) {

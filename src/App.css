@@ -4982,7 +4982,11 @@ input[type="number"] {
 
   .combat-entry-inner{
     height: 17dvh;
-    width: 70vw;
+    width: 65vw;
+  }
+
+  .out-of-hearts-container{
+    z-index: 21;
   }
 
   .combat-entry-rewards-pre{

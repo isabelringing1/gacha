@@ -10,6 +10,7 @@ import Timer from "./Timer";
 import History from "./History";
 
 import { isMobile } from "./constants.js";
+import { getCharmById } from "./Util";
 
 export default function MenusContainer(props) {
   var {
@@ -195,7 +196,20 @@ export default function MenusContainer(props) {
       );
     }
     if (tabId === "packShop") return canUnlockPackShop && canUnlockPackShop();
-    if (tabId === "charmShop") return canUnlockCharmShop && canUnlockCharmShop();
+    if (tabId === "charmShop") {
+      if (canUnlockCharmShop && canUnlockCharmShop()) return true;
+      if (isMobile && charmShopState === "unlocked" && charmShopEntries) {
+        var maxCost = 0;
+        for (var i = 0; i < charmShopEntries.length; i++) {
+          var charm = getCharmById(charmShopEntries[i]);
+          if (charm && typeof charm.cost === "number" && charm.cost > maxCost) {
+            maxCost = charm.cost;
+          }
+        }
+        if (maxCost > 0 && (clubs || 0) >= maxCost) return true;
+      }
+      return false;
+    }
     if (tabId === "battleShop") {
       if (canUnlockBattleShop && canUnlockBattleShop()) return true;
       if (

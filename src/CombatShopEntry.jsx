@@ -129,6 +129,10 @@ export default function CombatShopEntry(props) {
         <div className="combat-shop-entry-buy-button-container">
           <button
             onClick={() => {
+              try {
+                var a = new Audio("./buy.mp3");
+                a.play().catch(() => {});
+              } catch (e) {}
               buyCombatShopItem(shopEntry, index, count);
               setCount(1);
             }}
