@@ -5124,6 +5124,10 @@ input[type="number"] {
   .divide-button{
     width: 130%;
   }
+
+  .event-info-text{
+    padding-bottom: 1dvh;
+  }
 }
 
 .about-combat-button,

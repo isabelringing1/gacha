@@ -159,12 +159,20 @@ export default function MenusContainer(props) {
     prevShowing.current = isMobileTabShowing;
   }, [isMobileTabShowing]);
 
-  // Close the panel when the user taps outside it — but leave the number grid
-  // and tab strip interactive so tooltips still work while the menu is open.
-  // Also skip closing while a big-number splash is up, so the player can tap
+  // Close the panel when the user taps outside it — but leave the tab strip
+  // interactive. On the number grid, a quick tap closes the panel while a
+  // longer hold keeps it up so tooltips can still be inspected.
+  // Skip closing while a big-number splash is up, so the player can tap
   // through it (e.g. after rolling from the events tab) without dismissing.
   useEffect(() => {
     if (!isMobileTabShowing) return;
+    var pendingUp = null;
+    function clearPendingUp() {
+      if (!pendingUp) return;
+      window.removeEventListener("pointerup", pendingUp);
+      window.removeEventListener("pointercancel", pendingUp);
+      pendingUp = null;
+    }
     function onDocPointerDown(e) {
       if (bigNumberQueue && bigNumberQueue.length > 0) return;
       var t = e.target;
@@ -172,10 +180,25 @@ export default function MenusContainer(props) {
       if (
         t.closest(".mobile-menu-panel") ||
         t.closest(".mobile-tab-strip") ||
-        t.closest("#numbers-grid") ||
         t.closest(".big-number-container") ||
         t.closest(".splash-front")
       ) {
+        return;
+      }
+      if (t.closest("#numbers-grid")) {
+        clearPendingUp();
+        var pointerId = e.pointerId;
+        var downTime = Date.now();
+        var onUp = function (upEvent) {
+          if (upEvent.pointerId !== pointerId) return;
+          clearPendingUp();
+          if (Date.now() - downTime < 200) {
+            setIsMobileTabShowing(false);
+          }
+        };
+        pendingUp = onUp;
+        window.addEventListener("pointerup", onUp);
+        window.addEventListener("pointercancel", onUp);
         return;
       }
       setIsMobileTabShowing(false);
@@ -186,6 +209,7 @@ export default function MenusContainer(props) {
     return () => {
       clearTimeout(timeout);
       document.removeEventListener("pointerdown", onDocPointerDown);
+      clearPendingUp();
     };
   }, [isMobileTabShowing, setIsMobileTabShowing, bigNumberQueue]);
 
