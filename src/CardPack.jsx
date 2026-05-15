@@ -129,7 +129,7 @@ const CardPack = (props) => {
       return;
     }
     const result = splitCanvasByLine(canvasRef.current, lines[0]);
-    if (!isMobile && result == null) {
+    if (result == null) {
       console.log("splitCanvasByLine result is null");
       triggerErrorShake();
       return;
