@@ -1,4 +1,5 @@
 import { DitherShader } from "./dither-shader";
+import { playSfx } from "./sfx";
 
 export default function (props) {
   const { shopEntry, buyCharm, clubs, index } = props;
@@ -14,10 +15,7 @@ export default function (props) {
         <div className="charm-shop-entry-buy-button-container">
           <button
             onClick={() => {
-              try {
-                var a = new Audio("./buy.mp3");
-                a.play().catch(() => {});
-              } catch (e) {}
+              playSfx("./buy.mp3");
               buyCharm(shopEntry, index);
             }}
             className="charm-shop-entry-buy-button"

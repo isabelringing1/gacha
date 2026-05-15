@@ -7,6 +7,27 @@ let ctx = null;
 const bufferCache = {};
 const inflight = {};
 
+const VOLUME_KEY = "sfxVolume";
+let globalVolume = 1;
+try {
+  const stored = localStorage.getItem(VOLUME_KEY);
+  if (stored !== null) {
+    const v = parseFloat(stored);
+    if (!isNaN(v)) globalVolume = Math.max(0, Math.min(1, v));
+  }
+} catch (e) {}
+
+export function getSfxVolume() {
+  return globalVolume;
+}
+
+export function setSfxVolume(v) {
+  globalVolume = Math.max(0, Math.min(1, v));
+  try {
+    localStorage.setItem(VOLUME_KEY, String(globalVolume));
+  } catch (e) {}
+}
+
 function getCtx() {
   if (ctx) return ctx;
   const Ctor = window.AudioContext || window.webkitAudioContext;
@@ -40,6 +61,7 @@ export function preloadSfx(src) {
 }
 
 export function playSfx(src, volume = 1) {
+  if (globalVolume <= 0) return;
   const c = getCtx();
   if (!c) return;
   if (c.state === "suspended") c.resume().catch(() => {});
@@ -52,7 +74,7 @@ export function playSfx(src, volume = 1) {
     const source = c.createBufferSource();
     source.buffer = buf;
     const gain = c.createGain();
-    gain.gain.value = volume;
+    gain.gain.value = volume * globalVolume;
     source.connect(gain).connect(c.destination);
     source.start(0);
   } catch (e) {}

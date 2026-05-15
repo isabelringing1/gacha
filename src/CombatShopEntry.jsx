@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { getCurrencyIcon } from "./Util";
 import ticket from "/ticket.png";
+import { playSfx } from "./sfx";
 
 export default function CombatShopEntry(props) {
   const { shopEntry, buyCombatShopItem, currency, index, hearts, maxHearts, combatTickets, ticketBoughtSeen } = props;
@@ -129,10 +130,7 @@ export default function CombatShopEntry(props) {
         <div className="combat-shop-entry-buy-button-container">
           <button
             onClick={() => {
-              try {
-                var a = new Audio("./buy.mp3");
-                a.play().catch(() => {});
-              } catch (e) {}
+              playSfx("./buy.mp3");
               buyCombatShopItem(shopEntry, index, count);
               setCount(1);
             }}

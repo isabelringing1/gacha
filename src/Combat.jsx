@@ -14,6 +14,7 @@ import EnemyNumber from "./EnemyNumber";
 import CombatMenu from "./CombatMenu.jsx";
 import CombatShop from "./CombatShop.jsx";
 import CombatEntry from "./CombatEntry.jsx";
+import { playSfx } from "./sfx";
 
 const failStrings = [ "Back to the drawing board.", "When in doubt, roll more numbers.", "Time to try something new."]
 const winStrings = [ "You're a natural.", "You made that look easy.", "PHEW."]
@@ -262,10 +263,7 @@ export default function Combat(props) {
     var actualDamage = damage > enemyRef.current ? enemyRef.current : damage;
     scoreRef.current += actualDamage;
     enemyRef.current = Math.max(0, Math.floor(enemyRef.current - damage));
-    try {
-      var hitAudio = new Audio("./hit.wav");
-      hitAudio.play().catch(() => {});
-    } catch (e) {}
+    playSfx("./hit.wav");
     if (enemyRef.current == 0) {
       setWinState("win");
       setEnemyState(null);
@@ -340,10 +338,7 @@ export default function Combat(props) {
         hitDiv = document.getElementById("combat-number-" + rollIndex);
       }
 
-      try {
-        var sfx = new Audio(isBlocked ? "./block.mp3" : "./hit.wav");
-        sfx.play().catch(() => {});
-      } catch (e) {}
+      playSfx(isBlocked ? "./block.mp3" : "./hit.wav");
 
       hitDiv.classList.remove("damage");
       void hitDiv.offsetWidth;
@@ -663,10 +658,7 @@ export default function Combat(props) {
                 className="combat-outcome-popup-button"
                 onClick={() => {
                   if (levelRewards && Object.keys(levelRewards).length > 0) {
-                    try {
-                      var a = new Audio("./get.wav");
-                      a.play().catch(() => {});
-                    } catch (e) {}
+                    playSfx("./get.wav");
                   }
                   onNext();
                 }}
@@ -701,10 +693,7 @@ export default function Combat(props) {
             <button
               onClick={() => {
                 if (lossRewards && Object.keys(lossRewards).length > 0) {
-                  try {
-                    var a = new Audio("./get.wav");
-                    a.play().catch(() => {});
-                  } catch (e) {}
+                  playSfx("./get.wav");
                 }
                 onBack();
               }}

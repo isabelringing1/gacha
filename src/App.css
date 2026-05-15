@@ -174,7 +174,7 @@ p {
   display: grid;
   grid-template-columns: 25vw minmax(0, 50vw) 25vw;
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .column {
@@ -2453,9 +2453,9 @@ input[type="number"] {
 
 .goal-container {
   position: absolute;
-  font-size: 1.5vh;
+  font-size: 1.5dvh;
   font-weight: bold;
-  top: 1vh;
+  top: 1dvh;
   width: 100%;
   overflow: hidden;
   white-space: nowrap;
@@ -4417,7 +4417,7 @@ input[type="number"] {
   #numbers-grid {
     width: 90vw;
     height: 100vw;
-    padding-top: 6dvh;
+    padding-top: 4dvh;
   }
 
   #debug {
@@ -4694,7 +4694,7 @@ input[type="number"] {
 
   .wallet-container {
     position: absolute;
-    top: calc(100vw + 6dvh);
+    top: calc(100vw + 4dvh);
     bottom: auto;
     height: auto;
     width: 88vw;
@@ -4745,8 +4745,8 @@ input[type="number"] {
   }
 
   .goal-container {
-    font-size: 2vh;
-    top: 0; 
+    font-size: 2dvh;
+    top: 0;
   }
 
   .combat-shop-stepper{
@@ -5283,6 +5283,58 @@ input[type="number"] {
 
 .about-popup-small{
   font-size: 1.5vh;
+}
+
+.volume-control {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1dvh;
+  width: 90%;
+  margin-bottom: 1dvh;
+}
+
+.volume-icon {
+  height: 2.5dvh;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.volume-slider {
+  flex: 1;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 0.6dvh;
+  background: #bbb;
+  border-radius: 0.3dvh;
+  outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 2dvh;
+  height: 2dvh;
+  border-radius: 50%;
+  background: #666;
+  cursor: pointer;
+  border: none;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 2dvh;
+  height: 2dvh;
+  border-radius: 50%;
+  background: #666;
+  cursor: pointer;
+  border: none;
+}
+
+.volume-slider::-moz-range-track {
+  height: 0.6dvh;
+  background: #bbb;
+  border-radius: 0.3dvh;
 }
 
 .reset-button {

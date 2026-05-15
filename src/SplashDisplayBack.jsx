@@ -4,6 +4,7 @@ import Twinkle from "./Twinkle";
 import rarityJson from "./json/rarity.json";
 
 import { DitherShader } from "./dither-shader";
+import { playSfx } from "./sfx";
 
 function Ray({ height, width, rotate, top, left, rarity }) {
   return (
@@ -107,10 +108,7 @@ export default function SplashDisplayBack(props) {
         to: spadesEl,
         label: "♠︎",
         onLand: () => {
-          try {
-            var a = new Audio("./get.wav");
-            a.play().catch(() => {});
-          } catch (e) {}
+          playSfx("./get.wav");
           // Increment spades on landing — existing useEffect on `spades` pulses #spades-container.
           setSpades((prev) => prev + n);
           finalize();
@@ -139,10 +137,7 @@ export default function SplashDisplayBack(props) {
     var sfxSrc = isLocked ? "./lock.mp3" : newData && newData.sound_fx;
     if (sfxSrc) {
       var sfxTimer = setTimeout(() => {
-        try {
-          var audio = new Audio(sfxSrc);
-          audio.play().catch(() => {});
-        } catch (e) {}
+        playSfx(sfxSrc);
       }, 200);
       return () => clearTimeout(sfxTimer);
     }

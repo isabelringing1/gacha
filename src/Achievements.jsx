@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import achievementData from "./json/achievements.json";
 import { UNLOCK_ACHIEVEMENTS_COST } from "./constants.js";
 import { getCurrencyIcon, getLevel } from "./Util";
+import { playSfx } from "./sfx";
 
 const REACH_ACHIEVEMENTS = achievementData
   .filter((a) => a.id.startsWith("reach_"))
@@ -109,10 +110,7 @@ export default function Achievements(props) {
   }, [numbers]);
 
   function handleClaim(achievement) {
-    try {
-      var a = new Audio("./get.wav");
-      a.play().catch(() => {});
-    } catch (e) {}
+    playSfx("./get.wav");
     claimAchievement(achievement);
     setTimeout(() => {
       setFadingOut((prev) => [...prev, achievement.id]);

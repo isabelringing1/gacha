@@ -8,6 +8,7 @@ import trash_hover from "/trash_hover.png";
 import { getNumbersInPack, getPackCost } from "./Util";
 import { isMobile } from "./constants.js";
 import { DitherShader } from "./dither-shader.tsx";
+import { playSfx } from "./sfx";
 
 const OUTLINE_WIDTH = 2;
 function buildOutlineFilter(color) {
@@ -81,10 +82,7 @@ function PackShopEntry(props) {
     if (!canBuy()) {
       return;
     }
-    try {
-      var a = new Audio("./buy.mp3");
-      a.play().catch(() => {});
-    } catch (err) {}
+    playSfx("./buy.mp3");
     setHoveredPack(null);
     buyPack(e);
   }

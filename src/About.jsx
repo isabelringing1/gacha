@@ -1,7 +1,20 @@
+import { useState } from "react";
 import flower from "/flower.png";
+import volumeIcon from "/volume.png";
+import muteIcon from "/mute.png";
+import lowVolumeIcon from "/low_volume.png";
+import { getSfxVolume, setSfxVolume } from "./sfx";
 
 export default function About(props) {
   var { showResetPopup, setShowResetPopup, numbers, lockedNumbers, startTime, lastDefeatedLevel, lastDefeatedEnemy, open, setOpen } = props;
+
+  var [volume, setVolume] = useState(getSfxVolume());
+
+  function onVolumeChange(e) {
+    var v = parseFloat(e.target.value);
+    setVolume(v);
+    setSfxVolume(v);
+  }
 
   var hasAllNumbers =
     numbers && Object.keys(numbers).length === 100 && lockedNumbers && lockedNumbers.length === 0;
@@ -73,6 +86,20 @@ export default function About(props) {
                     </button>
                   )}
 
+                  <div className="volume-control">
+                    <img src={volume <= 0 ? muteIcon : volume < 0.5 ? lowVolumeIcon : volumeIcon} alt="volume" className="volume-icon" />
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.01"
+                      value={volume}
+                      onChange={onVolumeChange}
+                      className="volume-slider"
+                      style={{ background: `linear-gradient(to right, #666 0%, #666 ${volume * 100}%, #bbb ${volume * 100}%, #bbb 100%)` }}
+                    />
+                  </div>
+
                   <button
                     className="about-popup-button reset-button"
                     onClick={() => {setShowResetPopup(true); setOpen(false)}}
@@ -87,7 +114,7 @@ export default function About(props) {
                     CLOSE
                   </button>
                 </div>
-                <div className="about-popup-small">v0.1</div>
+                <div className="about-popup-small">v1.1</div>
                 
               </div>
           </div>
