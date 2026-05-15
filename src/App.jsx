@@ -641,7 +641,7 @@ function App() {
     );
   };
 
-  const rollTen = () => {
+  const rollTen = (rollFn = roll) => {
     if (isRollTenButtonDisabled()) return;
     if (!startTime) setStartTime(Date.now());
     setNumRollButtonClicks(numRollButtonClicks + 1);
@@ -653,7 +653,7 @@ function App() {
 
     var rolledNumbers = [];
     for (var i = 0; i < 10; i++) {
-      rolledNumbers.push(roll());
+      rolledNumbers.push(rollFn());
     }
 
     setShowingRoll(0); // block other rolls during animation
@@ -1155,6 +1155,11 @@ function App() {
     showRolledNumber(rolledNumber, false);
   };
 
+  const rollTenForEvent = () => {
+    if (!currentEvent) return;
+    rollTen(() => rollEvent(currentEvent));
+  };
+
   const checkForEvent = () => {
     if (Object.keys(numbers).length < 50 || currentEvent) {
       return;
@@ -1551,6 +1556,9 @@ function App() {
                   isBanner={false}
                   rollForEvent={rollForEvent}
                   isRollButtonDisabled={isRollButtonDisabled}
+                  rollTenForEvent={rollTenForEvent}
+                  isRollTenButtonDisabled={isRollTenButtonDisabled}
+                  tenPullUnlocked={tenPullUnlocked}
                 />
               </div>
             )}
@@ -1736,6 +1744,7 @@ function App() {
         currentEvent={currentEvent}
         setCurrentEvent={setCurrentEvent}
         rollForEvent={rollForEvent}
+        rollTenForEvent={rollTenForEvent}
         isCombatActive={isCombatActive}
         combatState={combatState}
         buyCombatShopItem={buyCombatShopItem}

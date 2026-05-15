@@ -72,6 +72,7 @@ export default function MenusContainer(props) {
     currentEvent,
     setCurrentEvent,
     rollForEvent,
+    rollTenForEvent,
     isCombatActive,
     combatState,
     buyCombatShopItem,
@@ -289,6 +290,9 @@ export default function MenusContainer(props) {
             isBanner={false}
             rollForEvent={rollForEvent}
             isRollButtonDisabled={isRollButtonDisabled}
+            rollTenForEvent={rollTenForEvent}
+            isRollTenButtonDisabled={isRollTenButtonDisabled}
+            tenPullUnlocked={tenPullUnlocked}
           />
         </div>
       );

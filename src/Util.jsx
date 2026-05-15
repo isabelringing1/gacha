@@ -147,33 +147,53 @@ const rollMultiple = (
 };
 
 const rollEvent = (event) => {
-  var dropTable = { ...data.chance };
-  var dropRates = { ...data.drop_rates };
   var n = event.n;
-  var normalNumberRarity = dropRates[n];
+  var normalRarity = data.drop_rates[n];
 
-  // sort by each rarity
+  // Build rarity -> [numbers] map, excluding event.n
   var raritiesToNumber = {};
-  for (var i in dropRates) {
-    i = parseInt(n);
-    var rarity = dropRates[n];
-    if (raritiesToNumber[rarity]) {
-      raritiesToNumber[rarity].push(i);
-    } else {
-      raritiesToNumber[rarity] = [i];
+  for (var key in data.drop_rates) {
+    var num = parseInt(key);
+    if (num === n) continue;
+    var rarity = data.drop_rates[num];
+    if (!raritiesToNumber[rarity]) raritiesToNumber[rarity] = [];
+    raritiesToNumber[rarity].push(num);
+  }
+
+  // natural per-number chance for event.n in absence of the event
+  var countInNormalRarity = (raritiesToNumber[normalRarity] || []).length + 1;
+  var naturalChance = data.chance[normalRarity] / countInNormalRarity;
+
+  // advertised "+addedChance%" means total chance = natural + addedChance
+  var eventChance = naturalChance + event.addedChance;
+
+  if (Math.random() * 100 < eventChance) {
+    return n;
+  }
+
+  // Otherwise pick a rarity from what's left and a number within it.
+  // The boost comes out of common (rarity 0); event.n's own natural slice
+  // comes out of its native rarity, so the remaining mass sums to 100 - eventChance.
+  var dropTable = { ...data.chance };
+  dropTable[normalRarity] -= naturalChance;
+  dropTable[0] -= event.addedChance;
+
+  var remainingTotal = 100 - eventChance;
+  var r = Math.random() * remainingTotal;
+  var cumulative = 0;
+  var rarities = Object.keys(raritiesToNumber)
+    .map(function (x) { return parseInt(x); })
+    .sort(function (a, b) { return a - b; });
+  var pickedRarity = rarities[rarities.length - 1];
+  for (var i = 0; i < rarities.length; i++) {
+    cumulative += dropTable[rarities[i]] || 0;
+    if (r < cumulative) {
+      pickedRarity = rarities[i];
+      break;
     }
   }
-  // chance = chance to roll number's rarity * chance to roll that number within rarity
-  var regularChances =
-    dropTable[normalNumberRarity] *
-    (1 / raritiesToNumber[normalNumberRarity].length);
-
-  dropTable[4] = event.addedChance + regularChances; // add extra category for event number
-  dropTable[0] -= event.addedChance + regularChances; // take the % gained from the most common pool
-
-  // replace number's normal rarity with special rarity
-  dropRates[n] = 4;
-  return roll(1, 0, 0, 0, 0, [], dropTable, dropRates);
+  var pool = raritiesToNumber[pickedRarity];
+  return pool[Math.floor(Math.random() * pool.length)];
 };
 
 function getNumbersInPack(packId) {

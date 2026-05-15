@@ -2683,7 +2683,7 @@ input[type="number"] {
 }
 
 .event-info-text {
-  padding-bottom: 1dvh;
+  padding-bottom: 0.4cdvh;
 }
 
 .event-button {
@@ -2692,6 +2692,10 @@ input[type="number"] {
   background-color: #ffffffb0;
   -webkit-text-stroke: 0.8dvh #ffffffb0;
   z-index: 1;
+}
+
+.event-button-ten {
+  width: 14dvh;
 }
 
 .event-container {
