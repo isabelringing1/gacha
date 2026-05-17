@@ -98,7 +98,8 @@ export default function CombatNumber(props) {
   }
 
   function getDivideCooldownMs() {
-    return getCooldownMs() * 4;
+    if (number <= 1) return 0;
+    return 20000 * Math.log10(number) * (isFactor ? 0.8 : 1);
   }
 
   function setAttackInterval() {

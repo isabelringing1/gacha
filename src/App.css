@@ -5128,6 +5128,11 @@ input[type="number"] {
   .event-info-text{
     padding-bottom: 1dvh;
   }
+
+  #debug {
+    right: -20dvh;
+  }
+
 }
 
 .about-combat-button,
