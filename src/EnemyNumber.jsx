@@ -36,9 +36,20 @@ export default function EnemyNumber(props) {
   function getRandomAttackInterval() {
     return attackIntervalBase + Math.random() * 500 - 250;
   }
+
+  const digitCount = enemyRef.current ? Math.floor(enemyRef.current).toString().length : 0;
+  let digitClass = "";
+  if (digitCount >= 12) {
+    digitClass = " enemy-digits-12 ";
+  } else if (digitCount >= 10) {
+    digitClass = " enemy-digits-10 ";
+  } else if (digitCount >= 8) {
+    digitClass = " enemy-digits-8 ";
+  }
+
   return (
     <div
-      className={"enemy-number " + (winState == "win" ? " dead " : "")}
+      className={"enemy-number " + (winState == "win" ? " dead " : "") + digitClass}
       id="enemy-number"
       style={{ opacity: isSetup ? 0 : 1 }}
     >

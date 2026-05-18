@@ -2737,7 +2737,7 @@ input[type="number"] {
   flex-direction: column;
   height: 60%;
   width: 50%;
-
+  pointer-events: all;
   transition: opacity 0.2s;
 }
 
@@ -5133,6 +5133,34 @@ input[type="number"] {
     right: -20dvh;
   }
 
+  .enemy-number.enemy-digits-8 {
+    font-size: 8dvh;
+  }
+
+  .enemy-number.enemy-digits-10 {
+    font-size: 6dvh;
+  }
+
+  .enemy-number.enemy-digits-10 .shadow,
+  .enemy-number.enemy-digits-12 .shadow {
+    bottom: 3.5dvh;
+  }
+
+  .enemy-number.enemy-digits-12 {
+    font-size: 4dvh;
+  }
+
+}
+
+@media (max-width: 600px) and (min-aspect-ratio: 5926/10000) {
+  .combat-entry-inner {
+    height: 13dvh;
+    width: 55vw;
+  }
+
+  .combat-menu-team-section {
+    padding-bottom: 26dvh;
+  }
 }
 
 .about-combat-button,
