@@ -374,6 +374,17 @@ function isTenPullUnlocked(purchasedCharms) {
   );
 }
 
+const KEYBINDINGS_SLOT_INDEX = 4;
+
+function isKeybindingsUnlocked(purchasedCharms) {
+  if (isMobile) return false;
+  return (
+    purchasedCharms.includes("speed-up-6") &&
+    purchasedCharms.includes("diamond-upgrade-5") &&
+    purchasedCharms.includes("ten-pull")
+  );
+}
+
 function findPathByCategory(category) {
   for (var p = 0; p < charmData.paths.length; p++) {
     var path = charmData.paths[p];
@@ -402,6 +413,10 @@ function getNextCharm(index, purchasedCharms) {
   if (index === TEN_PULL_SLOT_INDEX) {
     if (!isTenPullUnlocked(purchasedCharms)) return null;
     return nextUnpurchasedInPath(findPathByCategory("ten-pull"), purchasedCharms);
+  }
+  if (index === KEYBINDINGS_SLOT_INDEX) {
+    if (!isKeybindingsUnlocked(purchasedCharms)) return null;
+    return nextUnpurchasedInPath(findPathByCategory("combat-keybindings"), purchasedCharms);
   }
   var path = charmData.paths[index];
   if (!path) return null;

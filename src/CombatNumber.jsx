@@ -22,8 +22,10 @@ export default function CombatNumber(props) {
     isFactor,
     attackFirst,
     hearts,
-    setHearts
+    setHearts,
+    keybindingsUnlocked,
   } = props;
+  const blockKeys = ["Q", "W", "E"];
   var intervalRef = useRef(null);
   var lastAttackTimeRef = useRef(null);
   var timeRemainingRef = useRef(number * 100);
@@ -92,6 +94,21 @@ export default function CombatNumber(props) {
     };
   }, [winState]);
 
+
+  useEffect(() => {
+    if (winState !== "combat" || !keybindingsUnlocked) return;
+    const onKey = (e) => {
+      if (e.repeat) return;
+      if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.isContentEditable)) return;
+      const key = e.key.toLowerCase();
+      if (key === blockKeys[index].toLowerCase()) {
+        var btn = document.getElementById("block-button-" + index);
+        if (btn && !btn.disabled) btn.click();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [winState, index, keybindingsUnlocked]);
 
   function getCooldownMs() {
     return Math.max(50, number * (isFactor ? FACTOR_TIMING_BOOST : 100));
@@ -338,7 +355,8 @@ export default function CombatNumber(props) {
             {level.canBlock && (
               <CombatButton
                 id="block"
-                text={"BLOCK"}
+                htmlId={"block-button-" + index}
+                text={keybindingsUnlocked ? "BLOCK (" + blockKeys[index] + ")" : "BLOCK"}
                 cooldown={(getCombatLevelData(combatState.combatLevel).block_cooldown || 3000) / 1000}
                 startActive={true}
                 clickAction={onBlock}
@@ -358,6 +376,7 @@ export default function CombatNumber(props) {
             {canDivide && (
               <CombatButton
                 id="divide"
+                htmlId={"divide-button-" + index}
                 text={"DIVIDE (1\u2665\uFE0E)"}
                 cooldown={getDivideCooldownMs() / 1000}
                 startActive={false}

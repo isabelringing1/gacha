@@ -114,7 +114,7 @@ export default function About(props) {
                     CLOSE
                   </button>
                 </div>
-                <div className="about-popup-small">v1.1</div>
+                <div className="about-popup-small">v1.3</div>
                 
               </div>
           </div>

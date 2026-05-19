@@ -375,7 +375,7 @@ export default function MenusContainer(props) {
               <button
                 id="roll-ten-button"
                 disabled={isRollTenButtonDisabled && isRollTenButtonDisabled()}
-                onClick={rollTen}
+                onClick={() => rollTen()}
               >
                 Roll 10 (&diams;&#xfe0e;10)
               </button>

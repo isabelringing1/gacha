@@ -166,17 +166,15 @@ export default function CombatEntry(props) {
             </button>
           )}
 
-          {!waiting && (
-            <div className="combat-entry-rewards combat-entry-rewards-pre" style={{ marginTop: "2dvh" }}>
-              <div>REWARDS: </div>
-                {levelRewards && Object.keys(levelRewards).map((r, i) => (
-                  <div key={"reward-" + i} className="combat-entry-rewards-item">
-                    {getCurrencyIcon(r)}
-                    {levelRewards[r].toLocaleString()}
-                  </div>
-                ))}
-            </div>
-          )}
+          <div className="combat-entry-rewards combat-entry-rewards-pre" style={{ marginTop: "2dvh" }}>
+            <div>REWARDS: </div>
+              {levelRewards && Object.keys(levelRewards).map((r, i) => (
+                <div key={"reward-" + i} className="combat-entry-rewards-item">
+                  {getCurrencyIcon(r)}
+                  {levelRewards[r].toLocaleString()}
+                </div>
+              ))}
+          </div>
       </div>
     </div>
   );

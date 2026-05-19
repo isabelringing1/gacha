@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useInterval, msToTime } from "./Util";
 
 export default function CombatButton(props) {
-  const { id, text, cooldown, startActive, clickAction, isDisabled } = props;
+  const { id, htmlId, text, cooldown, startActive, clickAction, isDisabled } = props;
 
   const [isActive, setIsActive] = useState(startActive);
   var [timeLeft, setTimeLeft] = useState(null);
@@ -50,6 +50,7 @@ export default function CombatButton(props) {
 
   return (
     <button
+      id={htmlId}
       className={"combat-button " + id + "-button"}
       disabled={!isActive || isDisabled}
       onClick={onButtonPressed}

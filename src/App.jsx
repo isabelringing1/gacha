@@ -107,7 +107,7 @@ function App() {
   const [sportsbookEntries, setSportsbookEntries] = useState([null, null]);
 
   const [charmShopState, setCharmShopState] = useState("hidden");
-  const [charmShopEntries, setCharmShopEntries] = useState([0, 0, 0, 0]);
+  const [charmShopEntries, setCharmShopEntries] = useState([0, 0, 0, 0, 0]);
   const [purchasedCharms, setPurchasedCharms] = useState([]);
   const [tenPullUnlocked, setTenPullUnlocked] = useState(false);
   const [multiRollHighlights, setMultiRollHighlights] = useState([]);
@@ -174,6 +174,7 @@ function App() {
   const [showAboutPopup, setShowAboutPopup] = useState(false);
   const [lastBattledLevel, setLastBattledLevel] = useState(0);
   const [diamondsUnlocked, setDiamondsUnlocked] = useState(false);
+  const [keybindingsUnlocked, setKeybindingsUnlocked] = useState(false);
   const [battleShopState, setBattleShopState] = useState("unlocked");
   const winBattleRef = useRef(null);
   const [lockedNumbers, setLockedNumbers] = useState(() => {
@@ -435,6 +436,7 @@ function App() {
     lastDefeatedEnemy,
     tenPullUnlocked,
     lockedRollCounts,
+    keybindingsUnlocked,
   ]);
 
   function saveData() {
@@ -489,6 +491,7 @@ function App() {
       lastDefeatedEnemy: lastDefeatedEnemy,
       lastBattledLevel: lastBattledLevel,
       tenPullUnlocked: tenPullUnlocked,
+      keybindingsUnlocked: keybindingsUnlocked,
     };
     console.log('Saving data', newPlayerData);
     var saveString = JSON.stringify(newPlayerData);
@@ -514,7 +517,11 @@ function App() {
         setMaxDiamonds(saveData.maxDiamonds);
         setCharmShopState(saveData.charmShopState);
         var loadedCharmEntries = saveData.charmShopEntries || [];
-        while (loadedCharmEntries.length < 4) loadedCharmEntries.push(0);
+        while (loadedCharmEntries.length < 5) loadedCharmEntries.push(0);
+        if (!loadedCharmEntries[4]) {
+          var nextKeybindCharm = getNextCharm(4, saveData.purchasedCharms || []);
+          if (nextKeybindCharm) loadedCharmEntries[4] = nextKeybindCharm.id;
+        }
         setCharmShopEntries(loadedCharmEntries);
         setPurchasedCharms(saveData.purchasedCharms);
         if (isMobile) {
@@ -570,6 +577,9 @@ function App() {
         );
         setTenPullUnlocked(
           saveData.tenPullUnlocked || (saveData.purchasedCharms || []).includes("ten-pull")
+        );
+        setKeybindingsUnlocked(
+          saveData.keybindingsUnlocked || (saveData.purchasedCharms || []).includes("combat-keybindings")
         );
         var t = saveData.nextHeartRefreshTime - Date.now();
         if (saveData.nextHeartRefreshTime && t <= 0) {
@@ -891,7 +901,7 @@ function App() {
     }
     setCharmShopState("unlocked");
     setSpades(spades - UNLOCK_CHARM_SHOP_COST);
-    generateCharmShopEntry([0, 1, 2, 3], purchasedCharms);
+    generateCharmShopEntry([0, 1, 2, 3, 4], purchasedCharms);
   };
 
   const canUnlockSportsbook = () => {
@@ -1090,6 +1100,10 @@ function App() {
       if (shopEntry.id === "speed-up-6" || shopEntry.id === "diamond-upgrade-5") {
         if (!indicesToRegen.includes(2)) indicesToRegen.push(2);
         if (!indicesToRegen.includes(3)) indicesToRegen.push(3);
+        if (!indicesToRegen.includes(4)) indicesToRegen.push(4);
+      }
+      if (shopEntry.id === "ten-pull") {
+        if (!indicesToRegen.includes(4)) indicesToRegen.push(4);
       }
       generateCharmShopEntry(indicesToRegen, newPurchasedCharms);
       setPurchasedCharms(newPurchasedCharms);
@@ -1108,6 +1122,8 @@ function App() {
       setHearts(Math.min(maxHearts, hearts + shopEntry.amount));
     } else if (shopEntry.category == "ten-pull") {
       setTenPullUnlocked(true);
+    } else if (shopEntry.category == "combat-keybindings") {
+      setKeybindingsUnlocked(true);
     }
 
   };
@@ -1507,6 +1523,7 @@ function App() {
           onBattleStart={() => setNumBattles((n) => n + 1)}
           setHeartsUnlocked={setHeartsUnlocked}
           heartsUnlocked={heartsUnlocked}
+          keybindingsUnlocked={keybindingsUnlocked}
           ticketBoughtSeen={ticketBoughtSeen}
           swapInstructionsSeen={swapInstructionsSeen}
           setSwapInstructionsSeen={setSwapInstructionsSeen}

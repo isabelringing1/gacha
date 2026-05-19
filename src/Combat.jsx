@@ -60,6 +60,7 @@ export default function Combat(props) {
     onBattleStart,
     setHeartsUnlocked,
     heartsUnlocked,
+    keybindingsUnlocked,
     ticketBoughtSeen,
     swapInstructionsSeen,
     setSwapInstructionsSeen,
@@ -788,6 +789,7 @@ export default function Combat(props) {
                     attackFirst={true}
                     hearts={hearts}
                     setHearts={setHearts}
+                    keybindingsUnlocked={keybindingsUnlocked}
                   />
                 ))}
             </div>

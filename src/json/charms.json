@@ -125,6 +125,18 @@
         "consumable": true,
         "art": "./10_pull.png"
       }
+    ],
+
+    [
+      {
+        "id": "combat-keybindings",
+        "category": "combat-keybindings",
+        "name": "Combat Hotkeys",
+        "desc": "Adds keybindings to block",
+        "cost": 150,
+        "consumable": true,
+        "art": "./keybindings.png"
+      }
     ]
 
   ]
