@@ -700,7 +700,7 @@ function App() {
 
       var count = 0;
       var interval = setInterval(() => {
-        if (!isMobile) playSfx("./tick.wav", 0.35);
+        playSfx("./tick.wav", 0.35);
         count++;
         if (count >= 10) {
           clearInterval(interval);
@@ -766,7 +766,7 @@ function App() {
       setTimeout(() => {
         var n = ((i - 1) % 100) + 1;
         setHighlightedNumber(n);
-        if (!isMobile) playSfx("./tick.wav", 0.35);
+        playSfx("./tick.wav", 0.35);
         if (i == total) {
           setTimeout(() => {
             setHighlightedNumber(-1);
