@@ -126,6 +126,15 @@ export default function Achievements(props) {
     return count;
   }
 
+  function getNumbersAtLevel(targetLevel) {
+    var result = [];
+    for (var i = 1; i <= 100; i++) {
+      var rolls = numbers[i];
+      if (rolls !== undefined && getLevel(rolls) >= targetLevel) result.push(i);
+    }
+    return result;
+  }
+
   function getCurrent(a) {
     if (a.type === "row") return completeRows;
     if (a.type === "column") return completeCols;
@@ -227,6 +236,7 @@ export default function Achievements(props) {
                   );
                 }
 
+                var isLevelAchievement = achievement.type === "level";
                 return (
                   <div
                     className={
@@ -235,6 +245,8 @@ export default function Achievements(props) {
                       (achieved && !claimed ? " can-claim-yellow" : "")
                     }
                     key={achievement.id}
+                    onMouseEnter={isLevelAchievement ? () => setHighlightedNumbers(getNumbersAtLevel(achievement.target_level)) : undefined}
+                    onMouseLeave={isLevelAchievement ? () => setHighlightedNumbers([]) : undefined}
                   >
                     {!achieved && (
                       <div className="achievement-progress-fill" style={{ width: fillPercent + "%" }} />
