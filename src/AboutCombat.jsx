@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { playSfx } from "./sfx";
 
 export default function AboutCombat() {
   const [open, setOpen] = useState(false);
@@ -7,7 +8,10 @@ export default function AboutCombat() {
     <>
       <button
         className="about-combat-button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          playSfx("./click.wav");
+          setOpen(true);
+        }}
         aria-label="About combat"
       >
         ?

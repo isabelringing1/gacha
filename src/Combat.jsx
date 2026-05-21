@@ -93,6 +93,7 @@ export default function Combat(props) {
 
   function onUnlockEarly() {
     if (!waiting || !canAffordUnlockEarly) return;
+    playSfx("./buy.mp3");
     setSpades(spades - unlockEarlyCost);
     setCombatState((prev) => ({ ...prev, nextLevelUnlockTime: 0 }));
   }
@@ -264,7 +265,7 @@ export default function Combat(props) {
     var actualDamage = damage > enemyRef.current ? enemyRef.current : damage;
     scoreRef.current += actualDamage;
     enemyRef.current = Math.max(0, Math.floor(enemyRef.current - damage));
-    playSfx("./hit.wav");
+    playSfx("./hit.wav", 0.8);
     if (enemyRef.current == 0) {
       setWinState("win");
       setEnemyState(null);
@@ -339,7 +340,7 @@ export default function Combat(props) {
         hitDiv = document.getElementById("combat-number-" + rollIndex);
       }
 
-      playSfx(isBlocked ? "./block.mp3" : "./hit.wav");
+      playSfx(isBlocked ? "./block.mp3" : "./hit.wav", isBlocked ? 1 : 0.8);
 
       hitDiv.classList.remove("damage");
       void hitDiv.offsetWidth;
@@ -510,6 +511,8 @@ export default function Combat(props) {
     // Require a ticket for levels > 1
     if (combatState.combatLevel > 1 && (!combatState.combatTickets || combatState.combatTickets <= 0)) return;
 
+    playSfx("./click.wav");
+
     var enemyValue = combatState.currentEnemyValue;
 
     // Level 1: enemy is the sum of the three equipped numbers
@@ -548,7 +551,10 @@ export default function Combat(props) {
       {winState == "combat" && combatState.combatLevel > 1 && (
         <button
           className={"run-away-button"}
-          onClick={onBack}
+          onClick={() => {
+            playSfx("./click.wav");
+            onBack();
+          }}
         >
         RUN AWAY
         </button>

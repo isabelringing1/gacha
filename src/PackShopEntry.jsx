@@ -135,6 +135,7 @@ function PackShopEntry(props) {
             onMouseOut={() => setTrashHovered(false)}
             onClick={(e) => {
               e.stopPropagation();
+              playSfx("./trash.wav");
               setHoveredPack(null);
               trashPack(shopEntry);
             }}

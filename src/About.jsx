@@ -3,7 +3,7 @@ import flower from "/flower.png";
 import volumeIcon from "/volume.png";
 import muteIcon from "/mute.png";
 import lowVolumeIcon from "/low_volume.png";
-import { getSfxVolume, setSfxVolume } from "./sfx";
+import { getSfxVolume, setSfxVolume, playSfx } from "./sfx";
 
 export default function About(props) {
   var { showResetPopup, setShowResetPopup, numbers, lockedNumbers, startTime, lastDefeatedLevel, lastDefeatedEnemy, open, setOpen } = props;
@@ -54,7 +54,10 @@ export default function About(props) {
     <>
       <button
         className="about-button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          playSfx("./click.wav");
+          setOpen(true);
+        }}
         aria-label="About"
       >
         i

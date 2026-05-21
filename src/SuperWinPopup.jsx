@@ -1,5 +1,12 @@
+import { useEffect } from "react";
+import { playSfx } from "./sfx";
+
 export default function SuperWinPopup(props) {
   var { rolls, numPacksOpened, numRollButtonClicks, numBattles, startTime, combatLevel, onClose } = props;
+
+  useEffect(() => {
+    playSfx("./win.wav");
+  }, []);
 
   function getElapsedText(returnText = false) {
     if (!startTime) return null;

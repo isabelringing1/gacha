@@ -1,6 +1,7 @@
 import { getRarityData } from "./Util";
 import Timer from "./Timer";
 import { DitherShader } from "./dither-shader";
+import { playSfx } from "./sfx";
 export default function Event(props) {
   var {
     event,
@@ -19,6 +20,7 @@ export default function Event(props) {
   var data = getRarityData(n);
 
   const markEventAsSeen = () => {
+    playSfx("./click.wav");
     var newEvent = { ...event };
     newEvent.isNew = false;
     setCurrentEvent(newEvent);

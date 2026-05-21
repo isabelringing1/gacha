@@ -136,8 +136,9 @@ export default function SplashDisplayBack(props) {
 
     var sfxSrc = isLocked ? "./lock.mp3" : newData && newData.sound_fx;
     if (sfxSrc) {
+      var sfxVolume = sfxSrc === "./epic.wav" ? 0.8 : 1;
       var sfxTimer = setTimeout(() => {
-        playSfx(sfxSrc);
+        playSfx(sfxSrc, sfxVolume);
       }, 200);
       return () => clearTimeout(sfxTimer);
     }

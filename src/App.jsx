@@ -20,7 +20,7 @@ import {
   getRarityIndex,
 } from "./Util";
 import { UNLOCK_ENTRY_COST } from "./constants.js";
-import { playSfx, preloadSfx } from "./sfx.js";
+import { playSfx } from "./sfx.js";
 import ticket from "/ticket.png";
 import keyIcon from "/key.png";
 
@@ -197,7 +197,6 @@ function App() {
 
   useEffect(() => {
     loadData();
-    if (!isMobile) preloadSfx("./tick.wav");
     const onFocus = () => {
       console.log('User is back on the page, saving');
       saveDataRef.current();
@@ -701,7 +700,7 @@ function App() {
 
       var count = 0;
       var interval = setInterval(() => {
-        if (!isMobile) playSfx("./tick.wav", 0.55);
+        if (!isMobile) playSfx("./tick.wav", 0.35);
         count++;
         if (count >= 10) {
           clearInterval(interval);
@@ -767,7 +766,7 @@ function App() {
       setTimeout(() => {
         var n = ((i - 1) % 100) + 1;
         setHighlightedNumber(n);
-        if (!isMobile) playSfx("./tick.wav", 0.55);
+        if (!isMobile) playSfx("./tick.wav", 0.35);
         if (i == total) {
           setTimeout(() => {
             setHighlightedNumber(-1);
@@ -874,6 +873,7 @@ function App() {
     if (!cheat && !canUnlockPackShop()) {
       return;
     }
+    playSfx("./buy.mp3");
     setPackShopState("unlocked");
     setSpades(spades - UNLOCK_PACK_SHOP_COST);
     generatePackShopEntry(2, [-1], [0]);
@@ -899,6 +899,7 @@ function App() {
     if (!cheat && !canUnlockCharmShop()) {
       return;
     }
+    playSfx("./buy.mp3");
     setCharmShopState("unlocked");
     setSpades(spades - UNLOCK_CHARM_SHOP_COST);
     generateCharmShopEntry([0, 1, 2, 3, 4], purchasedCharms);
@@ -972,6 +973,7 @@ function App() {
   };
 
   const refreshPackShopEntry = (index) => {
+    playSfx("./buy.mp3");
     const entry = cardShopEntries[index];
     generatePackShopEntry(1, [index]);
     setSpades(spades - getRefreshEntryCost(entry));
@@ -998,6 +1000,7 @@ function App() {
   };
 
   const unlockShopEntry = (i) => {
+    playSfx("./buy.mp3");
     var newPackShopEntriesUnlocked = [...packShopEntriesUnlocked];
     newPackShopEntriesUnlocked[i] = true;
     setPackShopEntriesUnlocked(newPackShopEntriesUnlocked);
@@ -1006,6 +1009,7 @@ function App() {
   };
 
   const openPack = (pack) => {
+    playSfx("./open.mp3");
     setNumPacksOpened(numPacksOpened + 1);
     var isCopycat = pack.id == "copycat";
     if (isCopycat) {
@@ -1452,6 +1456,7 @@ function App() {
             }
             disabled={showingRoll != -1 && !waitingForUnlock}
             onClick={() => {
+              playSfx("./click.wav");
               setCombatButtonSeen(true);
               if (showingBattle && !waitingForUnlock) {
                 setLastBattledLevel(combatState.combatLevel);

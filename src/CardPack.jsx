@@ -10,6 +10,7 @@ import cardPackOld from "/copycat_big.png";
 import { DitherShader } from "./dither-shader";
 import numberBg from "/number_bg.png";
 import { isMobile } from "./constants.js";
+import { playSfx } from "./sfx";
 
 const CardPack = (props) => {
   const { pack, openPack, hidePack, bigNumberQueue } = props;
@@ -105,6 +106,7 @@ const CardPack = (props) => {
   };
 
   const triggerErrorShake = () => {
+    playSfx("./lock.mp3");
     setLines([]);
     setIsDrawing(false);
     setShowSliceInstructions(true);
