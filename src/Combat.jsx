@@ -165,6 +165,7 @@ export default function Combat(props) {
     winStateRef.current = winState;
     if (setIsCombatActive) setIsCombatActive(winState !== "menu");
     if (winState == "win") {
+      playSfx("./win.wav");
       setWinString(getRandomWinString());
       {
         var rewards = combatState.levelRewards || {};
@@ -179,6 +180,7 @@ export default function Combat(props) {
       }
     }
     if (winState == "lose") {
+      playSfx("./lose.mp3");
       setFailString(getRandomFailString());
       var awarded = {};
       if (combatState && (combatState.combatLevel || 0) >= 7) {
@@ -206,6 +208,10 @@ export default function Combat(props) {
         playerNumbers.classList.remove("walk-forward");
         void playerNumbers.offsetWidth;
         playerNumbers.classList.add("walk-forward");
+        // Walk-forward animation is 1.5s with step impacts at 25%, 50%, 75%
+        setTimeout(() => playSfx("./step.wav"), 375);
+        setTimeout(() => playSfx("./step.wav"), 750);
+        setTimeout(() => playSfx("./step.wav"), 1125);
       }
       if (enemySection) {
        
@@ -217,6 +223,7 @@ export default function Combat(props) {
           combatContainer.classList.remove("shake-screen");
          
           enemySection.style.opacity = 1;
+          playSfx("./crash.wav");
           setTimeout(() => {
             combatContainer.classList.add("shake-screen");
           }, 200);
@@ -265,7 +272,7 @@ export default function Combat(props) {
     var actualDamage = damage > enemyRef.current ? enemyRef.current : damage;
     scoreRef.current += actualDamage;
     enemyRef.current = Math.max(0, Math.floor(enemyRef.current - damage));
-    playSfx("./hit.wav", 0.8);
+    playSfx("./hit.wav", 0.4);
     if (enemyRef.current == 0) {
       setWinState("win");
       setEnemyState(null);
@@ -291,6 +298,7 @@ export default function Combat(props) {
       return;
     }
     enemyRef.current = Math.max(0, Math.floor(enemyRef.current / n));
+    playSfx("./divide.wav", 1.3);
     if (enemyRef.current == 0) {
       setCombatState((oldCombatState) => {
         var newCombatState = { ...oldCombatState };
@@ -340,7 +348,7 @@ export default function Combat(props) {
         hitDiv = document.getElementById("combat-number-" + rollIndex);
       }
 
-      playSfx(isBlocked ? "./block.mp3" : "./hit.wav", isBlocked ? 1 : 0.8);
+      playSfx(isBlocked ? "./block.mp3" : "./hit.wav", isBlocked ? 1 : 0.4);
 
       hitDiv.classList.remove("damage");
       void hitDiv.offsetWidth;

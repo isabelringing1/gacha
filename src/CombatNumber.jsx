@@ -5,6 +5,7 @@ import NumberTooltip from "./NumberTooltip";
 import { AUTO_LEVEL, DIVIDE_LEVEL, FACTOR_TIMING_BOOST } from "./constants.js";
 import shield from "/shield.png";
 import { getRarity, getCombatLevelData } from "./Util";
+import { playSfx } from "./sfx";
 
 export default function CombatNumber(props) {
   const {
@@ -176,6 +177,7 @@ export default function CombatNumber(props) {
   }
 
   function onHeal() {
+    playSfx("./heal.wav", 0.8);
     if (hearts < 1) {
       return;
     }

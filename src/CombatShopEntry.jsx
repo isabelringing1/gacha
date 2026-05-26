@@ -103,26 +103,26 @@ export default function CombatShopEntry(props) {
             className="combat-shop-stepper-btn"
             disabled={incMax === 0}
             {...makeHoldProps(
-              () => setCount(maxAffordable()),
-              () => changeCount(incMax)
+              () => { playSfx("./click.wav"); setCount(maxAffordable()); },
+              () => { playSfx("./click.wav"); changeCount(incMax); }
             )}
           >&#x25B2;&#x25B2;</button>
           <button
             className="combat-shop-stepper-btn"
-            onClick={() => changeCount(1)}
+            onClick={() => { playSfx("./click.wav"); changeCount(1); }}
             disabled={incMax === 0}
           >&#x25B2;</button>
           <button
             className="combat-shop-stepper-btn"
-            onClick={() => changeCount(-1)}
+            onClick={() => { playSfx("./click.wav"); changeCount(-1); }}
             disabled={decMax === 0}
           >&#x25BC;</button>
           <button
             className="combat-shop-stepper-btn"
             disabled={decMax === 0}
             {...makeHoldProps(
-              () => setCount(1),
-              () => changeCount(-decMax)
+              () => { playSfx("./click.wav"); setCount(1); },
+              () => { playSfx("./click.wav"); changeCount(-decMax); }
             )}
           >&#x25BC;&#x25BC;</button>
         </div>

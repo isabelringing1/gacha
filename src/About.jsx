@@ -105,14 +105,14 @@ export default function About(props) {
 
                   <button
                     className="about-popup-button reset-button"
-                    onClick={() => {setShowResetPopup(true); setOpen(false)}}
+                    onClick={() => {playSfx("./click.wav"); setShowResetPopup(true); setOpen(false)}}
                   >
                     RESET
                   </button>
 
                   <button
                     className="about-popup-button"
-                    onClick={() => setOpen(false)}
+                    onClick={() => {playSfx("./click.wav"); setOpen(false)}}
                   >
                     CLOSE
                   </button>

@@ -1,10 +1,14 @@
+import { playSfx } from "./sfx";
+
 export default function ResetPopup({ setShowResetPopup }) {
   function onYes() {
+    playSfx("./click.wav");
     localStorage.clear();
     window.location.reload();
   }
 
   function onNo() {
+    playSfx("./click.wav");
     setShowResetPopup(false);
   }
 

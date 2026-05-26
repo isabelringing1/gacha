@@ -36,7 +36,10 @@ export default function AboutCombat() {
               <div className="win-popup-buttons">
                 <button
                   className="win-popup-button"
-                  onClick={() => setOpen(false)}
+                  onClick={() => {
+                    playSfx("./click.wav");
+                    setOpen(false);
+                  }}
                 >
                   CLOSE
                 </button>
