@@ -237,6 +237,7 @@ export default function Achievements(props) {
                 }
 
                 var isLevelAchievement = achievement.type === "level";
+                var buttonActive = isLevelAchievement && achieved && !claimed;
                 return (
                   <div
                     className={
@@ -256,6 +257,8 @@ export default function Achievements(props) {
                       className="achievement-entry-button"
                       disabled={!achieved || claimed}
                       onClick={() => handleClaim(achievement)}
+                      onMouseEnter={buttonActive ? () => setHighlightedNumbers([]) : undefined}
+                      onMouseLeave={buttonActive ? () => setHighlightedNumbers(getNumbersAtLevel(achievement.target_level)) : undefined}
                     >
                       {getCurrencyIcon(achievement.currency) + " " + achievement.reward_amount}
                     </button>
