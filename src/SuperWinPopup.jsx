@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { playSfx } from "./sfx";
+import { useShareButton } from "./Util";
 
 export default function SuperWinPopup(props) {
   var { rolls, numPacksOpened, numRollButtonClicks, numBattles, startTime, combatLevel, onClose } = props;
@@ -32,11 +33,12 @@ export default function SuperWinPopup(props) {
   }
 
   var elapsedText = getElapsedText();
+  var { label: shareLabel, onShareClick } = useShareButton("SHARE");
 
   function onShareStats() {
     var t = getElapsedText(true);
     var text = "I 100%ed Number Gacha in " + t + "!";
-    navigator.share({
+    onShareClick({
       text: text,
       url: window.location.href,
     });
@@ -58,7 +60,7 @@ export default function SuperWinPopup(props) {
           <div className="win-popup-text combat-level-text">You reached level <b>{combatLevel}</b> in battle. That's some serious work!</div>
 
       <div className="win-popup-buttons">
-          <button className="win-popup-button" onClick={onShareStats}>SHARE</button>
+          <button className="win-popup-button" onClick={onShareStats}>{shareLabel}</button>
           <button className="win-popup-button" onClick={onClose}>CLOSE</button>
           </div>
         </div>

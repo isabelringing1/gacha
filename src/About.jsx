@@ -4,11 +4,13 @@ import volumeIcon from "/volume.png";
 import muteIcon from "/mute.png";
 import lowVolumeIcon from "/low_volume.png";
 import { getSfxVolume, setSfxVolume, playSfx } from "./sfx";
+import { useShareButton } from "./Util";
 
 export default function About(props) {
   var { showResetPopup, setShowResetPopup, numbers, lockedNumbers, startTime, lastDefeatedLevel, lastDefeatedEnemy, open, setOpen } = props;
 
   var [volume, setVolume] = useState(getSfxVolume());
+  var { label: shareLabel, onShareClick } = useShareButton("SHARE STATS");
 
   function onVolumeChange(e) {
     var v = parseFloat(e.target.value);
@@ -44,7 +46,7 @@ export default function About(props) {
       var t = getElapsedTextString();
       text = "I got all the numbers in " + t + "!";
     }
-    navigator.share({
+    onShareClick({
       text: text,
       url: window.location.href,
     });
@@ -85,7 +87,7 @@ export default function About(props) {
                       className="about-popup-button share-button"
                       onClick={onShareStats}
                     >
-                      SHARE STATS
+                      {shareLabel}
                     </button>
                   )}
 

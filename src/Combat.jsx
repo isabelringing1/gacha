@@ -15,6 +15,7 @@ import CombatMenu from "./CombatMenu.jsx";
 import CombatShop from "./CombatShop.jsx";
 import CombatEntry from "./CombatEntry.jsx";
 import { playSfx } from "./sfx";
+import { useShareButton } from "./Util";
 
 const failStrings = [ "Back to the drawing board.", "When in doubt, roll more numbers.", "Time to try something new."]
 const winStrings = [ "You're a natural.", "You made that look easy.", "PHEW."]
@@ -106,6 +107,7 @@ export default function Combat(props) {
   const [showStartLabel, setShowStartLabel] = useState(false);
   const [failString, setFailString] = useState(getRandomFailString());
   const [winString, setWinString] = useState(getRandomWinString());
+  const { label: shareLabel, onShareClick } = useShareButton("SHARE");
 
   const enemyRef = useRef(null);
   const healthArrayRef = useRef();
@@ -660,13 +662,13 @@ export default function Combat(props) {
                   onClick={() => {
                     var enemyVal = combatState.currentEnemyValue || 0;
                     var lvl = combatState.combatLevel || 0;
-                    navigator.share({
+                    onShareClick({
                       text: "I just beat " + enemyVal.toLocaleString() + " at Level " + lvl + "!",
                       url: window.location.href,
                     });
                   }}
                 >
-                  SHARE
+                  {shareLabel}
                 </button>
               )}
               <button

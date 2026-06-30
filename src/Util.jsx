@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import data from "./json/data.json";
 import rarityData from "./json/rarity.json";
 import packData from "./json/packs.json";
@@ -824,6 +824,65 @@ function getLevelProgress(numTimesRolled) {
   return { min: min, max: max, current: rolls, isMax: !next };
 }
 
+function copyText(text) {
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+    return navigator.clipboard.writeText(text);
+  }
+
+  var textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand("copy");
+  } finally {
+    document.body.removeChild(textarea);
+  }
+  return Promise.resolve();
+}
+
+function share({ text, url }) {
+  if (typeof navigator.share === "function") {
+    return navigator.share({ text, url }).then(function () {
+      return { copied: false };
+    });
+  }
+
+  var shareText = url ? text + "\n" + url : text;
+  return copyText(shareText).then(function () {
+    return { copied: true };
+  });
+}
+
+function useShareButton(defaultLabel) {
+  var [label, setLabel] = useState(defaultLabel);
+  var timeoutRef = useRef(null);
+
+  useEffect(function () {
+    return function () {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
+  var onShareClick = useCallback(function (shareArgs) {
+    share(shareArgs).then(function (result) {
+      if (result.copied) {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        setLabel("COPIED!");
+        timeoutRef.current = setTimeout(function () {
+          setLabel(defaultLabel);
+          timeoutRef.current = null;
+        }, 1000);
+      }
+    });
+  }, [defaultLabel]);
+
+  return { label: label, onShareClick: onShareClick };
+}
+
 export {
   useInterval,
   msToTime,
@@ -859,4 +918,6 @@ export {
   getNumToUpgrade,
   getLevelProgress,
   spawnDoober,
+  share,
+  useShareButton,
 };
