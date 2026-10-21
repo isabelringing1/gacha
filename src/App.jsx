@@ -1407,8 +1407,9 @@ function App() {
       {currentEvent && currentEvent.isNew && bigNumberQueue.length == 0 && (
         <EventBanner event={currentEvent} setCurrentEvent={setCurrentEvent} />
       )}
-      <div
+      <h1
         className="goal-container"
+        aria-label="Number Gacha"
         onClick={() => setShowAboutPopup(true)}
       >
         <div className="marquee-track">
@@ -1419,7 +1420,7 @@ function App() {
             {("NUMBER " + (showCombat ? "BATTLE" : "GACHA") + " \u00A0 ").repeat(20)}
           </span>
         </div>
-      </div>
+      </h1>
       {false && !isMobile && !showCombat && <History rolls={rolls} />}
 
       {combatUnlocked && !combatState.active && (() => {

@@ -2453,6 +2453,7 @@ input[type="number"] {
 
 .goal-container {
   position: absolute;
+  margin: 0;
   font-size: 1.5dvh;
   font-weight: bold;
   top: 1dvh;
